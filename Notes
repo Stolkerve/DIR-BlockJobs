@@ -1,4 +1,5 @@
-source ./build_deploy.sh
+source ./deploy.sh
+source ./clear.sh
 
 near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID
 

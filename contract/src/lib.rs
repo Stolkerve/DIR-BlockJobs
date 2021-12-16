@@ -73,7 +73,7 @@ impl Contract {
     /// * `owner_id`    - La cuenta de mainnet/testnet de quien sera el owner del contrato.
     #[init]
     pub fn new(owner_id: ValidAccountId) -> Self {
-        assert!(!env::state_exists(), "Already initialized");
+        assert!(!env::state_exists(), "Contract already inicialized");
         let mut this = Self {
             tokens_id_counter: 0,
             tokens_per_owner: LookupMap::new(b"a".to_vec()),
@@ -83,7 +83,7 @@ impl Contract {
             extra_storage_in_bytes_per_token: 0,
         };
 
-        // El owner del contrato debe ser un usuario con role de Admin
+        // El owner del contrato debe ser un usuario con rol de Admin
         let mut lenguages = HashSet::new();
         lenguages.insert(ProgramingLenguages::Rust);
 
@@ -114,7 +114,7 @@ impl Contract {
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
         let is_admin = user.roles.get(&UserRoles::Admin).is_none();
-        assert_eq!(is_professional || is_admin, true, "Solo los profesionales pueden mintear un nft");
+        assert_eq!(is_professional || is_admin, true, "Only professional can mint a service");
         // if  {
         //     env::panic(b"Solo los profesionales pueden mintear un nft");
         // }
@@ -413,10 +413,10 @@ impl Contract {
 #[derive(Serialize, Deserialize, PanicMessage)]
 #[serde(crate = "near_sdk::serde", tag = "err")]
 pub enum Panic {
-    #[panic_msg = "Invalid argument for servise title `{}`: {}"]
+    #[panic_msg = "Invalid argument for service title `{}`: {}"]
     InvalidTitle { len_title: usize, reason: String },
 
-    #[panic_msg = "Invalid argument for servise title `{}`: {}"]
+    #[panic_msg = "Invalid argument for service description `{}`: {}"]
     InvalidDescription { len_description: usize, reason: String },
     /*
     #[panic_msg = "Token ID `{}` must have a positive cantidad"]
