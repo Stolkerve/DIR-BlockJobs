@@ -35,7 +35,7 @@ pub(crate) fn deposit_refund(storage_used: u64) {
 
     assert!(
         required_cost <= attached_deposit,
-        "Requires to attach {:.1$} NEAR tokens to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 4 // la presicion de decimales
+        "Requires to attach {:.1$} NEAR tokens to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
     );
 
     let refund = attached_deposit - required_cost;
