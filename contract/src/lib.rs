@@ -27,6 +27,7 @@ static ALLOC: near_sdk::wee_alloc::WeeAlloc<'_> = near_sdk::wee_alloc::WeeAlloc:
 // const MAX_MARKET_DEPOSIT: u128 = 100_000_000_000_000_000_000_000;
 // const ACCESS_KEY_ALLOWANCE: u128 = 100_000_000_000_000_000_000_000;
 // const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
+
 const USER_MINT_LIMIT: u8 = 10;
 const USERS_LIMIT: u16 = u16::MAX;
 
