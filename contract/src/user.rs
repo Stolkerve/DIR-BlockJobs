@@ -22,5 +22,7 @@ pub struct User {
     pub mints: u8,
     pub roles: HashSet<UserRoles>,
     pub rep: i16,
-    pub categories: Vec<Categories>
+    pub categories: Vec<Categories>,
+    pub links: Option<String>,
+    pub education: Option<String>
 }
