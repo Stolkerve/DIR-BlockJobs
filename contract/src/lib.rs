@@ -289,12 +289,19 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_tokens(&self, account_id: ValidAccountId) -> Vec<Token> {
+    /// * `only_active`  - Retornar solo los tokens activos.
+    pub fn get_user_tokens(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
         let mut tokens: Vec<Token> = Vec::new();
         let tokens_id = self.get_user_tokens_id(account_id.clone());
         for i in 0 .. tokens_id.len() {
             let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
-            tokens.push( token );
+            if only_active && token.metadata.active {
+                tokens.push( token );
+                continue;    
+            }
+            else {
+                tokens.push( token );
+            }
         }
         return tokens;
     }
