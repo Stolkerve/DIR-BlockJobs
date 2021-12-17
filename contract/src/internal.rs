@@ -61,7 +61,7 @@ pub(crate) fn refund_approved_account_ids(
 }
 
 impl Contract {
-    // pub(crate) fn assert_owner(&self) {
+    // pub(crate) fn admin_assert(&self) {
     //     assert_eq!(
     //         &env::predecessor_account_id(),
     //         &self.owner_id,
