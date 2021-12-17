@@ -1,10 +1,10 @@
 use std::collections::HashSet;
-
 use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{ValidAccountId};
 use near_sdk::serde::{Deserialize, Serialize};
+use near_sdk::serde_json;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
 
 use crate::internal::*;
@@ -17,8 +17,7 @@ mod nft_core;
 mod user;
 mod categories;
 
-#[global_allocator]
-static ALLOC: near_sdk::wee_alloc::WeeAlloc<'_> = near_sdk::wee_alloc::WeeAlloc::INIT;
+near_sdk::setup_alloc!();
 
 // const ON_CALLBACK_GAS: u64 = 20_000_000_000_000;
 // const GAS_FOR_RESOLVE_TRANSFER: Gas = 10_000_000_000_000;
@@ -54,14 +53,22 @@ pub struct TokenMetadata {
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
-    pub tokens_id_counter: u128,
+    pub total_supply: u128,
     pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
     pub tokens_by_id: UnorderedMap<TokenId, Token>,
-    pub owner_id: AccountId,
+    pub contract_owner: AccountId,
     // The storage size in bytes for one account.
     pub extra_storage_in_bytes_per_token: StorageUsage,
 
     pub users: UnorderedMap<AccountId, User>,
+}
+
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Category {
+    pub category: String,
+    pub subcategory: String,
+    pub areas: String,
 }
 
 #[near_bindgen]
@@ -75,11 +82,11 @@ impl Contract {
     pub fn new(owner_id: ValidAccountId) -> Self {
         assert!(!env::state_exists(), "Contract already inicialized");
         let mut this = Self {
-            tokens_id_counter: 0,
+            total_supply: 0,
             tokens_per_owner: LookupMap::new(b"a".to_vec()),
             tokens_by_id: UnorderedMap::new(b"t".to_vec()),
             users: UnorderedMap::new(b"u".to_vec()),
-            owner_id: owner_id.clone().into(),
+            contract_owner: owner_id.clone().into(),
             extra_storage_in_bytes_per_token: 0,
         };
 
@@ -91,7 +98,7 @@ impl Contract {
         areas.insert(ProgrammerAreas::Blockchain);
         areas.insert(ProgrammerAreas::Backend);
 
-        this.add_user(owner_id, UserRoles::Admin, vec!(Categories::Programmer(
+        this.user_add(owner_id, UserRoles::Admin, vec!(Categories::Programmer(
             ProgrammerCategoryData {
                 lenguages: lenguages,
                 area: areas,
@@ -102,15 +109,19 @@ impl Contract {
         return this;
     }
     
-    /// Mintea un o varios servios de un usuario que sea un profesional (tambien si eres un admin)
+    /// Mintea uno o varios servios de un usuario que sea un profesional (tambien si eres un admin)
     ///
     /// #Arguments
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
     /// * `active_services`      - La cantidad de tokens que se desea mintear.
     #[payable]
-    pub fn nft_mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
+    pub fn service_mint(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
 
-        let user = self.update_user_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
+        if _active_services > 10 || _active_services < 1 {
+            Panic::InvalidMintAmount{}.panic();
+        }
+
+        let user = self.user_update_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
         let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
@@ -134,11 +145,11 @@ impl Contract {
                 _active_services -= 1;
             }
             assert!(
-                self.tokens_by_id.insert(&self.tokens_id_counter.to_string(), &token).is_none(),
+                self.tokens_by_id.insert(&self.total_supply.to_string(), &token).is_none(),
                 "Token already exists"
             );
-            self.internal_add_token_to_owner(&token.owner_id, &self.tokens_id_counter.to_string());
-            self.tokens_id_counter += 1;
+            self.internal_add_token_to_owner(&token.owner_id, &self.total_supply.to_string());
+            self.total_supply += 1;
         }
 
         let new_tokens_size_in_bytes = env::storage_usage() - initial_storage_usage;
@@ -152,15 +163,103 @@ impl Contract {
         return token;
     }
 
-    /// Registra usuarios! Asignandoles un role y a que se didican por categorias
+    // Quitar un servicio ofrecido
+    pub fn service_delete(&mut self, token_id: TokenId) -> Token {
+        // Verificar que el servicio exista
+        assert_eq!(
+            token_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            true,
+            "The indicated TokenID doesn't exist"
+        );
+        //Comprobar que sea el creador o un admin
+        let user = self.user_update_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
+        let owner_id = user.account_id;
+
+        let is_professional = user.roles.get(&UserRoles::Professional).is_none();
+        let is_admin = user.roles.get(&UserRoles::Admin).is_none();
+        assert_eq!(is_professional || is_admin, true, "Only owner or admin can delete the service");
+
+        let mut token = self.service_get(token_id.clone());
+
+        token.metadata.active = false;
+
+        token
+    }
+
+    #[payable]
+    // Adquisición de un servicio
+    pub fn service_buy(&mut self, token_id: TokenId) -> Token {
+        // Verificar que el servicio exista
+        assert_eq!(
+            token_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            true,
+            "The indicated TokenID doesn't exist"
+        );
+
+        //Si no cuenta con los fondos se hace rollback
+        //let amount = env::attached_deposit();
+        // assert_eq!(
+        //     metadata.price.as_ref().unwrap().parse::<u128>().unwrap(), amount,
+        //     "Fondos insuficientes"
+        // );
+        // assert_eq!(
+        //     metadata.on_sale.as_ref().unwrap(), &true,
+        //     "No esta a la venta"
+        // );
+
+        //Obtener los metadatos del token
+        let metadata = Token::metadata.as_ref()
+            .and_then(|by_id| by_id.get(&token_id)).unwrap();
+
+        let mut token = self.service_get(token_id.clone());
+
+        // Revisa que este a la venta y obtiene el dueño del token
+        let owner_id = self.service_get_owner(token_id);
+        let buyer_id = &env::signer_account_id();
+
+        // Verifica que quien compra no sea ya el dueño
+        assert_eq!(buyer_id == &owner_id, false, "Ya es dueño del token ");
+        // Cambiarla metadata
+        // self.service
+        //     .token_metadata_by_id
+        //     .as_mut()
+        //     .and_then(|by_id| by_id.insert(&token_id, &metadata));
+        // Transferir los nears
+        // let promise = Promise::new(owner_id.clone())
+        //     .transfer(amount)
+        //     .function_call("tx_status_callback".into(), vec![], 0, 0);
+        // Promise::new(owner_id.clone()).transfer(amount);
+        
+        //Transferir el nft
+        &self.token.internal_transfer(&token_id, &owner_id, buyer_id);
+
+        //Retornar la metadata
+        token
+    }
+
+
+    /// #Arguments
+    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
+    pub fn service_get(&self, token_id: TokenId) -> Token {
+        self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first")
+    }
+
+    /// #Arguments
+    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
+    pub fn service_get_owner(&self, token_id: TokenId) -> String {
+        let token = self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first");
+        token.owner_id
+    }
+
+    /// Registra usuarios! Asignandoles un role y a que se dedican por categorias
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
-    pub fn add_user(&mut self, account_id: ValidAccountId, role: UserRoles, categories: Vec<Categories>) -> User {
-        self.assert_owner(&env::predecessor_account_id());
+    pub fn user_add(&mut self, account_id: ValidAccountId, role: UserRoles, categories: Vec<Categories>) -> User {
+        self.admin_assert(&env::predecessor_account_id());
 
         if self.users.len() >= USERS_LIMIT as u64 {
             
@@ -173,7 +272,7 @@ impl Contract {
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
-        let categories_not_repited: Vec<Categories> = self.eliminate_repited_categories(categories);
+        let categories_not_repited: Vec<Categories> = self.categories_eliminate_repited(categories);
 
         let mut new_user = User{
             account_id: s_account_id.clone(),
@@ -225,10 +324,10 @@ impl Contract {
             env::panic(b"Only the user cant modify it self");
         }
 
-        let mut user = self.get_user(account_id.clone());
+        let mut user = self.user_get(account_id.clone());
 
         // por ahora solo soporta una sola categoria, por lo que no crece y siempre sera 0
-        user.categories = self.eliminate_repited_categories(categories);
+        user.categories = self.categories_eliminate_repited(categories);
         self.users.insert(&account_id.into(), &user);
 
         return user;
@@ -241,7 +340,7 @@ impl Contract {
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     pub fn user_set_role(&mut self, account_id: ValidAccountId, role: UserRoles, remove: bool) -> User {
         let is_user_sender = env::predecessor_account_id() != account_id.to_string();
-        let is_owner_sender = env::predecessor_account_id() != self.owner_id;
+        let is_owner_sender = env::predecessor_account_id() != self.contract_owner;
         if is_user_sender && is_owner_sender {
             env::panic(b"Only the user and admins cant modify it self");
         }
@@ -250,7 +349,7 @@ impl Contract {
             env::panic(b"Only the admins cant grant the admin or mod role");
         }
 
-        let mut user = self.get_user(account_id.clone());
+        let mut user = self.user_get(account_id.clone());
 
         if !remove {
             user.roles.insert(role);
@@ -266,14 +365,14 @@ impl Contract {
 
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user(&self, account_id: ValidAccountId) -> User {
+    pub fn user_get(&self, account_id: ValidAccountId) -> User {
         self.users.get(&account_id.into()).expect("No users found. Register the user first")
     }
 
     // TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_users_by_role(&self, role: UserRoles) -> Vec<User> {
+    pub fn user_get_by_role(&self, role: UserRoles) -> Vec<User> {
 
         let mut users: Vec<User> = Vec::new();
         for (_account_id, user) in self.users.iter() {
@@ -289,9 +388,9 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_tokens(&self, account_id: ValidAccountId) -> Vec<Token> {
+    pub fn user_get_tokens(&self, account_id: ValidAccountId) -> Vec<Token> {
         let mut tokens: Vec<Token> = Vec::new();
-        let tokens_id = self.get_user_tokens_id(account_id.clone());
+        let tokens_id = self.user_get_services_by_id(account_id.clone());
         for i in 0 .. tokens_id.len() {
             let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
             tokens.push( token );
@@ -304,16 +403,14 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_tokens_by_id(&self, ids: HashSet<u128>) -> Vec<Token> {
+    pub fn service_get_by_id(&self, ids: HashSet<u128>) -> Vec<Token> {
         if ids.len() > self.tokens_by_id.len() as usize {
             env::panic(b"The amounts of ids supere the amount of tokens");
         }
-
         let mut tokens: Vec<Token> = Vec::new();
         for id in ids.iter() {
             tokens.push(self.tokens_by_id.get(&id.to_string()).expect("Token id dont match"));
         }
-
         return tokens;
     }
 
@@ -321,7 +418,7 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_tokens_id(&self, account_id: ValidAccountId) -> Vec<String> {
+    pub fn user_get_services_by_id(&self, account_id: ValidAccountId) -> Vec<String> {
         return self.tokens_per_owner.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
     }
 
@@ -330,10 +427,10 @@ impl Contract {
     ///
     /// #Arguments
     /// * `category`    - La categoria en la cual los usuarios van a ser filtrados
-    pub fn get_users_by_category(&self, categories: Vec<Categories>) -> Vec<User> {
+    pub fn user_get_by_category(&self, categories: Vec<Categories>) -> Vec<User> {
         let mut users: Vec<User> = Vec::new();
 
-        let a = self.eliminate_repited_categories(categories);
+        let a = self.categories_eliminate_repited(categories);
         let mut programmer_data: Option<ProgrammerCategoryData> = None;
         let mut artist_data: Option<ArtistCategoryData> = None;
         for category in a.iter() {
@@ -413,7 +510,7 @@ impl Contract {
         self.tokens_per_owner.insert(&tmp_account_id, &u);
 
         let tokens_per_owner_entry_in_bytes = env::storage_usage() - initial_storage_usage;
-        let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.owner_id.len()) as u64;
+        let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
 
         self.extra_storage_in_bytes_per_token =
             tokens_per_owner_entry_in_bytes + owner_id_extra_cost_in_bytes;
@@ -422,7 +519,7 @@ impl Contract {
     }
 
     #[private]
-    fn update_user_mint_amount(&mut self, new_mints: u8) -> User {
+    fn user_update_mint_amount(&mut self, new_mints: u8) -> User {
         let sender_id = env::predecessor_account_id();
         let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
         assert!(
@@ -435,12 +532,12 @@ impl Contract {
     }
 
     #[private]
-    fn assert_owner(&self, account_id: &AccountId) {
-        assert_eq!(*account_id, self.owner_id, "Must be owner_id how call its function");
+    fn admin_assert(&self, account_id: &AccountId) {
+        assert_eq!(*account_id, self.contract_owner, "Must be owner_id how call its function");
     }
 
     #[private]
-    fn eliminate_repited_categories(& self, categories: Vec<Categories>) -> Vec<Categories> {
+    fn categories_eliminate_repited(& self, categories: Vec<Categories>) -> Vec<Categories> {
         let mut categories_not_repited: Vec<Categories> = Vec::new();
 
         let mut programmer_found: bool = false;
@@ -465,6 +562,22 @@ impl Contract {
 
         return categories_not_repited;
     }
+
+    #[private]
+    fn string_to_json(&self, token_id: TokenId) -> Category {
+        let example = Category {
+            category: "Programmer".to_string(),
+            subcategory: "Backend".to_string(),
+            areas: "Python, SQL".to_string()
+        };
+        let serialized = serde_json::to_string(&example).unwrap();
+
+        let string = format!("String: {}", &serialized);
+        env::log(string.as_bytes());
+
+        let deserialized: Category = serde_json::from_str(&serialized).unwrap();
+        deserialized
+    }
 }
 
 // fn is_promise_success() -> bool {
@@ -488,9 +601,10 @@ pub enum Panic {
 
     #[panic_msg = "Invalid argument for service description `{}`: {}"]
     InvalidDescription { len_description: usize, reason: String },
+
+    #[panic_msg = "Token ID must have a positive quantity and less than 10"]
+    InvalidMintAmount { },
     /*
-    #[panic_msg = "Token ID `{}` must have a positive cantidad"]
-    ZeroSupplyNotAllowed { token_id: TokenId },
     #[panic_msg = "Operation is allowed only for admin"]
     AdminRestrictedOperation,
     #[panic_msg = "Unable to delete Account ID `{}`"]
