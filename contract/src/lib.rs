@@ -282,7 +282,6 @@ impl Contract {
             categories: categories_not_repited,
             links: None,
             education: None, 
-
         };
         new_user.roles.insert(role);
 
@@ -389,7 +388,7 @@ impl Contract {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     /// * `only_active`  - Retornar solo los tokens activos.
-    pub fn user_get_tokens(&self, account_id: ValidAccountId) -> Vec<Token> {
+    pub fn user_get_tokens(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
         let mut tokens: Vec<Token> = Vec::new();
         let tokens_id = self.user_get_services_by_id(account_id.clone());
         for i in 0 .. tokens_id.len() {
