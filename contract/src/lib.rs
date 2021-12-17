@@ -49,9 +49,6 @@ pub struct TokenMetadata {
     pub profile_photo_url: String,
     pub price: u16,
     pub active: bool,
-    pub linkedin: Option<String>,
-    pub github: Option<String>,
-    pub education: Option<String>
 }
 
 #[near_bindgen]
@@ -183,7 +180,10 @@ impl Contract {
             mints: 0,
             roles: HashSet::new(),
             rep: 0,
-            categories: categories_not_repited
+            categories: categories_not_repited,
+            links: None,
+            education: None, 
+
         };
         new_user.roles.insert(role);
 
