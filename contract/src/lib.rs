@@ -164,7 +164,7 @@ impl Contract {
     }
 
     // Quitar un servicio ofrecido
-    pub fn service_delete(&mut self, token_id: TokenId) -> Token {
+    pub fn service_deactivate(&mut self, token_id: TokenId) -> Token {
         // Verificar que el servicio exista
         assert_eq!(
             token_id.trim().parse::<u128>().unwrap() < self.total_supply,
@@ -173,7 +173,7 @@ impl Contract {
         );
         //Comprobar que sea el creador o un admin
         let user = self.user_update_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
-        let owner_id = user.account_id;
+        //let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
         let is_admin = user.roles.get(&UserRoles::Admin).is_none();
@@ -196,6 +196,8 @@ impl Contract {
             "The indicated TokenID doesn't exist"
         );
 
+        //env::attached_deposit();
+
         //Si no cuenta con los fondos se hace rollback
         //let amount = env::attached_deposit();
         // assert_eq!(
@@ -208,17 +210,22 @@ impl Contract {
         // );
 
         //Obtener los metadatos del token
-        let metadata = Token::metadata.as_ref()
-            .and_then(|by_id| by_id.get(&token_id)).unwrap();
+        // let metadata = Token::metadata.as_ref()
+        //     .and_then(|by_id| by_id.get(&token_id)).unwrap();
 
-        let mut token = self.service_get(token_id.clone());
+        let token = self.service_get(token_id.clone());
+        //let mut token = self.tokens_by_id.get(&token_id);
 
         // Revisa que este a la venta y obtiene el dueño del token
         let owner_id = self.service_get_owner(token_id);
         let buyer_id = &env::signer_account_id();
 
         // Verifica que quien compra no sea ya el dueño
-        assert_eq!(buyer_id == &owner_id, false, "Ya es dueño del token ");
+        assert_eq!(buyer_id == &owner_id, false, "Already is the token owner");
+
+        //Transferir el nft
+        //self.nft_transfer(buyer_id, token_id, None, None);
+
         // Cambiarla metadata
         // self.service
         //     .token_metadata_by_id
@@ -229,9 +236,6 @@ impl Contract {
         //     .transfer(amount)
         //     .function_call("tx_status_callback".into(), vec![], 0, 0);
         // Promise::new(owner_id.clone()).transfer(amount);
-        
-        //Transferir el nft
-        &self.token.internal_transfer(&token_id, &owner_id, buyer_id);
 
         //Retornar la metadata
         token
@@ -563,8 +567,8 @@ impl Contract {
         return categories_not_repited;
     }
 
-    #[private]
-    fn string_to_json(&self, token_id: TokenId) -> Category {
+    // pub fn string_to_json(&self, token_id: TokenId) -> Category {
+    pub fn string_to_json(&self) -> Category {
         let example = Category {
             category: "Programmer".to_string(),
             subcategory: "Backend".to_string(),

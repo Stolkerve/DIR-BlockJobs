@@ -1,11 +1,39 @@
 use crate::*;
-use near_sdk::json_types::{ValidAccountId};
-use near_sdk::{ext_contract, Gas, PromiseResult};
+use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+use near_sdk::collections::{LookupMap, TreeMap, UnorderedSet};
+use near_sdk::json_types::ValidAccountId;
+use near_sdk::{
+    assert_one_yocto, env, log, AccountId, Balance, BorshStorageKey, CryptoHash,
+    IntoStorageKey, StorageUsage,ext_contract, Gas, PromiseResult
+};
+use std::collections::HashMap;
 
 const GAS_FOR_RESOLVE_TRANSFER: Gas = 10_000_000_000_000;
 const GAS_FOR_NFT_TRANSFER_CALL: Gas = 25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER;
 const NO_DEPOSIT: Balance = 0;
 
+#[derive(BorshDeserialize, BorshSerialize)]
+pub struct NonFungibleToken {
+    // owner of contract; this is the only account allowed to call `mint`
+    pub owner_id: AccountId,
+    // The storage size in bytes for each new token
+    pub extra_storage_in_bytes_per_token: StorageUsage,
+    // always required
+    pub owner_by_id: TreeMap<TokenId, AccountId>,
+    // required by metadata extension
+    pub token_metadata_by_id: Option<LookupMap<TokenId, TokenMetadata>>,
+    // required by enumeration extension
+    pub tokens_per_owner: Option<LookupMap<AccountId, UnorderedSet<TokenId>>>,
+    // required by approval extension
+    pub approvals_by_id: Option<LookupMap<TokenId, HashMap<AccountId, u64>>>,
+    pub next_approval_id_by_id: Option<LookupMap<TokenId, u64>>,
+}
+
+#[derive(BorshStorageKey, BorshSerialize)]
+pub enum StorageKey {
+    TokensPerOwner { account_hash: Vec<u8> },
+    TokenPerOwnerInner { account_id_hash: CryptoHash },
+}
 
 pub trait NonFungibleTokenCore {
     fn nft_transfer(
@@ -272,5 +300,135 @@ impl NonFungibleTokenResolver for Contract {
         self.tokens_by_id.insert(&token_id, &token);
 
         false
+    }
+}
+
+impl NonFungibleToken {
+    pub fn new<Q, R, S, T>(
+        owner_by_id_prefix: Q,
+        owner_id: ValidAccountId,
+        token_metadata_prefix: Option<R>,
+        enumeration_prefix: Option<S>,
+        approval_prefix: Option<T>,
+    ) -> Self
+    where
+        Q: IntoStorageKey,
+        R: IntoStorageKey,
+        S: IntoStorageKey,
+        T: IntoStorageKey,
+    {
+        let (approvals_by_id, next_approval_id_by_id) = if let Some(prefix) = approval_prefix {
+            let prefix: Vec<u8> = prefix.into_storage_key();
+            (
+                Some(LookupMap::new(prefix.clone())),
+                Some(LookupMap::new([prefix, "n".into()].concat())),
+            )
+        } else {
+            (None, None)
+        };
+
+        let mut this = Self {
+            owner_id: owner_id.into(),
+            extra_storage_in_bytes_per_token: 0,
+            owner_by_id: TreeMap::new(owner_by_id_prefix),
+            token_metadata_by_id: token_metadata_prefix.map(LookupMap::new),
+            tokens_per_owner: enumeration_prefix.map(LookupMap::new),
+            approvals_by_id,
+            next_approval_id_by_id,
+        };
+        this
+    }
+
+
+    /// Transfer token_id from `from` to `to`
+    ///
+    /// Do not perform any safety checks or do any logging
+    pub fn internal_transfer_unguarded(
+        &mut self,
+        token_id: &TokenId,
+        from: &AccountId,
+        to: &AccountId,
+    ) {
+        // update owner
+        self.owner_by_id.insert(token_id, to);
+
+        // if using Enumeration standard, update old & new owner's token lists
+        if let Some(tokens_per_owner) = &mut self.tokens_per_owner {
+            // owner_tokens should always exist, so call `unwrap` without guard
+            let mut owner_tokens = tokens_per_owner
+                .get(from)
+                .expect("Unable to access tokens per owner in unguarded call.");
+            owner_tokens.remove(&token_id);
+            if owner_tokens.is_empty() {
+                tokens_per_owner.remove(from);
+            } else {
+                tokens_per_owner.insert(&from, &owner_tokens);
+            }
+
+            let mut receiver_tokens = tokens_per_owner.get(to).unwrap_or_else(|| {
+                UnorderedSet::new(StorageKey::TokensPerOwner {
+                    account_hash: env::sha256(to.as_bytes()),
+                })
+            });
+            receiver_tokens.insert(&token_id);
+            tokens_per_owner.insert(&to, &receiver_tokens);
+        }
+    }
+
+    /// Transfer from current owner to receiver_id, checking that sender is allowed to transfer.
+    /// Clear approvals, if approval extension being used.
+    /// Return previous owner and approvals.
+    pub fn internal_transfer(
+        &mut self,
+        sender_id: &AccountId,
+        receiver_id: &AccountId,
+        token_id: &TokenId,
+        approval_id: Option<u64>,
+        memo: Option<String>,
+    ) -> (AccountId, Option<HashMap<AccountId, u64>>) {
+        let owner_id = self.owner_by_id.get(token_id).expect("Token not found");
+
+        // clear approvals, if using Approval Management extension
+        // this will be rolled back by a panic if sending fails
+        let approved_account_ids =
+            self.approvals_by_id.as_mut().and_then(|by_id| by_id.remove(&token_id));
+
+        // check if authorized
+        if sender_id != &owner_id {
+            // if approval extension is NOT being used, or if token has no approved accounts
+            if approved_account_ids.is_none() {
+                env::panic(b"Unauthorized")
+            }
+
+            // Approval extension is being used; get approval_id for sender.
+            let actual_approval_id = approved_account_ids.as_ref().unwrap().get(sender_id);
+
+            // Panic if sender not approved at all
+            if actual_approval_id.is_none() {
+                env::panic(b"Sender not approved");
+            }
+
+            // If approval_id included, check that it matches
+            if let Some(enforced_approval_id) = approval_id {
+                let actual_approval_id = actual_approval_id.unwrap();
+                assert_eq!(
+                    actual_approval_id, &enforced_approval_id,
+                    "The actual approval_id {} is different from the given approval_id {}",
+                    actual_approval_id, enforced_approval_id,
+                );
+            }
+        }
+
+        assert_ne!(&owner_id, receiver_id, "Current and next owner must differ");
+
+        self.internal_transfer_unguarded(&token_id, &owner_id, &receiver_id);
+
+        log!("Transfer {} from {} to {}", token_id, sender_id, receiver_id);
+        if let Some(memo) = memo {
+            log!("Memo: {}", memo);
+        }
+
+        // return previous owner & approvals
+        (owner_id, approved_account_ids)
     }
 }
