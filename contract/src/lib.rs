@@ -2,10 +2,11 @@ use std::collections::HashSet;
 use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
-use near_sdk::json_types::{ValidAccountId};
+use near_sdk::json_types::ValidAccountId;
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::serde_json;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
+use std::convert::TryFrom;
 
 use crate::internal::*;
 pub use crate::nft_core::*;
@@ -196,37 +197,36 @@ impl Contract {
             "The indicated TokenID doesn't exist"
         );
 
-        //env::attached_deposit();
+        let mut token = self.service_get(token_id.clone());
+        // Verificar que este en venta
+        assert_eq!(
+            token.metadata.active, &false,
+            "The service isn't on sale"
+        );
 
+        //env::attached_deposit();
         //Si no cuenta con los fondos se hace rollback
         //let amount = env::attached_deposit();
         // assert_eq!(
         //     metadata.price.as_ref().unwrap().parse::<u128>().unwrap(), amount,
         //     "Fondos insuficientes"
         // );
-        // assert_eq!(
-        //     metadata.on_sale.as_ref().unwrap(), &true,
-        //     "No esta a la venta"
-        // );
-
-        //Obtener los metadatos del token
-        // let metadata = Token::metadata.as_ref()
-        //     .and_then(|by_id| by_id.get(&token_id)).unwrap();
-
-        let token = self.service_get(token_id.clone());
-        //let mut token = self.tokens_by_id.get(&token_id);
 
         // Revisa que este a la venta y obtiene el dueño del token
-        let owner_id = self.service_get_owner(token_id);
-        let buyer_id = &env::signer_account_id();
+        let owner_id = &self.service_get_owner(token_id);
+        let buyer_id = env::signer_account_id();
+
+        // let mut user = self.user_get(buyer_id.clone());
+        
+        let account_buyer = ValidAccountId::try_from(buyer_id).unwrap();
 
         // Verifica que quien compra no sea ya el dueño
-        assert_eq!(buyer_id == &owner_id, false, "Already is the token owner");
+        assert_eq!(&buyer_id == owner_id, false, "Already is the token owner");
 
         //Transferir el nft
-        //self.nft_transfer(buyer_id, token_id, None, None);
+        self.nft_transfer(account_buyer, token_id, None, None);
 
-        // Cambiarla metadata
+        // Cambiar la metadata
         // self.service
         //     .token_metadata_by_id
         //     .as_mut()
@@ -237,7 +237,6 @@ impl Contract {
         //     .function_call("tx_status_callback".into(), vec![], 0, 0);
         // Promise::new(owner_id.clone()).transfer(amount);
 
-        //Retornar la metadata
         token
     }
 
