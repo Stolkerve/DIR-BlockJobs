@@ -9,7 +9,8 @@ pub enum ArtistAreas {
     Illustration,
     Realism,
     Manga,
-    Anime
+    Anime,
+    Sculpture
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialOrd, PartialEq, Eq, Hash, Clone)]
@@ -27,16 +28,26 @@ pub enum ProgrammerAreas {
     Backend,
     Frontend,
     Blockchain,
-    Testing
+    Testing,
+    ComputerGraphics,
+    Os,
+    Networking,
+    EmbeddedSystems,
+    ComputerScience,
+    ArtificialInteligens,
+    MachineLearing
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialOrd, PartialEq, Eq, Hash, Clone)]
 #[serde(crate="near_sdk::serde")]
 pub enum ProgramingLenguages {
     Angular,
+    Arduino,
+    Asm,
     C,
     Cplusplus,
     Css,
+    Csharp,
     Docker,
     Go,
     Html,

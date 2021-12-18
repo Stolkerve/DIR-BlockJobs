@@ -635,16 +635,81 @@ mod tests {
 
     fn get_context(is_view: bool) -> VMContext {
         VMContextBuilder::new()
-            .signer_account_id(accounts(3))
+            .signer_account_id(accounts(1))
             .predecessor_account_id(accounts(2))
             .attached_deposit(100000000000000000)
             .is_view(is_view)
             .build()
     }
 
+    fn generate_category1() -> Categories {
+        let mut lenguages = HashSet::new();
+        lenguages.insert(ProgramingLenguages::Rust);
+        lenguages.insert(ProgramingLenguages::Angular);
+
+        let mut programing_area = HashSet::new();
+        programing_area.insert(ProgrammerAreas::Blockchain);
+        programing_area.insert(ProgrammerAreas::Backend);
+
+        return Categories::Programmer(ProgrammerCategoryData {
+            lenguages: lenguages,
+            area: programing_area
+        });
+    }
+
+    fn generate_category2() -> Categories {
+        let mut lenguages = HashSet::new();
+        lenguages.insert(ProgramingLenguages::C);
+        lenguages.insert(ProgramingLenguages::Arduino);
+
+        let mut programing_area = HashSet::new();
+        programing_area.insert(ProgrammerAreas::Os);
+        programing_area.insert(ProgrammerAreas::EmbeddedSystems);
+
+        return Categories::Programmer(ProgrammerCategoryData {
+            lenguages: lenguages,
+            area: programing_area
+        });
+    }
+
+    fn generate_category3() -> Categories {
+        let mut lenguages = HashSet::new();
+        lenguages.insert(ProgramingLenguages::C);
+        lenguages.insert(ProgramingLenguages::Arduino);
+
+        let mut programing_area = HashSet::new();
+        programing_area.insert(ProgrammerAreas::Os);
+        programing_area.insert(ProgrammerAreas::EmbeddedSystems);
+
+        return Categories::Programmer(ProgrammerCategoryData {
+            lenguages: lenguages,
+            area: programing_area
+        });
+    }
+
+    fn generate_category4() -> Categories {
+        let mut art_area = HashSet::new();
+        art_area.insert(ArtistAreas::Illustration);
+        art_area.insert(ArtistAreas::Realism);
+
+        return Categories::Artist(ArtistCategoryData{
+            area: art_area
+        });
+    }
+
+    fn generate_category5() -> Categories {
+        let mut art_area = HashSet::new();
+        art_area.insert(ArtistAreas::Anime);
+        art_area.insert(ArtistAreas::Manga);
+
+        return Categories::Artist(ArtistCategoryData{
+            area: art_area
+        });
+    }
+
     #[test]
     fn test_basic() {
-        let admin_id = accounts(2).to_string();
+        let admin_id = accounts(1).to_string();
         let mut context = get_context(false);
         context.attached_deposit = 58700000000000000000000;
         testing_env!(context.clone());
@@ -664,59 +729,13 @@ mod tests {
     }
     #[test]
 
-    fn test_user() {
+    fn test_mint() {
         let mut context = get_context(false);
-        let admin_id = accounts(2).to_string();
+        let admin_id = accounts(1).to_string();
         context.attached_deposit = 58700000000000000000000;
+        context.predecessor_account_id = admin_id.clone();
         testing_env!(context);
         let mut marketplace = Marketplace::new(admin_id.clone());
-
-        let mut lenguages1 = HashSet::new();
-        lenguages1.insert(ProgramingLenguages::Rust);
-        lenguages1.insert(ProgramingLenguages::Angular);
-
-        let mut lenguages2 = HashSet::new();
-        lenguages2.insert(ProgramingLenguages::C);
-        lenguages2.insert(ProgramingLenguages::Go);
-
-        let mut programing_area1 = HashSet::new();
-        programing_area1.insert(ProgrammerAreas::Blockchain);
-        programing_area1.insert(ProgrammerAreas::Backend);
-
-        // let mut programing_area2 = HashSet::new();
-        // programing_area2.insert(ProgrammerAreas::Testing);
-        // programing_area2.insert(ProgrammerAreas::Backend);
-
-        // let mut art_area1 = HashSet::new();
-        // art_area1.insert(ArtistAreas::Illustration);
-        // art_area1.insert(ArtistAreas::Realism);
-
-        // let mut art_area2 = HashSet::new();
-        // art_area2.insert(ArtistAreas::Anime);
-        // art_area2.insert(ArtistAreas::Manga);
-
-        let category1 = Categories::Programmer(ProgrammerCategoryData {
-            lenguages: lenguages1,
-            area: programing_area1
-        });
-
-        // let category2 = Categories::Programmer(ProgrammerCategoryData {
-        //     lenguages: lenguages2,
-        //     area: programing_area2
-        // });
-
-        // let category3 = Categories::Artist(ArtistCategoryData {
-        //     area: art_area1
-        // });
-
-        // let category4 = Categories::Artist(ArtistCategoryData {
-        //     area: art_area2
-        // });
-
-        // let user1 = marketplace.add_user(
-        //     accounts(2).to_string(),
-        //     UserRoles::Professional, vec!(category1)
-        // );
 
         let jose_token = marketplace.mint_service(TokenMetadata {
             fullname: "Jose Antoio".to_string(),
@@ -761,5 +780,42 @@ mod tests {
         //     price: 10,
         //     active: true,
         // }, 1);
+    }
+
+    #[test]
+    fn test_user() {
+        let mut context = get_context(false);
+        let admin_id = accounts(1).to_string();
+        context.attached_deposit = 58700000000000000000000;
+        context.predecessor_account_id = admin_id.clone();
+        testing_env!(context);
+        let mut marketplace = Marketplace::new(admin_id.clone());
+
+        // let mut context = get_context(false);
+        // context.attached_deposit = 58700000000000000000000;
+        // context.predecessor_account_id = accounts(2).to_string();
+        // testing_env!(context);
+
+        let user_id = "andres.testnet";
+        marketplace.add_user(
+            user_id.to_string(),
+            UserRoles::Professional,
+            vec!(generate_category1())
+        );
+
+        assert_eq!(
+            true,
+            true
+        );
+    }
+
+    #[test]
+    fn test_roles() {
+
+    }
+
+    #[test]
+    fn test_categories() {
+
     }
 }
