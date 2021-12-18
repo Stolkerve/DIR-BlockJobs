@@ -1,9 +1,9 @@
 source ./deploy.sh
 source ./clear.sh
 
-near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID
+near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID --amount 1
 
-near call $ID user_add '{"account_id": "'$ID2'", "role": "Professional", "categories": [{"Programmer": {"lenguages": ["Angular", "Cplusplus"], "area": ["Blockchain", "Backend"]}}, {"Programmer": {"lenguages": ["Ruby", "TypeScript"], "area": ["Testing", "Backend"]}}]}' --accountId $ID
+near call $ID user_add '{"account_id": "'$ID2'", "role": "Professional", "categories": [{"Programmer": {"lenguages": ["Angular", "Cplusplus"], "area": ["Blockchain", "Backend"]}}, {"Programmer": {"lenguages": ["Ruby", "TypeScript"], "area": ["Testing", "Backend"]}}]}' --accountId $ID --amount 0.1
 
 near call $ID user_update_categories '{"account_id": "'$ID2'", "categories": [{"Programmer": {"lenguages": ["Angular", "C"], "area": ["Blockchain", "Backend"]}}, {"Artist": {"area": ["Illustration", "Manga"]}}]}' --accountId $ID
 
@@ -13,7 +13,10 @@ near call $ID user_set_role '{"account_id": "'$ID2'", "role": "Admin", "remove":
 
 near call $ID user_set_role '{"account_id": "'$ID2'", "role": "Employeer", "remove": true}' --accountId $ID
 
-near call $ID service_mint '{"metadata": {"fullname": "Sebastian Gonzalez", "profile_photo_url": "foto.png", "price": 100, "active": true}, "_active_services": 10}' --accountId $ID2
+near call $ID service_mint '{"metadata": {"fullname": "Sebastian Gonzalez", "profile_photo_url": "foto.png", "price": 100, "active": true}, "_active_services": 5}' --accountId $ID2 --amount 0.1
+
+###debe fallar, panic error
+near call $ID service_mint '{"metadata": {"fullname": "Sebastian Gonzalez", "profile_photo_url": "foto.png", "price": 100, "active": true}, "_active_services": 0}' --accountId $ID2 --amount 0.1
 
 near call $ID user_get '{"account_id": "'$ID'"}' --accountId $ID
 near call $ID user_get '{"account_id": "'$ID2'"}' --accountId $ID
@@ -28,3 +31,5 @@ near call $ID user_get_tokens '{"account_id": "'$ID'"}' --accountId $ID
 near call $ID user_get_services_by_id '{"account_id": "'$ID2'"}' --accountId $ID
 
 near call $ID user_get_by_category '{"categories": [{"Programmer": {"lenguages": ["Php", "Rust"], "area": ["Frontend", "Testing"]}}]}' --accountId $ID
+
+near call $ID service_deactivate '{"token_id": "1"}' --accountId $ID
