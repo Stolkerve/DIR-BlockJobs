@@ -169,6 +169,55 @@ impl Marketplace {
         return token
     }
 
+    pub fn give_back_service(&mut self, token_id: TokenId) -> Token {
+        // Verificar que el servicio exista
+        let u_token_id = token_id.trim().parse::<u128>().unwrap();
+        assert_eq!(
+            u_token_id < self.total_supply,
+            true,
+            "The indicated TokenID doesn't exist"
+        );
+
+        let mut token = self.get_service_by_id(token_id.clone());
+
+        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let sender = self.get_user(sender_id.clone());
+
+        let is_bought = token.actual_employer_account_id.is_some();
+        let is_employer = sender.account_id == (*token.actual_employer_account_id.as_ref().unwrap());
+        assert_eq!(
+            (is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(),
+            false,
+            "Only the employer or admins can give back the services"
+        );
+
+        self.delete_token(&token_id, &sender.account_id);
+        self.add_token(&token_id, &token.owner_id);
+
+        // modificar la metadata del token
+        token.actual_employer_account_id = None;
+        self.tokens_by_id.insert(&token_id, &token);
+
+        return token;
+    }
+
+    #[private]
+    fn delete_token(&mut self, token_id: &TokenId, account_id: &String) {
+        let mut tokens_set = self.tokens_per_owner.get(account_id).expect("Token should be owned by the sender");
+        tokens_set.remove(token_id);
+        self.tokens_per_owner.insert(&account_id, &tokens_set);
+    }
+
+    #[private]
+    fn add_token(&mut self, token_id: &TokenId, account_id: &String) {
+        let mut tokens_set = self
+            .tokens_per_owner
+            .get(account_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&account_id)));
+        tokens_set.insert(token_id);
+        self.tokens_per_owner.insert(account_id, &tokens_set);
+    }
+
     #[payable]
     // Adquisición de un servicio
     pub fn buy_service(&mut self, token_id: TokenId) -> Token {
@@ -201,7 +250,7 @@ impl Marketplace {
             "Solo los adminy empleadores pueden comprar servicios"
         );
 
-        let mut token = self.get_service_by_id(token_id.clone());
+        
         let owner_id = token.owner_id.clone();
 
         assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
@@ -218,17 +267,10 @@ impl Marketplace {
         );
 
         // quitarle el token al owner
-        let mut tokens_set = self.tokens_per_owner.get(&owner_id).expect("Token should be owned by the sender");
-        tokens_set.remove(&token_id);
-        self.tokens_per_owner.insert(&owner_id, &tokens_set);
+        self.delete_token(&token_id, &owner_id);
 
         // anadirle el nuevo token al comprador
-        let mut tokens_set = self
-            .tokens_per_owner
-            .get(&buyer.account_id)
-            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&buyer.account_id)));
-        tokens_set.insert(&token_id);
-        self.tokens_per_owner.insert(&buyer.account_id, &tokens_set);
+        self.delete_token(&token_id, &buyer.account_id);
 
         // modificar la metadata del token
         token.actual_employer_account_id = Some(buyer.account_id.clone());
