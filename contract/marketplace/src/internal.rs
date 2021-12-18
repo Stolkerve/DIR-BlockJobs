@@ -7,7 +7,7 @@ const YOCTO_NEAR: u128 = 1000000000000000000000000;
 pub(crate) const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
 
 pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
-    return ValidAccountId::try_from(*account_id).unwrap();
+    return ValidAccountId::try_from((*account_id).to_string()).unwrap();
 }
 
 pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
@@ -45,6 +45,21 @@ pub(crate) fn deposit_refund(storage_used: u64) {
     let refund = attached_deposit - required_cost;
     if refund > 0 {
         Promise::new(env::predecessor_account_id()).transfer(refund);
+    }
+}
+
+pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
+    let required_cost = STORAGE_PRICE_PER_BYTE * Balance::from(storage_used);
+    let attached_deposit = env::attached_deposit();
+
+    assert!(
+        required_cost <= attached_deposit,
+        "Requires to attach {:.1$} NEAR tokens to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
+    );
+
+    let refund = attached_deposit - required_cost;
+    if refund > 0 {
+        Promise::new(to).transfer(refund);
     }
 }
 

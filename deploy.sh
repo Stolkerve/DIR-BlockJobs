@@ -11,8 +11,8 @@ cd ..
 echo "Deployando el contrato de marketplace"
 near dev-deploy out/marketplace.wasm
 
-echo "Deployando el contrato de mediator"
-near dev-deploy out/mediator.wasm
+#echo "Deployando el contrato de mediator"
+#near dev-deploy out/mediator.wasm
 
 echo "Exportanto la cuenta de test a la variable ID"
 

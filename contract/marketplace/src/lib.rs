@@ -102,11 +102,6 @@ impl Marketplace {
     /// * `active_services`      - La cantidad de tokens que se desea mintear.
     #[payable]
     pub fn mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
-
-        if _active_services > 5 {
-            Panic::InvalidMintAmount{}.panic();
-        }
-
         let user = self.user_update_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
@@ -196,7 +191,7 @@ impl Marketplace {
 
         let amount = env::attached_deposit();
         assert_eq!(
-            token.metadata.price, amount,
+            token.metadata.price as u128, amount,
             "Fondos insuficientes"
         );
 
@@ -206,7 +201,7 @@ impl Marketplace {
 
         assert_eq!(buyer_id == owner_id, true, "Already is the token owner");
 
-        self.nft_transfer(string_to_valid_account_id(&buyer_id), token_id, None, None);
+        self.nft_transfer(string_to_valid_account_id(&buyer_id), token_id.clone(), None, None);
 
         // Transferir los nears
         let promise = Promise::new(owner_id.clone())
@@ -260,7 +255,7 @@ impl Marketplace {
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_token + new_tokens_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
-        deposit_refund(required_storage_in_bytes);
+        deposit_refund_to(required_storage_in_bytes, s_account_id);
 
         return new_user;
     }
@@ -373,7 +368,7 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_services_ids(&self, account_id: ValidAccountId) -> Vec<String> {
+    pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<String> {
         return self.tokens_per_owner.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
     }
 
@@ -384,7 +379,7 @@ impl Marketplace {
     /// * `only_active`  - Retornar solo los tokens activos.
     pub fn get_user_services(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
         let mut tokens: Vec<Token> = Vec::new();
-        let tokens_id = self.get_user_services_ids(account_id.clone());
+        let tokens_id = self.get_user_services_id(account_id.clone());
         for i in 0 .. tokens_id.len() {
             let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
             if only_active {
@@ -521,7 +516,7 @@ mod tests {
             (admin.mints == false) &&
             (admin.account_id == admin_id.to_string()) &&
             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-            (marketplace.get_user_services_ids(admin_id).len() == 0) // no minteo ningun token
+            (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun token
             ,
             true
         );
