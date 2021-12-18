@@ -2,18 +2,15 @@ use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::serde_json;
 use near_sdk::json_types::ValidAccountId;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
 
 use crate::internal::*;
-pub use crate::nft_core::*;
 use crate::user::*;
 
 mod internal;
-mod nft_core;
 mod user;
 
 near_sdk::setup_alloc!();
@@ -36,8 +33,8 @@ pub type TokenId = String;
 pub struct Token {
     pub owner_id: AccountId,
     pub metadata: TokenMetadata,
-    pub employer_account_ids: HashSet<AccountId>,
-    pub employer_id: u64,
+    pub actual_employer_account_id: Option<AccountId>,
+    pub employers_account_ids: HashSet<AccountId>,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -115,8 +112,8 @@ impl Marketplace {
         let mut token = Token {
             owner_id: owner_id.clone(),
             metadata: metadata,
-            employer_account_ids: Default::default(),
-            employer_id: 0,
+            employers_account_ids: Default::default(),
+            actual_employer_account_id: None
         };
 
         for _i in 0 .. USER_MINT_LIMIT {
@@ -177,40 +174,72 @@ impl Marketplace {
     pub fn buy_service(&mut self, token_id: TokenId) -> Token {
 
         // Verificar que el servicio exista
+        let u_token_id = token_id.trim().parse::<u128>().unwrap();
         assert_eq!(
-            token_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            u_token_id < self.total_supply,
             true,
             "The indicated TokenID doesn't exist"
         );
         let mut token = self.get_service_by_id(token_id.clone());
         // Si no cuenta con los fondos se hace rollback
         assert_eq!(
-            token.metadata.active, false,
+            token.metadata.active, true,
             "No esta a la venta"
         );
-
-        let amount = env::attached_deposit();
+        let amount = env::attached_deposit() / YOCTO_NEAR;
         assert_eq!(
             token.metadata.price as u128, amount,
             "Fondos insuficientes"
         );
+        
+        let buyer_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let buyer = self.get_user(buyer_id.clone());
+
+        assert_eq!(
+            buyer.roles.get(&UserRoles::Admin).is_some() || buyer.roles.get(&UserRoles::Employeer).is_some(),
+            true,
+            "Solo los adminy empleadores pueden comprar servicios"
+        );
 
         let mut token = self.get_service_by_id(token_id.clone());
         let owner_id = token.owner_id.clone();
-        let buyer_id = env::predecessor_account_id();
 
-        assert_eq!(buyer_id == owner_id, true, "Already is the token owner");
-
-        self.nft_transfer(string_to_valid_account_id(&buyer_id), token_id.clone(), None, None);
+        assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
 
         // Transferir los nears
-        let promise = Promise::new(owner_id.clone())
-            .transfer(amount)
-            .function_call("tx_status_callback".into(), vec![], 0, 0);
-        Promise::new(owner_id.clone()).transfer(amount);
+        Promise::new(owner_id.clone()).transfer(amount * YOCTO_NEAR);
+
+        env::log(
+            format!(
+                "Transfer {} from @{} to @{}",
+                token_id, &owner_id, &buyer.account_id
+            )
+            .as_bytes(),
+        );
+
+        // quitarle el token al owner
+        let mut tokens_set = self.tokens_per_owner.get(&owner_id).expect("Token should be owned by the sender");
+        tokens_set.remove(&token_id);
+        self.tokens_per_owner.insert(&owner_id, &tokens_set);
+
+        // anadirle el nuevo token al comprador
+        let mut tokens_set = self
+            .tokens_per_owner
+            .get(&buyer.account_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&buyer.account_id)));
+        tokens_set.insert(&token_id);
+        self.tokens_per_owner.insert(&buyer.account_id, &tokens_set);
+
+        // modificar la metadata del token
+        token.actual_employer_account_id = Some(buyer.account_id.clone());
+        token.employers_account_ids.insert(buyer.account_id.clone());
+        self.tokens_by_id.insert(&token_id, &token);
+
+        // if let Some(memo) = memo {
+        //     env::log(format!("Memo: {}", memo).as_bytes());
+        // }
 
         return self.get_service_by_id(token_id);
-        // token
     }
 
     /// Registra usuarios! Asignandoles un role y a que se dedican por categorias

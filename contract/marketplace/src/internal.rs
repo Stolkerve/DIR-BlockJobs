@@ -3,7 +3,7 @@ use crate::*;
 /// It's 10 times lower than the genesis price.
 
 // Esto esta en yocto near
-const YOCTO_NEAR: u128 = 1000000000000000000000000;
+pub(crate) const YOCTO_NEAR: u128 = 1000000000000000000000000;
 pub(crate) const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
 
 pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
@@ -118,60 +118,60 @@ impl Marketplace {
         }
     }
 
-    pub(crate) fn internal_transfer(
-        &mut self,
-        sender_id: &AccountId,
-        receiver_id: &AccountId,
-        token_id: &TokenId,
-        enforce_approval_id: Option<u64>,
-        memo: Option<String>,
-    ) -> (AccountId, HashSet<AccountId>) {
-        let Token {
-            owner_id,
-            metadata,
-            employer_account_ids,
-            employer_id,
-        } = self.tokens_by_id.get(token_id).expect("Token not found");
-        if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
-            env::panic(b"Unauthorized");
-        }
+    // pub(crate) fn internal_transfer(
+    //     &mut self,
+    //     sender_id: &AccountId,
+    //     receiver_id: &AccountId,
+    //     token_id: &TokenId,
+    //     enforce_approval_id: Option<u64>,
+    //     memo: Option<String>,
+    // ) -> (AccountId, HashSet<AccountId>) {
+    //     let Token {
+    //         owner_id,
+    //         metadata,
+    //         employer_account_ids,
+    //         employer_id,
+    //     } = self.tokens_by_id.get(token_id).expect("Token not found");
+    //     if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
+    //         env::panic(b"Unauthorized");
+    //     }
 
-        if let Some(enforce_approval_id) = enforce_approval_id {
-            assert_eq!(
-                employer_id,
-                enforce_approval_id,
-                "The token approval_id is different from provided"
-            );
-        }
+    //     if let Some(enforce_approval_id) = enforce_approval_id {
+    //         assert_eq!(
+    //             employer_id,
+    //             enforce_approval_id,
+    //             "The token approval_id is different from provided"
+    //         );
+    //     }
 
-        assert_ne!(
-            &owner_id, receiver_id,
-            "The token owner and the receiver should be different"
-        );
+    //     assert_ne!(
+    //         &owner_id, receiver_id,
+    //         "The token owner and the receiver should be different"
+    //     );
 
-        env::log(
-            format!(
-                "Transfer {} from @{} to @{}",
-                token_id, &owner_id, receiver_id
-            )
-            .as_bytes(),
-        );
+    //     env::log(
+    //         format!(
+    //             "Transfer {} from @{} to @{}",
+    //             token_id, &owner_id, receiver_id
+    //         )
+    //         .as_bytes(),
+    //     );
 
-        self.internal_remove_token_from_owner(&owner_id, token_id);
-        self.internal_add_token_to_owner(receiver_id, token_id);
+    //     self.internal_remove_token_from_owner(&owner_id, token_id);
+    //     self.internal_add_token_to_owner(receiver_id, token_id);
 
-        let token = Token {
-            owner_id: receiver_id.clone(),
-            metadata,
-            employer_account_ids: Default::default(),
-            employer_id: employer_id + 1,
-        };
-        self.tokens_by_id.insert(token_id, &token);
+    //     let token = Token {
+    //         owner_id: receiver_id.clone(),
+    //         metadata,
+    //         employer_account_ids: Default::default(),
+    //         employer_id: employer_id + 1,
+    //     };
+    //     self.tokens_by_id.insert(token_id, &token);
 
-        if let Some(memo) = memo {
-            env::log(format!("Memo: {}", memo).as_bytes());
-        }
+    //     if let Some(memo) = memo {
+    //         env::log(format!("Memo: {}", memo).as_bytes());
+    //     }
 
-        (owner_id, employer_account_ids)
-    }
+    //     (owner_id, employer_account_ids)
+    // }
 }
