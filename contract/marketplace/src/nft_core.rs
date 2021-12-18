@@ -159,17 +159,17 @@ impl NonFungibleTokenCore for Marketplace {
         let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
         assert_eq!(&env::predecessor_account_id(), &token.owner_id);
 
-        if token.approved_account_ids.insert(account_id.clone()) {
+        if token.employer_account_ids.insert(account_id.clone()) {
             deposit -= storage_required as u128;
 
-            token.approval_id += 1;
+            token.employer_id += 1;
 
             self.tokens_by_id.insert(&token_id, &token);
             ext_non_fungible_approval_receiver::nft_on_approve(
                 env::current_account_id(),
                 token_id,
                 token.owner_id,
-                token.approval_id,
+                token.employer_id,
                 msg,
                 &account_id,
                 deposit,
@@ -191,7 +191,7 @@ impl NonFungibleTokenCore for Marketplace {
         let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
         let predecessor_account_id = env::predecessor_account_id();
         assert_eq!(&predecessor_account_id, &token.owner_id);
-        if token.approved_account_ids.remove(account_id.as_ref()) {
+        if token.employer_account_ids.remove(account_id.as_ref()) {
             let storage_released = bytes_for_approved_account_id(account_id.as_ref());
             Promise::new(env::predecessor_account_id())
                 .transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE);
@@ -211,9 +211,9 @@ impl NonFungibleTokenCore for Marketplace {
         let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
         let predecessor_account_id = env::predecessor_account_id();
         assert_eq!(&predecessor_account_id, &token.owner_id);
-        if !token.approved_account_ids.is_empty() {
-            refund_approved_account_ids(predecessor_account_id, &token.approved_account_ids);
-            token.approved_account_ids.clear();
+        if !token.employer_account_ids.is_empty() {
+            refund_approved_account_ids(predecessor_account_id, &token.employer_account_ids);
+            token.employer_account_ids.clear();
             self.tokens_by_id.insert(&token_id, &token);
             true
         } else {
@@ -267,8 +267,8 @@ impl NonFungibleTokenResolver for Marketplace {
         self.internal_remove_token_from_owner(&receiver_id, &token_id);
         self.internal_add_token_to_owner(&owner_id, &token_id);
         token.owner_id = owner_id;
-        refund_approved_account_ids(receiver_id, &token.approved_account_ids);
-        token.approved_account_ids = approved_account_ids;
+        refund_approved_account_ids(receiver_id, &token.employer_account_ids);
+        token.employer_account_ids = approved_account_ids;
         self.tokens_by_id.insert(&token_id, &token);
 
         false

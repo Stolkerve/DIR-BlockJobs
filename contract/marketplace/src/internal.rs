@@ -6,6 +6,10 @@ use crate::*;
 const YOCTO_NEAR: u128 = 1000000000000000000000000;
 pub(crate) const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
 
+pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
+    return ValidAccountId::try_from(*account_id).unwrap();
+}
+
 pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
     let mut prefix = Vec::with_capacity(33);
     prefix.push(b'o');
@@ -110,16 +114,16 @@ impl Marketplace {
         let Token {
             owner_id,
             metadata,
-            approved_account_ids,
-            approval_id,
+            employer_account_ids,
+            employer_id,
         } = self.tokens_by_id.get(token_id).expect("Token not found");
-        if sender_id != &owner_id && !approved_account_ids.contains(sender_id) {
+        if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
             env::panic(b"Unauthorized");
         }
 
         if let Some(enforce_approval_id) = enforce_approval_id {
             assert_eq!(
-                approval_id,
+                employer_id,
                 enforce_approval_id,
                 "The token approval_id is different from provided"
             );
@@ -144,8 +148,8 @@ impl Marketplace {
         let token = Token {
             owner_id: receiver_id.clone(),
             metadata,
-            approved_account_ids: Default::default(),
-            approval_id: approval_id + 1,
+            employer_account_ids: Default::default(),
+            employer_id: employer_id + 1,
         };
         self.tokens_by_id.insert(token_id, &token);
 
@@ -153,6 +157,6 @@ impl Marketplace {
             env::log(format!("Memo: {}", memo).as_bytes());
         }
 
-        (owner_id, approved_account_ids)
+        (owner_id, employer_account_ids)
     }
 }
