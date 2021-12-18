@@ -1,22 +1,18 @@
-use std::collections::HashSet;
 use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::ValidAccountId;
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::serde_json;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
+
+use std::collections::{HashSet};
 use std::convert::TryFrom;
 
 use crate::internal::*;
-pub use crate::nft_core::*;
 use crate::user::*;
-use crate::categories::*;
 
 mod internal;
-mod nft_core;
 mod user;
-mod categories;
 
 near_sdk::setup_alloc!();
 
@@ -38,8 +34,8 @@ pub type TokenId = String;
 pub struct Token {
     pub owner_id: AccountId,
     pub metadata: TokenMetadata,
-    pub approved_account_ids: HashSet<AccountId>,
-    pub approval_id: u64,
+    pub actual_employer_account_id: Option<AccountId>,
+    pub employers_account_ids: HashSet<AccountId>,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -53,7 +49,7 @@ pub struct TokenMetadata {
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
-pub struct Contract {
+pub struct Marketplace {
     pub total_supply: u128,
     pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
     pub tokens_by_id: UnorderedMap<TokenId, Token>,
@@ -73,7 +69,7 @@ pub struct Category {
 }
 
 #[near_bindgen]
-impl Contract {
+impl Marketplace {
     /// Inicializa el contrato y asigna el propietario del contrato. El cual sera el primer admin
     ///
     /// #Arguments
@@ -91,20 +87,7 @@ impl Contract {
             extra_storage_in_bytes_per_token: 0,
         };
 
-        // El owner del contrato debe ser un usuario con rol de Admin
-        let mut lenguages = HashSet::new();
-        lenguages.insert(ProgramingLenguages::Rust);
-
-        let mut areas = HashSet::new();
-        areas.insert(ProgrammerAreas::Blockchain);
-        areas.insert(ProgrammerAreas::Backend);
-
-        this.user_add(owner_id, UserRoles::Admin, vec!(Categories::Programmer(
-            ProgrammerCategoryData {
-                lenguages: lenguages,
-                area: areas,
-            }))
-        );
+        this.add_user(owner_id, UserRoles::Admin, "Categories { Programer: {Lenguajes: } }".to_string());
 
         this.measure_min_token_storage_cost();
         return this;
@@ -116,13 +99,8 @@ impl Contract {
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
     /// * `active_services`      - La cantidad de tokens que se desea mintear.
     #[payable]
-    pub fn service_mint(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
-
-        if _active_services > 10 || _active_services < 1 {
-            Panic::InvalidMintAmount{}.panic();
-        }
-
-        let user = self.user_update_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
+    pub fn mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
+        let user = self.user_update_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
@@ -135,8 +113,8 @@ impl Contract {
         let mut token = Token {
             owner_id: owner_id.clone(),
             metadata: metadata,
-            approved_account_ids: Default::default(),
-            approval_id: 0,
+            employers_account_ids: Default::default(),
+            actual_employer_account_id: None
         };
 
         for _i in 0 .. USER_MINT_LIMIT {
@@ -165,93 +143,105 @@ impl Contract {
     }
 
     // Quitar un servicio ofrecido
-    pub fn service_deactivate(&mut self, token_id: TokenId) -> Token {
+    pub fn service_desactivate(&mut self, token_id: TokenId) -> Token {
+
         // Verificar que el servicio exista
         assert_eq!(
             token_id.trim().parse::<u128>().unwrap() < self.total_supply,
             true,
             "The indicated TokenID doesn't exist"
         );
-        //Comprobar que sea el creador o un admin
-        let user = self.user_update_mint_amount(USER_MINT_LIMIT); // cantidad de servicios
-        //let owner_id = user.account_id;
 
-        let is_professional = user.roles.get(&UserRoles::Professional).is_none();
-        let is_admin = user.roles.get(&UserRoles::Admin).is_none();
-        assert_eq!(is_professional || is_admin, true, "Only owner or admin can delete the service");
-
-        let mut token = self.service_get(token_id.clone());
+        let mut token = self.get_service_by_id(token_id.clone());
+        
+        let sender = env::predecessor_account_id();
+        let user = self.get_user(string_to_valid_account_id(&sender));
+        let is_admin = user.roles.get(&UserRoles::Admin).is_some();
+        let is_owner = token.owner_id == sender;
+        assert_eq!(
+            is_admin || is_owner,
+            true,
+            "Only the owner or the ower can desactivate the service"
+        );
 
         token.metadata.active = false;
 
-        token
+        self.tokens_by_id.insert(&token_id, &token);
+
+        return token
     }
 
     #[payable]
     // Adquisición de un servicio
-    pub fn service_buy(&mut self, token_id: TokenId) -> Token {
+    pub fn buy_service(&mut self, token_id: TokenId) -> Token {
+
         // Verificar que el servicio exista
+        let u_token_id = token_id.trim().parse::<u128>().unwrap();
         assert_eq!(
-            token_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            u_token_id < self.total_supply,
             true,
             "The indicated TokenID doesn't exist"
         );
-
-        let mut token = self.service_get(token_id.clone());
-        // Verificar que este en venta
+        let mut token = self.get_service_by_id(token_id.clone());
+        // Si no cuenta con los fondos se hace rollback
         assert_eq!(
-            token.metadata.active, &false,
-            "The service isn't on sale"
+            token.metadata.active, true,
+            "No esta a la venta"
+        );
+        let amount = env::attached_deposit() / YOCTO_NEAR;
+        assert_eq!(
+            token.metadata.price as u128, amount,
+            "Fondos insuficientes"
+        );
+        
+        let buyer_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let buyer = self.get_user(buyer_id.clone());
+
+        assert_eq!(
+            buyer.roles.get(&UserRoles::Admin).is_some() || buyer.roles.get(&UserRoles::Employeer).is_some(),
+            true,
+            "Solo los adminy empleadores pueden comprar servicios"
         );
 
-        //env::attached_deposit();
-        //Si no cuenta con los fondos se hace rollback
-        //let amount = env::attached_deposit();
-        // assert_eq!(
-        //     metadata.price.as_ref().unwrap().parse::<u128>().unwrap(), amount,
-        //     "Fondos insuficientes"
-        // );
+        let mut token = self.get_service_by_id(token_id.clone());
+        let owner_id = token.owner_id.clone();
 
-        // Revisa que este a la venta y obtiene el dueño del token
-        let owner_id = &self.service_get_owner(token_id);
-        let buyer_id = env::signer_account_id();
+        assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
 
-        // let mut user = self.user_get(buyer_id.clone());
-        
-        let account_buyer = ValidAccountId::try_from(buyer_id).unwrap();
-
-        // Verifica que quien compra no sea ya el dueño
-        assert_eq!(&buyer_id == owner_id, false, "Already is the token owner");
-
-        //Transferir el nft
-        self.nft_transfer(account_buyer, token_id, None, None);
-
-        // Cambiar la metadata
-        // self.service
-        //     .token_metadata_by_id
-        //     .as_mut()
-        //     .and_then(|by_id| by_id.insert(&token_id, &metadata));
         // Transferir los nears
-        // let promise = Promise::new(owner_id.clone())
-        //     .transfer(amount)
-        //     .function_call("tx_status_callback".into(), vec![], 0, 0);
-        // Promise::new(owner_id.clone()).transfer(amount);
+        Promise::new(owner_id.clone()).transfer(amount * YOCTO_NEAR);
 
-        token
-    }
+        env::log(
+            format!(
+                "Transfer {} from @{} to @{}",
+                token_id, &owner_id, &buyer.account_id
+            )
+            .as_bytes(),
+        );
 
+        // quitarle el token al owner
+        let mut tokens_set = self.tokens_per_owner.get(&owner_id).expect("Token should be owned by the sender");
+        tokens_set.remove(&token_id);
+        self.tokens_per_owner.insert(&owner_id, &tokens_set);
 
-    /// #Arguments
-    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn service_get(&self, token_id: TokenId) -> Token {
-        self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first")
-    }
+        // anadirle el nuevo token al comprador
+        let mut tokens_set = self
+            .tokens_per_owner
+            .get(&buyer.account_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&buyer.account_id)));
+        tokens_set.insert(&token_id);
+        self.tokens_per_owner.insert(&buyer.account_id, &tokens_set);
 
-    /// #Arguments
-    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn service_get_owner(&self, token_id: TokenId) -> String {
-        let token = self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first");
-        token.owner_id
+        // modificar la metadata del token
+        token.actual_employer_account_id = Some(buyer.account_id.clone());
+        token.employers_account_ids.insert(buyer.account_id.clone());
+        self.tokens_by_id.insert(&token_id, &token);
+
+        // if let Some(memo) = memo {
+        //     env::log(format!("Memo: {}", memo).as_bytes());
+        // }
+
+        return self.get_service_by_id(token_id);
     }
 
     /// Registra usuarios! Asignandoles un role y a que se dedican por categorias
@@ -261,7 +251,7 @@ impl Contract {
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
-    pub fn user_add(&mut self, account_id: ValidAccountId, role: UserRoles, categories: Vec<Categories>) -> User {
+    pub fn add_user(&mut self, account_id: ValidAccountId, role: UserRoles, categories: String) -> User {
         self.admin_assert(&env::predecessor_account_id());
 
         if self.users.len() >= USERS_LIMIT as u64 {
@@ -275,14 +265,12 @@ impl Contract {
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
-        let categories_not_repited: Vec<Categories> = self.categories_eliminate_repited(categories);
-
         let mut new_user = User{
             account_id: s_account_id.clone(),
-            mints: 0,
+            mints: false,
             roles: HashSet::new(),
             rep: 0,
-            categories: categories_not_repited,
+            categories: categories,
             links: None,
             education: None, 
         };
@@ -298,7 +286,7 @@ impl Contract {
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_token + new_tokens_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
-        deposit_refund(required_storage_in_bytes);
+        deposit_refund_to(required_storage_in_bytes, s_account_id);
 
         return new_user;
     }
@@ -307,7 +295,7 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
-    // pub fn remove_user(&mut self, account_id: ValidAccountId) {
+    // pub fn remove_user(&mut self, account_id: AccountId) {
     //     assert_eq!(env::predecessor_account_id(), self.owner_id, "must be owner_id");
     //     let guest = self.users.get(&account_id.clone().into()).expect("Could not find the user");
     //     // TODO transfer NFTs
@@ -321,15 +309,13 @@ impl Contract {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
-    pub fn user_update_categories(&mut self, account_id: ValidAccountId, categories: Vec<Categories>) -> User {
+    pub fn update_user_categories(&mut self, account_id: ValidAccountId, categories: String) -> User {
         if env::predecessor_account_id() == account_id.to_string() {
             env::panic(b"Only the user cant modify it self");
         }
 
-        let mut user = self.user_get(account_id.clone());
-
-        // por ahora solo soporta una sola categoria, por lo que no crece y siempre sera 0
-        user.categories = self.categories_eliminate_repited(categories);
+        let mut user = self.get_user(account_id.clone());
+        user.categories = categories;
         self.users.insert(&account_id.into(), &user);
 
         return user;
@@ -340,7 +326,7 @@ impl Contract {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
-    pub fn user_set_role(&mut self, account_id: ValidAccountId, role: UserRoles, remove: bool) -> User {
+    pub fn set_user_role(&mut self, account_id: ValidAccountId, role: UserRoles, remove: bool) -> User {
         let is_user_sender = env::predecessor_account_id() != account_id.to_string();
         let is_owner_sender = env::predecessor_account_id() != self.contract_owner;
         if is_user_sender && is_owner_sender {
@@ -351,7 +337,7 @@ impl Contract {
             env::panic(b"Only the admins cant grant the admin or mod role");
         }
 
-        let mut user = self.user_get(account_id.clone());
+        let mut user = self.get_user(account_id.clone());
 
         if !remove {
             user.roles.insert(role);
@@ -367,14 +353,14 @@ impl Contract {
 
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn user_get(&self, account_id: ValidAccountId) -> User {
+    pub fn get_user(&self, account_id: ValidAccountId) -> User {
         self.users.get(&account_id.into()).expect("No users found. Register the user first")
     }
 
     // TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn user_get_by_role(&self, role: UserRoles) -> Vec<User> {
+    pub fn get_users_by_role(&self, role: UserRoles) -> Vec<User> {
 
         let mut users: Vec<User> = Vec::new();
         for (_account_id, user) in self.users.iter() {
@@ -386,25 +372,11 @@ impl Contract {
         return users;
     }
 
-    /// Obtener los token y sus metadata de un usuario
-    ///
+
     /// #Arguments
-    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    /// * `only_active`  - Retornar solo los tokens activos.
-    pub fn user_get_tokens(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
-        let mut tokens: Vec<Token> = Vec::new();
-        let tokens_id = self.user_get_services_by_id(account_id.clone());
-        for i in 0 .. tokens_id.len() {
-            let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
-            if only_active && token.metadata.active {
-                tokens.push( token );
-                continue;    
-            }
-            else {
-                tokens.push( token );
-            }
-        }
-        return tokens;
+    /// * `token_id`
+    pub fn get_service_by_id(&self, token_id: TokenId) -> Token {
+        return self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first");
     }
 
     // TODO(Sebas): Optimizar con colocar un limite
@@ -412,7 +384,7 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn service_get_by_id(&self, ids: HashSet<u128>) -> Vec<Token> {
+    pub fn get_service_by_ids(&self, ids: HashSet<TokenId>) -> Vec<Token> {
         if ids.len() > self.tokens_by_id.len() as usize {
             env::panic(b"The amounts of ids supere the amount of tokens");
         }
@@ -427,88 +399,30 @@ impl Contract {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn user_get_services_by_id(&self, account_id: ValidAccountId) -> Vec<String> {
+    pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<String> {
         return self.tokens_per_owner.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
     }
 
-    // TODO(Sebas): Optimizar con paginacion
-    /// Filtra los usuarios por las categorias seleccionadas
+    /// Obtener los token y sus metadata de un usuario
     ///
     /// #Arguments
-    /// * `category`    - La categoria en la cual los usuarios van a ser filtrados
-    pub fn user_get_by_category(&self, categories: Vec<Categories>) -> Vec<User> {
-        let mut users: Vec<User> = Vec::new();
-
-        let a = self.categories_eliminate_repited(categories);
-        let mut programmer_data: Option<ProgrammerCategoryData> = None;
-        let mut artist_data: Option<ArtistCategoryData> = None;
-        for category in a.iter() {
-            match category {
-                Categories::Programmer(data) => {
-                    programmer_data = Some(data.clone());
-                }
-                Categories::Artist(data) => {
-                    artist_data= Some(data.clone());
+    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
+    /// * `only_active`  - Retornar solo los tokens activos.
+    pub fn get_user_services(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
+        let mut tokens: Vec<Token> = Vec::new();
+        let tokens_id = self.get_user_services_id(account_id.clone());
+        for i in 0 .. tokens_id.len() {
+            let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
+            if only_active {
+                if token.metadata.active {
+                    tokens.push( token ); 
                 }
             }
-        }
-
-        for (_account_id, user) in self.users.iter() {
-            for category in user.categories.iter() {
-                match category {
-                    Categories::Programmer(data) => {
-                        if programmer_data.is_some() {
-                            let looking_data = programmer_data.as_ref().unwrap();
-                            let mut found_lenguages = false;
-                            let mut found_area = false;
-                            if looking_data.lenguages.len() > 0 && !found_lenguages{
-                                // let mut matchs = 0; // strict modes
-                                for l in data.lenguages.iter() {
-                                    if looking_data.lenguages.get(l).is_some() {
-                                        // env::log(format!("LEN: {:?}", user).as_bytes());
-                                        found_lenguages = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if looking_data.area.len() > 0 && !found_area{
-                                for a in data.area.iter() {
-                                    if looking_data.area.get(a).is_some() {
-                                        // env::log(format!("AREA: {:?}", user).as_bytes());
-                                        found_area = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if found_lenguages || found_area {
-                                users.push(user.clone());
-                            }
-                        }
-                    }
-                    Categories::Artist(data) => {
-                        if artist_data.is_some() {
-                            let looking_data = artist_data.as_ref().unwrap();
-                            let mut found_area = false;
-                            if looking_data.area.len() > 0 && !found_area {
-                                for a in data.area.iter() {
-                                    if looking_data.area.get(a).is_some() {
-                                        found_area = true;
-                                        // break;
-                                    }
-                                }
-                            }
-
-                            if found_area {
-                                users.push(user.clone());
-                            }
-                        }
-                    }
-                }
+            else {
+                tokens.push( token );
             }
         }
-
-        return users;
+        return tokens;
     }
 
     #[private]
@@ -528,14 +442,14 @@ impl Contract {
     }
 
     #[private]
-    fn user_update_mint_amount(&mut self, new_mints: u8) -> User {
+    fn user_update_mint(&mut self) -> User {
         let sender_id = env::predecessor_account_id();
         let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
         assert!(
-            user.mints < USER_MINT_LIMIT,
+            user.mints == false,
             "Exceeded user mint limit {}", USER_MINT_LIMIT
         );
-        user.mints += new_mints;
+        user.mints = true;
         self.users.insert(&sender_id, &user);
         return user;
     }
@@ -545,48 +459,33 @@ impl Contract {
         assert_eq!(*account_id, self.contract_owner, "Must be owner_id how call its function");
     }
 
-    #[private]
-    fn categories_eliminate_repited(& self, categories: Vec<Categories>) -> Vec<Categories> {
-        let mut categories_not_repited: Vec<Categories> = Vec::new();
+    // #[private]
+    // fn string_to_json(&self, token_id: TokenId) -> Category {
+    //     let example = Category {
+    //         category: "Programmer".to_string(),
+    //         subcategory: "Backend".to_string(),
+    //         areas: "Python, SQL".to_string()
+    //     };
+    //     let serialized = serde_json::to_string(&example).unwrap();
 
-        let mut programmer_found: bool = false;
-        let mut artist_found: bool = false;
+    //     let string = format!("String: {}", &serialized);
+    //     env::log(string.as_bytes());
 
-        for category in categories.iter() {
-            match category {
-                Categories::Programmer(data) => {
-                    if !programmer_found {
-                        categories_not_repited.push(Categories::Programmer(data.clone()));
-                        programmer_found = true;
-                    }
-                }
-                Categories::Artist(data) => {
-                    if !artist_found {
-                        categories_not_repited.push(Categories::Artist(data.clone()));
-                        artist_found = true;
-                    }
-                }
-            }
-        }
+    // // pub fn string_to_json(&self, token_id: TokenId) -> Category {
+    // pub fn string_to_json(&self) -> Category {
+    //     let example = Category {
+    //         category: "Programmer".to_string(),
+    //         subcategory: "Backend".to_string(),
+    //         areas: "Python, SQL".to_string()
+    //     };
+    //     let serialized = serde_json::to_string(&example).unwrap();
 
-        return categories_not_repited;
-    }
+    //     let string = format!("String: {}", &serialized);
+    //     env::log(string.as_bytes());
 
-    // pub fn string_to_json(&self, token_id: TokenId) -> Category {
-    pub fn string_to_json(&self) -> Category {
-        let example = Category {
-            category: "Programmer".to_string(),
-            subcategory: "Backend".to_string(),
-            areas: "Python, SQL".to_string()
-        };
-        let serialized = serde_json::to_string(&example).unwrap();
-
-        let string = format!("String: {}", &serialized);
-        env::log(string.as_bytes());
-
-        let deserialized: Category = serde_json::from_str(&serialized).unwrap();
-        deserialized
-    }
+    //     let deserialized: Category = serde_json::from_str(&serialized).unwrap();
+    //     deserialized
+    // }
 }
 
 // fn is_promise_success() -> bool {
@@ -627,4 +526,133 @@ pub enum Panic {
     #[panic_msg = "The token owner and the receiver should be different"]
     ReceiverIsOwner,
     */
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use near_sdk::MockedBlockchain;
+    use near_sdk::test_utils::{VMContextBuilder, accounts};
+    use near_sdk::{testing_env, VMContext};
+
+    fn get_context(is_view: bool) -> VMContext {
+        VMContextBuilder::new()
+            .signer_account_id(accounts(1))
+            .predecessor_account_id(accounts(2))
+            .attached_deposit(100000000000000000)
+            .is_view(is_view)
+            .build()
+    }
+
+    #[test]
+    fn test_basic() {
+        let admin_id = string_to_valid_account_id(&accounts(1).to_string());
+        let mut context = get_context(false);
+        context.attached_deposit = 58700000000000000000000;
+        testing_env!(context.clone());
+        let marketplace = Marketplace::new(admin_id.clone());
+
+        let admin: User = marketplace.get_user(admin_id.clone());
+
+        // Verificar que el admin sea creado correctamente
+        assert_eq!(
+            (admin.mints == false) &&
+            (admin.account_id == admin_id.to_string()) &&
+            (admin.roles.get(&UserRoles::Admin).is_some()) &&
+            (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun token
+            ,
+            true
+        );
+    }
+    #[test]
+
+    fn test_mint() {
+        let mut context = get_context(false);
+        let admin_id = string_to_valid_account_id(&accounts(1).to_string());
+        context.attached_deposit = 58700000000000000000000;
+        context.predecessor_account_id = accounts(1).to_string();
+        testing_env!(context);
+        let mut marketplace = Marketplace::new(admin_id.clone());
+
+        let jose_token = marketplace.mint_service(TokenMetadata {
+            fullname: "Jose Antoio".to_string(),
+            profile_photo_url: "Jose_Antoio.png".to_string(),
+            price: 10,
+            active: false,
+        }, 3);
+
+        let admin: User = marketplace.get_user(admin_id.clone());
+        let actives_services = marketplace.get_user_services(admin_id, true);
+
+        assert_eq!(
+            (admin.roles.get(&UserRoles::Admin).is_some()) &&
+            actives_services.len() == 3 &&
+            admin.mints == true
+            ,
+            true
+        );  
+
+        // let user2 = marketplace.add_user(
+        //     "maria.testnet".to_string(),
+        //     UserRoles::Professional, vec!(category2, category3)
+        // );
+        // context.attached_deposit = 58700000000000000000000;
+        // testing_env!(context);
+        // marketplace.mint_service(TokenMetadata {
+        //     fullname: "Maria Jose".to_string(),
+        //     profile_photo_url: "Maria_Jose.png".to_string(),
+        //     price: 10,
+        //     active: true,
+        // }, 3);
+
+        // let user3 = marketplace.add_user(
+        //     "ed.testnet".to_string(),
+        //     UserRoles::Professional, vec!(category4)
+        // );
+        // context.attached_deposit = 58700000000000000000000;
+        // testing_env!(context);
+        // marketplace.mint_service(TokenMetadata {
+        //     fullname: "Ed Robet".to_string(),
+        //     profile_photo_url: "Ed_Robet.png".to_string(),
+        //     price: 10,
+        //     active: true,
+        // }, 1);
+    }
+
+    // #[test]
+    // fn test_user() {
+    //     let mut context = get_context(false);
+    //     let admin_id = accounts(1).to_string();
+    //     context.attached_deposit = 58700000000000000000000;
+    //     context.predecessor_account_id = admin_id.clone();
+    //     testing_env!(context);
+    //     let mut marketplace = Marketplace::new(admin_id.clone());
+
+    //     // let mut context = get_context(false);
+    //     // context.attached_deposit = 58700000000000000000000;
+    //     // context.predecessor_account_id = accounts(2).to_string();
+    //     // testing_env!(context);
+
+    //     let user_id = "andres.testnet";
+    //     marketplace.add_user(
+    //         user_id.to_string(),
+    //         UserRoles::Professional,
+    //         vec!(generate_category1())
+    //     );
+
+    //     assert_eq!(
+    //         true,
+    //         true
+    //     );
+    // }
+
+    #[test]
+    fn test_roles() {
+
+    }
+
+    #[test]
+    fn test_categories() {
+
+    }
 }
