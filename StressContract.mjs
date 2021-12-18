@@ -29,19 +29,17 @@ const config = {
 
 const near = await connect(config);
 let account = await near.account("stolkerve.testnet");
-console.log(account)
-
-const keyPair = KeyPair.fromRandom("ed25519");
-console.log(keyPair)
-const publicKey = keyPair.publicKey.toString();
 
 
-// for (let index = 0; index < 10; index++) {
+for (let index = 0; index < 10; index++) {
+    const keyPair = KeyPair.fromRandom("ed25519");
+    console.log(keyPair)
+    const publicKey = keyPair.publicKey.toString();
     console.log(publicKey)
     await account.createAccount(
-        `${broofa()}.testnet`, // new account name
+        `pruebadeblogjobs.testnet`, // new account name
         publicKey, // public key for new account
         "1000000000000000000" // initial balance for new account in yoctoNEAR
     );
     
-// }
+}

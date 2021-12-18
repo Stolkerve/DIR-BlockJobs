@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
@@ -6,6 +5,7 @@ use near_sdk::json_types::{ValidAccountId};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::serde_json;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
+use std::collections::{HashSet};
 
 use crate::internal::*;
 pub use crate::nft_core::*;
@@ -52,7 +52,7 @@ pub struct TokenMetadata {
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
-pub struct Contract {
+pub struct Marketplace {
     pub total_supply: u128,
     pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
     pub tokens_by_id: UnorderedMap<TokenId, Token>,
@@ -72,7 +72,7 @@ pub struct Category {
 }
 
 #[near_bindgen]
-impl Contract {
+impl Marketplace {
     /// Inicializa el contrato y asigna el propietario del contrato. El cual sera el primer admin
     ///
     /// #Arguments
@@ -208,8 +208,8 @@ impl Contract {
         // );
 
         //Obtener los metadatos del token
-        let metadata = Token::metadata.as_ref()
-            .and_then(|by_id| by_id.get(&token_id)).unwrap();
+        // let metadata = Token::metadata.as_ref()
+            // .and_then(|by_id| by_id.get(&token_id)).unwrap();
 
         let mut token = self.service_get(token_id.clone());
 
@@ -231,7 +231,7 @@ impl Contract {
         // Promise::new(owner_id.clone()).transfer(amount);
         
         //Transferir el nft
-        &self.token.internal_transfer(&token_id, &owner_id, buyer_id);
+        // &self.token.internal_transfer(&token_id, &owner_id, buyer_id);
 
         //Retornar la metadata
         token

@@ -82,7 +82,7 @@ trait NonFungibleTokenResolver {
 }
 
 #[near_bindgen]
-impl NonFungibleTokenCore for Contract {
+impl NonFungibleTokenCore for Marketplace {
     #[payable]
     fn nft_transfer(
         &mut self,
@@ -227,7 +227,7 @@ impl NonFungibleTokenCore for Contract {
 }
 
 #[near_bindgen]
-impl NonFungibleTokenResolver for Contract {
+impl NonFungibleTokenResolver for Marketplace {
     fn nft_resolve_transfer(
         &mut self,
         owner_id: AccountId,

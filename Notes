@@ -1,6 +1,6 @@
 source ./deploy.sh
 source ./clear.sh
-
+npx tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch
 near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID
 
 near call $ID user_add '{"account_id": "'$ID2'", "role": "Professional", "categories": [{"Programmer": {"lenguages": ["Angular", "Cplusplus"], "area": ["Blockchain", "Backend"]}}, {"Programmer": {"lenguages": ["Ruby", "TypeScript"], "area": ["Testing", "Backend"]}}]}' --accountId $ID

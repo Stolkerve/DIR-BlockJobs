@@ -60,7 +60,7 @@ pub(crate) fn refund_approved_account_ids(
     Promise::new(account_id).transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE)
 }
 
-impl Contract {
+impl Marketplace {
     // pub(crate) fn admin_assert(&self) {
     //     assert_eq!(
     //         &env::predecessor_account_id(),

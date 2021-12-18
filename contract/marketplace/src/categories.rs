@@ -14,6 +14,15 @@ pub enum ArtistAreas {
 
 #[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialOrd, PartialEq, Eq, Hash, Clone)]
 #[serde(crate="near_sdk::serde")]
+pub enum MusicGenders {
+    Electronic,
+    Classic,
+    Pop,
+    Rock
+}
+
+#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialOrd, PartialEq, Eq, Hash, Clone)]
+#[serde(crate="near_sdk::serde")]
 pub enum ProgrammerAreas {
     Backend,
     Frontend,
