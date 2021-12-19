@@ -13,10 +13,10 @@ near call $ID set_user_role '{"account_id": "'$ID2'", "role": "Admin", "remove":
 
 near call $ID set_user_role '{"account_id": "'$ID2'", "role": "Employeer", "remove": true}' --accountId $ID
 
-near call $ID mint_service '{"metadata": {"fullname": "Sebastian Gonzalez", "profile_photo_url": "foto.png", "price": 5, "active": true}, "_active_services": 10}' --accountId $ID2
+near call $ID mint_service '{"metadata": {"fullname": "Sebastian Gonzalez", "profile_photo_url": "foto.png", "price": 5, "active": true}, "_active_services": 4}' --accountId $ID2 --amount 0.023
 
 near call $ID service_desactivate '{"token_id": ""}' --accountId $ID2
-near call $ID buy_service '{"token_id": "2"}' --accountId $ID
+near call $ID buy_service '{"token_id": "2"}' --accountId $ID --amount 1
 
 near call $ID get_user '{"account_id": "'$ID'"}' --accountId $ID
 near call $ID get_user '{"account_id": "'$ID2'"}' --accountId $ID

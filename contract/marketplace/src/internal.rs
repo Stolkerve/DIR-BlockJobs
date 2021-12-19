@@ -94,11 +94,11 @@ impl Marketplace {
         token_id: &TokenId,
     ) {
         let mut tokens_set = self
-            .tokens_per_owner
+            .services_by_account
             .get(account_id)
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(account_id)));
         tokens_set.insert(token_id);
-        self.tokens_per_owner.insert(account_id, &tokens_set);
+        self.services_by_account.insert(account_id, &tokens_set);
     }
 
     pub(crate) fn internal_remove_token_from_owner(
@@ -107,14 +107,14 @@ impl Marketplace {
         token_id: &TokenId,
     ) {
         let mut tokens_set = self
-            .tokens_per_owner
+            .services_by_account
             .get(account_id)
             .expect("Token should be owned by the sender");
         tokens_set.remove(token_id);
         if tokens_set.is_empty() {
-            self.tokens_per_owner.remove(account_id);
+            self.services_by_account.remove(account_id);
         } else {
-            self.tokens_per_owner.insert(account_id, &tokens_set);
+            self.services_by_account.insert(account_id, &tokens_set);
         }
     }
 
@@ -131,7 +131,7 @@ impl Marketplace {
     //         metadata,
     //         employer_account_ids,
     //         employer_id,
-    //     } = self.tokens_by_id.get(token_id).expect("Token not found");
+    //     } = self.services_by_id.get(token_id).expect("Token not found");
     //     if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
     //         env::panic(b"Unauthorized");
     //     }
@@ -166,7 +166,7 @@ impl Marketplace {
     //         employer_account_ids: Default::default(),
     //         employer_id: employer_id + 1,
     //     };
-    //     self.tokens_by_id.insert(token_id, &token);
+    //     self.services_by_id.insert(token_id, &token);
 
     //     if let Some(memo) = memo {
     //         env::log(format!("Memo: {}", memo).as_bytes());
