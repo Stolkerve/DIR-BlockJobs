@@ -102,7 +102,7 @@ impl Marketplace {
     /// * `active_services`      - La cantidad de tokens que se desea mintear.
     #[payable]
     pub fn mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
-        let user = self.user_update_mint(); // cantidad de servicios
+        let user = self.update_max_mint_amount_per_user(); // cantidad de servicios
         let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
@@ -141,11 +141,11 @@ impl Marketplace {
 
         deposit_refund(required_storage_in_bytes);
 
-        return token;
+        return token
     }
 
     // Quitar un servicio ofrecido
-    pub fn service_desactivate(&mut self, token_id: TokenId) -> Token {
+    pub fn deactive_service(&mut self, token_id: TokenId) -> Token {
 
         // Verificar que el servicio exista
         assert_eq!(
@@ -296,7 +296,7 @@ impl Marketplace {
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
     pub fn add_user(&mut self, account_id: ValidAccountId, role: UserRoles, categories: String) -> User {
-        self.admin_assert(&env::predecessor_account_id());
+        //self.admin_assert(&env::predecessor_account_id());
 
         if self.users.len() >= USERS_LIMIT as u64 {
             env::panic(b"Users amount over limit");
@@ -485,8 +485,9 @@ impl Marketplace {
         self.services_by_account.remove(&tmp_account_id);
     }
 
-    #[private]
-    fn user_update_mint(&mut self) -> User {
+    pub fn update_max_mint_amount_per_user(&mut self) -> User {
+        self.admin_assert(&env::predecessor_account_id());
+
         let sender_id = env::predecessor_account_id();
         let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
         assert!(
