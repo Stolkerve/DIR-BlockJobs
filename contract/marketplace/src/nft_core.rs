@@ -156,7 +156,7 @@
 //     //     let storage_required = bytes_for_approved_account_id(&account_id);
 //     //     assert!(deposit >= storage_required as u128, "Deposit doesn't cover storage of account_id: {}", account_id.clone());
 
-//     //     let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+//     //     let mut token = self.services_by_id.get(&token_id).expect("Token not found");
 //     //     assert_eq!(&env::predecessor_account_id(), &token.owner_id);
 
 //     //     if token.employer_account_ids.insert(account_id.clone()) {
@@ -164,7 +164,7 @@
 
 //     //         token.employer_id += 1;
 
-//     //         self.tokens_by_id.insert(&token_id, &token);
+//     //         self.services_by_id.insert(&token_id, &token);
 //     //         ext_non_fungible_approval_receiver::nft_on_approve(
 //     //             env::current_account_id(),
 //     //             token_id,
@@ -188,14 +188,14 @@
 //     //     account_id: ValidAccountId,
 //     // ) -> bool {
 //     //     assert_one_yocto();
-//     //     let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+//     //     let mut token = self.services_by_id.get(&token_id).expect("Token not found");
 //     //     let predecessor_account_id = env::predecessor_account_id();
 //     //     assert_eq!(&predecessor_account_id, &token.owner_id);
 //     //     if token.employer_account_ids.remove(account_id.as_ref()) {
 //     //         let storage_released = bytes_for_approved_account_id(account_id.as_ref());
 //     //         Promise::new(env::predecessor_account_id())
 //     //             .transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE);
-//     //         self.tokens_by_id.insert(&token_id, &token);
+//     //         self.services_by_id.insert(&token_id, &token);
 //     //         true
 //     //     } else {
 //     //         false
@@ -208,13 +208,13 @@
 //     //     token_id: TokenId,
 //     // ) -> bool {
 //     //     assert_one_yocto();
-//     //     let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+//     //     let mut token = self.services_by_id.get(&token_id).expect("Token not found");
 //     //     let predecessor_account_id = env::predecessor_account_id();
 //     //     assert_eq!(&predecessor_account_id, &token.owner_id);
 //     //     if !token.employer_account_ids.is_empty() {
 //     //         refund_approved_account_ids(predecessor_account_id, &token.employer_account_ids);
 //     //         token.employer_account_ids.clear();
-//     //         self.tokens_by_id.insert(&token_id, &token);
+//     //         self.services_by_id.insert(&token_id, &token);
 //     //         true
 //     //     } else {
 //     //         false
@@ -222,7 +222,7 @@
 //     // }
 
 //     // fn nft_token(&self, token_id: TokenId) -> Option<Token> {
-//     //     self.tokens_by_id.get(&token_id)
+//     //     self.services_by_id.get(&token_id)
 //     // }
 // }
 
@@ -249,7 +249,7 @@
 // //             }
 // //         }
 
-// //         let mut token = if let Some(token) = self.tokens_by_id.get(&token_id) {
+// //         let mut token = if let Some(token) = self.services_by_id.get(&token_id) {
 // //             if &token.owner_id != &receiver_id {
 // //                 // The token is not owner by the receiver anymore. Can't return it.
 // //                 refund_approved_account_ids(owner_id, &approved_account_ids);
@@ -269,7 +269,7 @@
 // //         token.owner_id = owner_id;
 // //         refund_approved_account_ids(receiver_id, &token.employer_account_ids);
 // //         token.employer_account_ids = approved_account_ids;
-// //         self.tokens_by_id.insert(&token_id, &token);
+// //         self.services_by_id.insert(&token_id, &token);
 
 // //         false
 // //     }

@@ -4,6 +4,7 @@ use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::ValidAccountId;
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
+use near_sdk::BorshStorageKey;
 
 use std::collections::{HashSet};
 use std::convert::TryFrom;
@@ -34,7 +35,7 @@ pub type TokenId = String;
 pub struct Token {
     pub owner_id: AccountId,
     pub metadata: TokenMetadata,
-    pub actual_employer_account_id: Option<AccountId>,
+    pub current_employer_account_id: Option<AccountId>,
     pub employers_account_ids: HashSet<AccountId>,
 }
 
@@ -50,14 +51,16 @@ pub struct TokenMetadata {
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Marketplace {
+    pub services: UnorderedMap<TokenId, Token>,
     pub total_supply: u128,
-    pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
-    pub tokens_by_id: UnorderedMap<TokenId, Token>,
+    pub services_by_account: LookupMap<AccountId, UnorderedSet<TokenId>>,
+    pub services_by_id: UnorderedMap<TokenId, Token>,
     pub contract_owner: AccountId,
+    pub users: UnorderedMap<AccountId, User>,
     // The storage size in bytes for one account.
     pub extra_storage_in_bytes_per_token: StorageUsage,
 
-    pub users: UnorderedMap<AccountId, User>,
+
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -67,6 +70,9 @@ pub struct Category {
     pub subcategory: String,
     pub areas: String,
 }
+
+#[derive(BorshSerialize, BorshStorageKey)]
+enum Keys {Service}
 
 #[near_bindgen]
 impl Marketplace {
@@ -79,9 +85,10 @@ impl Marketplace {
     pub fn new(owner_id: ValidAccountId) -> Self {
         assert!(!env::state_exists(), "Contract already inicialized");
         let mut this = Self {
+            services: UnorderedMap::new(Keys::Service),
             total_supply: 0,
-            tokens_per_owner: LookupMap::new(b"a".to_vec()),
-            tokens_by_id: UnorderedMap::new(b"t".to_vec()),
+            services_by_account: LookupMap::new(b"a".to_vec()),
+            services_by_id: UnorderedMap::new(b"t".to_vec()),
             users: UnorderedMap::new(b"u".to_vec()),
             contract_owner: owner_id.clone().into(),
             extra_storage_in_bytes_per_token: 0,
@@ -114,7 +121,7 @@ impl Marketplace {
             owner_id: owner_id.clone(),
             metadata: metadata,
             employers_account_ids: Default::default(),
-            actual_employer_account_id: None
+            current_employer_account_id: None
         };
 
         for _i in 0 .. USER_MINT_LIMIT {
@@ -124,7 +131,7 @@ impl Marketplace {
                 _active_services -= 1;
             }
             assert!(
-                self.tokens_by_id.insert(&self.total_supply.to_string(), &token).is_none(),
+                self.services_by_id.insert(&self.total_supply.to_string(), &token).is_none(),
                 "Token already exists"
             );
             self.internal_add_token_to_owner(&token.owner_id, &self.total_supply.to_string());
@@ -143,7 +150,7 @@ impl Marketplace {
     }
 
     // Quitar un servicio ofrecido
-    pub fn service_desactivate(&mut self, token_id: TokenId) -> Token {
+    pub fn deactivate_service(&mut self, token_id: TokenId) -> Token {
 
         // Verificar que el servicio exista
         assert_eq!(
@@ -166,7 +173,7 @@ impl Marketplace {
 
         token.metadata.active = false;
 
-        self.tokens_by_id.insert(&token_id, &token);
+        self.services_by_id.insert(&token_id, &token);
 
         return token
     }
@@ -182,7 +189,7 @@ impl Marketplace {
             true,
             "The indicated TokenID doesn't exist"
         );
-        let mut token = self.get_service_by_id(token_id.clone());
+        let token = self.get_service_by_id(token_id.clone());
         // Si no cuenta con los fondos se hace rollback
         assert_eq!(
             token.metadata.active, true,
@@ -219,29 +226,29 @@ impl Marketplace {
             .as_bytes(),
         );
 
-        // quitarle el token al owner
-        let mut tokens_set = self.tokens_per_owner.get(&owner_id).expect("Token should be owned by the sender");
+        // Quitarle el token al owner
+        let mut tokens_set = self.services_by_account.get(&owner_id).expect("Token should be owned by the sender");
         tokens_set.remove(&token_id);
-        self.tokens_per_owner.insert(&owner_id, &tokens_set);
+        self.services_by_account.insert(&owner_id, &tokens_set);
 
-        // anadirle el nuevo token al comprador
+        // Anadirle el nuevo token al comprador
         let mut tokens_set = self
-            .tokens_per_owner
+            .services_by_account
             .get(&buyer.account_id)
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&buyer.account_id)));
         tokens_set.insert(&token_id);
-        self.tokens_per_owner.insert(&buyer.account_id, &tokens_set);
+        self.services_by_account.insert(&buyer.account_id, &tokens_set);
 
-        // modificar la metadata del token
-        token.actual_employer_account_id = Some(buyer.account_id.clone());
+        // Modificar la metadata del token
+        token.current_employer_account_id = Some(buyer.account_id.clone());
         token.employers_account_ids.insert(buyer.account_id.clone());
-        self.tokens_by_id.insert(&token_id, &token);
+        self.services_by_id.insert(&token_id, &token);
 
         // if let Some(memo) = memo {
         //     env::log(format!("Memo: {}", memo).as_bytes());
         // }
 
-        return self.get_service_by_id(token_id);
+        token
     }
 
     /// Registra usuarios! Asignandoles un role y a que se dedican por categorias
@@ -255,12 +262,12 @@ impl Marketplace {
         self.admin_assert(&env::predecessor_account_id());
 
         if self.users.len() >= USERS_LIMIT as u64 {
-            
+            env::panic(b"Users amount over limit");
         }
 
         let s_account_id: AccountId = account_id.into();
         let tokens_set = UnorderedSet::new(unique_prefix(&s_account_id));
-        self.tokens_per_owner.insert(&s_account_id, &tokens_set);
+        self.services_by_account.insert(&s_account_id, &tokens_set);
 
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
@@ -299,7 +306,7 @@ impl Marketplace {
     //     assert_eq!(env::predecessor_account_id(), self.owner_id, "must be owner_id");
     //     let guest = self.users.get(&account_id.clone().into()).expect("Could not find the user");
     //     // TODO transfer NFTs
-    //     self.tokens_per_owner.remove(&guest.account_id);
+    //     self.services_by_account.remove(&guest.account_id);
     //     self.users.remove(&account_id.into());
 
     // }
@@ -368,15 +375,14 @@ impl Marketplace {
                 users.push(user);
             }
         }
-
-        return users;
+        users
     }
 
 
     /// #Arguments
     /// * `token_id`
     pub fn get_service_by_id(&self, token_id: TokenId) -> Token {
-        return self.tokens_by_id.get(&token_id.into()).expect("No users found. Register the user first");
+        return self.services_by_id.get(&token_id.into()).expect("No users found. Register the user first");
     }
 
     // TODO(Sebas): Optimizar con colocar un limite
@@ -385,14 +391,14 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_service_by_ids(&self, ids: HashSet<TokenId>) -> Vec<Token> {
-        if ids.len() > self.tokens_by_id.len() as usize {
+        if ids.len() > self.services_by_id.len() as usize {
             env::panic(b"The amounts of ids supere the amount of tokens");
         }
         let mut tokens: Vec<Token> = Vec::new();
         for id in ids.iter() {
-            tokens.push(self.tokens_by_id.get(&id.to_string()).expect("Token id dont match"));
+            tokens.push(self.services_by_id.get(&id.to_string()).expect("Token id dont match"));
         }
-        return tokens;
+        tokens
     }
 
     /// Obtener id de los tokens de un usuario
@@ -400,7 +406,7 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<String> {
-        return self.tokens_per_owner.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
+        return self.services_by_account.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
     }
 
     /// Obtener los token y sus metadata de un usuario
@@ -412,7 +418,7 @@ impl Marketplace {
         let mut tokens: Vec<Token> = Vec::new();
         let tokens_id = self.get_user_services_id(account_id.clone());
         for i in 0 .. tokens_id.len() {
-            let token = self.tokens_by_id.get(&tokens_id[i]).expect("Token id dont match");
+            let token = self.services_by_id.get(&tokens_id[i]).expect("Token id dont match");
             if only_active {
                 if token.metadata.active {
                     tokens.push( token ); 
@@ -422,7 +428,7 @@ impl Marketplace {
                 tokens.push( token );
             }
         }
-        return tokens;
+        tokens
     }
 
     #[private]
@@ -430,15 +436,15 @@ impl Marketplace {
         let initial_storage_usage = env::storage_usage();
         let tmp_account_id = "a".repeat(64);
         let u = UnorderedSet::new(unique_prefix(&tmp_account_id));
-        self.tokens_per_owner.insert(&tmp_account_id, &u);
+        self.services_by_account.insert(&tmp_account_id, &u);
 
-        let tokens_per_owner_entry_in_bytes = env::storage_usage() - initial_storage_usage;
+        let services_by_account_entry_in_bytes = env::storage_usage() - initial_storage_usage;
         let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
 
         self.extra_storage_in_bytes_per_token =
-            tokens_per_owner_entry_in_bytes + owner_id_extra_cost_in_bytes;
+            services_by_account_entry_in_bytes + owner_id_extra_cost_in_bytes;
 
-        self.tokens_per_owner.remove(&tmp_account_id);
+        self.services_by_account.remove(&tmp_account_id);
     }
 
     #[private]
