@@ -102,7 +102,7 @@ impl Marketplace {
     /// * `active_services`      - La cantidad de tokens que se desea mintear.
     #[payable]
     pub fn mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
-        let user = self.update_max_mint_amount_per_user(); // cantidad de servicios
+        let user = self.user_update_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
@@ -146,7 +146,6 @@ impl Marketplace {
 
     // Quitar un servicio ofrecido
     pub fn deactive_service(&mut self, token_id: TokenId) -> Token {
-
         // Verificar que el servicio exista
         assert_eq!(
             token_id.trim().parse::<u128>().unwrap() < self.total_supply,
@@ -155,19 +154,17 @@ impl Marketplace {
         );
 
         let mut token = self.get_service_by_id(token_id.clone());
-        
         let sender = env::predecessor_account_id();
         let user = self.get_user(string_to_valid_account_id(&sender));
         let is_admin = user.roles.get(&UserRoles::Admin).is_some();
         let is_owner = token.owner_id == sender;
+
         assert_eq!(
-            is_admin || is_owner,
-            true,
+            is_admin || is_owner, true,
             "Only the owner or the ower can desactivate the service"
         );
 
         token.metadata.active = false;
-
         self.services_by_id.insert(&token_id, &token);
 
         return token
@@ -225,12 +222,10 @@ impl Marketplace {
     #[payable]
     // Adquisición de un servicio
     pub fn buy_service(&mut self, token_id: TokenId) -> Token {
-
         // Verificar que el servicio exista
         let u_token_id = token_id.trim().parse::<u128>().unwrap();
         assert_eq!(
-            u_token_id < self.total_supply,
-            true,
+            u_token_id < self.total_supply, true,
             "The indicated TokenID doesn't exist"
         );
         let mut token = self.get_service_by_id(token_id.clone());
@@ -256,7 +251,6 @@ impl Marketplace {
 
         
         let owner_id = token.owner_id.clone();
-
         assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
 
         // Transferir los nears
@@ -274,7 +268,7 @@ impl Marketplace {
         self.delete_token(&token_id, &owner_id);
 
         // Anadirle el nuevo token al comprador
-        self.delete_token(&token_id, &buyer.account_id);
+        self.add_token(&token_id, &buyer.account_id);
 
         // Modificar la metadata del token
         token.actual_employer_account_id = Some(buyer.account_id.clone());
@@ -296,7 +290,7 @@ impl Marketplace {
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
     pub fn add_user(&mut self, account_id: ValidAccountId, role: UserRoles, categories: String) -> User {
-        //self.admin_assert(&env::predecessor_account_id());
+        self.admin_assert(&env::predecessor_account_id());
 
         if self.users.len() >= USERS_LIMIT as u64 {
             env::panic(b"Users amount over limit");
@@ -332,7 +326,7 @@ impl Marketplace {
 
         deposit_refund_to(required_storage_in_bytes, s_account_id);
 
-        return new_user;
+        return new_user
     }
 
     /// Elimina un usuarios y sus tokens
@@ -485,9 +479,8 @@ impl Marketplace {
         self.services_by_account.remove(&tmp_account_id);
     }
 
-    pub fn update_max_mint_amount_per_user(&mut self) -> User {
-        self.admin_assert(&env::predecessor_account_id());
-
+    #[private]
+    fn user_update_mint(&mut self) -> User {
         let sender_id = env::predecessor_account_id();
         let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
         assert!(
