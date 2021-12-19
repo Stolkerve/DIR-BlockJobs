@@ -23,7 +23,7 @@ pub struct NonFungibleToken {
     // required by metadata extension
     pub token_metadata_by_id: Option<LookupMap<TokenId, TokenMetadata>>,
     // required by enumeration extension
-    pub tokens_per_owner: Option<LookupMap<AccountId, UnorderedSet<TokenId>>>,
+    pub services_by_account: Option<LookupMap<AccountId, UnorderedSet<TokenId>>>,
     // required by approval extension
     pub approvals_by_id: Option<LookupMap<TokenId, HashMap<AccountId, u64>>>,
     pub next_approval_id_by_id: Option<LookupMap<TokenId, u64>>,
@@ -184,7 +184,7 @@ impl NonFungibleTokenCore for Contract {
         let storage_required = bytes_for_approved_account_id(&account_id);
         assert!(deposit >= storage_required as u128, "Deposit doesn't cover storage of account_id: {}", account_id.clone());
 
-        let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+        let mut token = self.services_by_id.get(&token_id).expect("Token not found");
         assert_eq!(&env::predecessor_account_id(), &token.owner_id);
 
         if token.approved_account_ids.insert(account_id.clone()) {
@@ -192,7 +192,7 @@ impl NonFungibleTokenCore for Contract {
 
             token.approval_id += 1;
 
-            self.tokens_by_id.insert(&token_id, &token);
+            self.services_by_id.insert(&token_id, &token);
             ext_non_fungible_approval_receiver::nft_on_approve(
                 env::current_account_id(),
                 token_id,
@@ -216,14 +216,14 @@ impl NonFungibleTokenCore for Contract {
         account_id: ValidAccountId,
     ) -> bool {
         assert_one_yocto();
-        let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+        let mut token = self.services_by_id.get(&token_id).expect("Token not found");
         let predecessor_account_id = env::predecessor_account_id();
         assert_eq!(&predecessor_account_id, &token.owner_id);
         if token.approved_account_ids.remove(account_id.as_ref()) {
             let storage_released = bytes_for_approved_account_id(account_id.as_ref());
             Promise::new(env::predecessor_account_id())
                 .transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE);
-            self.tokens_by_id.insert(&token_id, &token);
+            self.services_by_id.insert(&token_id, &token);
             true
         } else {
             false
@@ -236,13 +236,13 @@ impl NonFungibleTokenCore for Contract {
         token_id: TokenId,
     ) -> bool {
         assert_one_yocto();
-        let mut token = self.tokens_by_id.get(&token_id).expect("Token not found");
+        let mut token = self.services_by_id.get(&token_id).expect("Token not found");
         let predecessor_account_id = env::predecessor_account_id();
         assert_eq!(&predecessor_account_id, &token.owner_id);
         if !token.approved_account_ids.is_empty() {
             refund_approved_account_ids(predecessor_account_id, &token.approved_account_ids);
             token.approved_account_ids.clear();
-            self.tokens_by_id.insert(&token_id, &token);
+            self.services_by_id.insert(&token_id, &token);
             true
         } else {
             false
@@ -250,7 +250,7 @@ impl NonFungibleTokenCore for Contract {
     }
 
     fn nft_token(&self, token_id: TokenId) -> Option<Token> {
-        self.tokens_by_id.get(&token_id)
+        self.services_by_id.get(&token_id)
     }
 }
 
@@ -277,7 +277,7 @@ impl NonFungibleTokenResolver for Contract {
             }
         }
 
-        let mut token = if let Some(token) = self.tokens_by_id.get(&token_id) {
+        let mut token = if let Some(token) = self.services_by_id.get(&token_id) {
             if &token.owner_id != &receiver_id {
                 // The token is not owner by the receiver anymore. Can't return it.
                 refund_approved_account_ids(owner_id, &approved_account_ids);
@@ -297,7 +297,7 @@ impl NonFungibleTokenResolver for Contract {
         token.owner_id = owner_id;
         refund_approved_account_ids(receiver_id, &token.approved_account_ids);
         token.approved_account_ids = approved_account_ids;
-        self.tokens_by_id.insert(&token_id, &token);
+        self.services_by_id.insert(&token_id, &token);
 
         false
     }
@@ -332,7 +332,7 @@ impl NonFungibleToken {
             extra_storage_in_bytes_per_token: 0,
             owner_by_id: TreeMap::new(owner_by_id_prefix),
             token_metadata_by_id: token_metadata_prefix.map(LookupMap::new),
-            tokens_per_owner: enumeration_prefix.map(LookupMap::new),
+            services_by_account: enumeration_prefix.map(LookupMap::new),
             approvals_by_id,
             next_approval_id_by_id,
         };
@@ -353,25 +353,25 @@ impl NonFungibleToken {
         self.owner_by_id.insert(token_id, to);
 
         // if using Enumeration standard, update old & new owner's token lists
-        if let Some(tokens_per_owner) = &mut self.tokens_per_owner {
+        if let Some(services_by_account) = &mut self.services_by_account {
             // owner_tokens should always exist, so call `unwrap` without guard
-            let mut owner_tokens = tokens_per_owner
+            let mut owner_tokens = services_by_account
                 .get(from)
                 .expect("Unable to access tokens per owner in unguarded call.");
             owner_tokens.remove(&token_id);
             if owner_tokens.is_empty() {
-                tokens_per_owner.remove(from);
+                services_by_account.remove(from);
             } else {
-                tokens_per_owner.insert(&from, &owner_tokens);
+                services_by_account.insert(&from, &owner_tokens);
             }
 
-            let mut receiver_tokens = tokens_per_owner.get(to).unwrap_or_else(|| {
+            let mut receiver_tokens = services_by_account.get(to).unwrap_or_else(|| {
                 UnorderedSet::new(StorageKey::TokensPerOwner {
                     account_hash: env::sha256(to.as_bytes()),
                 })
             });
             receiver_tokens.insert(&token_id);
-            tokens_per_owner.insert(&to, &receiver_tokens);
+            services_by_account.insert(&to, &receiver_tokens);
         }
     }
 
