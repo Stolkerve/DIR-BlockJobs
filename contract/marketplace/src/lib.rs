@@ -187,12 +187,9 @@ impl Marketplace {
         let is_employer = sender.account_id == (*token.actual_employer_account_id.as_ref().unwrap());
         assert_eq!(
             (is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(),
-            true,
+            false,
             "Only the employer or admins can give back the services"
         );
-
-        // Transferir los nears
-        Promise::new(token.owner_id.clone()).transfer(token.metadata.price as u128 * YOCTO_NEAR);
 
         self.delete_token(&token_id, &sender.account_id);
         self.add_token(&token_id, &token.owner_id);
@@ -258,6 +255,9 @@ impl Marketplace {
 
         assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
 
+        // Transferir los nears
+        Promise::new(owner_id.clone()).transfer(amount * YOCTO_NEAR);
+
         env::log(
             format!(
                 "Transfer {} from @{} to @{}",
@@ -270,7 +270,7 @@ impl Marketplace {
         self.delete_token(&token_id, &owner_id);
 
         // anadirle el nuevo token al comprador
-        self.add_token(&token_id, &buyer.account_id);
+        self.delete_token(&token_id, &buyer.account_id);
 
         // modificar la metadata del token
         token.actual_employer_account_id = Some(buyer.account_id.clone());
