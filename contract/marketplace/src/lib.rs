@@ -104,6 +104,7 @@ impl Marketplace {
     /// * `active_services`      - La cantidad de services que se desea mintear.
     #[payable]
     pub fn mint_service(&mut self, metadata: ServiceMetadata, mut _active_services: u8) -> Service {
+        let sender_id = env::predecessor_account_id();
         let user = self.update_user_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
@@ -120,6 +121,11 @@ impl Marketplace {
             employers_account_ids: Default::default(),
             actual_employer_account_id: None
         };
+        
+        let mut services_set = self
+            .services_by_account
+            .get(&sender_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender_id)));
 
         for _i in 0 .. USER_MINT_LIMIT {
             service.metadata.active = false;
@@ -131,9 +137,14 @@ impl Marketplace {
                 self.services_by_id.insert(&self.total_supply.to_string(), &service).is_none(),
                 "Service already exists"
             );
-            self.internal_add_service_to_owner(&service.owner_id, &self.total_supply.to_string());
+
+            services_set.insert(&self.total_supply.to_string());
+            
+            // self.internal_add_service_to_owner(&service.owner_id, &self.total_supply.to_string());
             self.total_supply += 1;
         }
+
+        self.services_by_account.insert(&sender_id, &services_set);
 
         let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
         env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
@@ -180,9 +191,6 @@ impl Marketplace {
         let owner_id = service.owner_id.clone();
         assert_eq!(buyer.account_id == owner_id, false, "Already is the service owner");
 
-        // Transferir los nears
-        Promise::new(owner_id.clone()).transfer(amount * YOCTO_NEAR);
-
         env::log(
             format!(
                 "Transfer {} from @{} to @{}",
@@ -210,7 +218,6 @@ impl Marketplace {
     }
 
     /// Modificar la metadata de u servicio
-    /// 
     pub fn update_service_metadata(&self, service_id: ServiceId, metadata: ServiceMetadata) -> Service {
         // Verificar que el servicio exista
         let _service_id = service_id.trim().parse::<u128>().unwrap();
@@ -236,7 +243,7 @@ impl Marketplace {
     }
 
     // Quitar un servicio ofrecido
-    pub fn deactive_service(&mut self, service_id: ServiceId) -> Service {
+    pub fn set_service(&mut self, service_id: ServiceId, active: bool) -> Service {
         // Verificar que el servicio exista
         assert_eq!(
             service_id.trim().parse::<u128>().unwrap() < self.total_supply,
@@ -255,7 +262,7 @@ impl Marketplace {
             "Only the owner or the ower can desactivate the service"
         );
 
-        service.metadata.active = false;
+        service.metadata.active = active;
         self.services_by_id.insert(&service_id, &service);
 
         return service
@@ -284,6 +291,9 @@ impl Marketplace {
             false,
             "Only the employer or admins can give back the services"
         );
+
+        // Transferir los nears
+        Promise::new(service.owner_id.clone()).transfer(service.metadata.price as u128 * YOCTO_NEAR);
 
         self.delete_service(&service_id, &sender.account_id);
         self.add_service(&service_id, &service.owner_id);
