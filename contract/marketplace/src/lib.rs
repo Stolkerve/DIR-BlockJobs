@@ -27,20 +27,20 @@ near_sdk::setup_alloc!();
 const USER_MINT_LIMIT: u8 = 5;
 const USERS_LIMIT: u16 = u16::MAX;
 
-pub type TokenId = String;
+pub type ServiceId = String;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
-pub struct Token {
+pub struct Service {
     pub owner_id: AccountId,
-    pub metadata: TokenMetadata,
+    pub metadata: ServiceMetadata,
     pub actual_employer_account_id: Option<AccountId>,
     pub employers_account_ids: HashSet<AccountId>,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
-pub struct TokenMetadata {
+pub struct ServiceMetadata {
     pub fullname: String,
     pub profile_photo_url: String,
     pub price: u16,
@@ -50,15 +50,15 @@ pub struct TokenMetadata {
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Marketplace {
-    pub services_by_id: UnorderedMap<TokenId, Token>,
-    pub services_by_account: LookupMap<AccountId, UnorderedSet<TokenId>>,
+    pub services_by_id: UnorderedMap<ServiceId, Service>,
+    pub services_by_account: LookupMap<AccountId, UnorderedSet<ServiceId>>,
     pub total_supply: u128,
     
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
 
     // The storage size in bytes for one account.
-    pub extra_storage_in_bytes_per_token: StorageUsage,
+    pub extra_storage_in_bytes_per_service: StorageUsage,
 }
 
 
@@ -86,23 +86,25 @@ impl Marketplace {
             services_by_id: UnorderedMap::new(b"t".to_vec()),
             users: UnorderedMap::new(b"u".to_vec()),
             contract_owner: owner_id.clone().into(),
-            extra_storage_in_bytes_per_token: 0,
+            extra_storage_in_bytes_per_service: 0,
         };
 
         this.add_user(owner_id, UserRoles::Admin, "Categories { Programer: {Lenguajes: } }".to_string());
 
-        this.measure_min_token_storage_cost();
+        this.measure_min_service_storage_cost();
         return this;
     }
     
+    /*** SERVICE FUNCTIONS ***/
+
     /// Mintea uno o varios servios de un usuario que sea un profesional (tambien si eres un admin)
     ///
     /// #Arguments
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
-    /// * `active_services`      - La cantidad de tokens que se desea mintear.
+    /// * `active_services`      - La cantidad de services que se desea mintear.
     #[payable]
-    pub fn mint_service(&mut self, metadata: TokenMetadata, mut _active_services: u8) -> Token {
-        let user = self.user_update_mint(); // cantidad de servicios
+    pub fn mint_service(&mut self, metadata: ServiceMetadata, mut _active_services: u8) -> Service {
+        let user = self.update_user_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
@@ -112,7 +114,7 @@ impl Marketplace {
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
-        let mut token = Token {
+        let mut service = Service {
             owner_id: owner_id.clone(),
             metadata: metadata,
             employers_account_ids: Default::default(),
@@ -120,123 +122,48 @@ impl Marketplace {
         };
 
         for _i in 0 .. USER_MINT_LIMIT {
-            token.metadata.active = false;
+            service.metadata.active = false;
             if _active_services != 0 {
-                token.metadata.active = true;
+                service.metadata.active = true;
                 _active_services -= 1;
             }
             assert!(
-                self.services_by_id.insert(&self.total_supply.to_string(), &token).is_none(),
-                "Token already exists"
+                self.services_by_id.insert(&self.total_supply.to_string(), &service).is_none(),
+                "Service already exists"
             );
-            self.internal_add_token_to_owner(&token.owner_id, &self.total_supply.to_string());
+            self.internal_add_service_to_owner(&service.owner_id, &self.total_supply.to_string());
             self.total_supply += 1;
         }
 
-        let new_tokens_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New tokens size in bytes: {}", new_tokens_size_in_bytes).as_bytes());
+        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
 
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_token + new_tokens_size_in_bytes;
+        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund(required_storage_in_bytes);
 
-        return token
-    }
-
-    // Quitar un servicio ofrecido
-    pub fn deactive_service(&mut self, token_id: TokenId) -> Token {
-        // Verificar que el servicio exista
-        assert_eq!(
-            token_id.trim().parse::<u128>().unwrap() < self.total_supply,
-            true,
-            "The indicated TokenID doesn't exist"
-        );
-
-        let mut token = self.get_service_by_id(token_id.clone());
-        let sender = env::predecessor_account_id();
-        let user = self.get_user(string_to_valid_account_id(&sender));
-        let is_admin = user.roles.get(&UserRoles::Admin).is_some();
-        let is_owner = token.owner_id == sender;
-
-        assert_eq!(
-            is_admin || is_owner, true,
-            "Only the owner or the ower can desactivate the service"
-        );
-
-        token.metadata.active = false;
-        self.services_by_id.insert(&token_id, &token);
-
-        return token
-    }
-
-    pub fn give_back_service(&mut self, token_id: TokenId) -> Token {
-        // Verificar que el servicio exista
-        let u_token_id = token_id.trim().parse::<u128>().unwrap();
-        assert_eq!(
-            u_token_id < self.total_supply,
-            true,
-            "The indicated TokenID doesn't exist"
-        );
-
-        let mut token = self.get_service_by_id(token_id.clone());
-
-        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
-        let sender = self.get_user(sender_id.clone());
-
-        let is_bought = token.actual_employer_account_id.is_some();
-        let is_employer = sender.account_id == (*token.actual_employer_account_id.as_ref().unwrap());
-        assert_eq!(
-            (is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(),
-            false,
-            "Only the employer or admins can give back the services"
-        );
-
-        self.delete_token(&token_id, &sender.account_id);
-        self.add_token(&token_id, &token.owner_id);
-
-        // modificar la metadata del token
-        token.actual_employer_account_id = None;
-        self.services_by_id.insert(&token_id, &token);
-
-        return token
-    }
-
-    #[private]
-    fn delete_token(&mut self, token_id: &TokenId, account_id: &String) {
-        let mut tokens_set = self.services_by_account.get(account_id).expect("Token should be owned by the sender");
-        tokens_set.remove(token_id);
-        self.services_by_account.insert(&account_id, &tokens_set);
-    }
-
-    #[private]
-    fn add_token(&mut self, token_id: &TokenId, account_id: &String) {
-        let mut tokens_set = self
-            .services_by_account
-            .get(account_id)
-            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&account_id)));
-        tokens_set.insert(token_id);
-        self.services_by_account.insert(account_id, &tokens_set);
+        return service
     }
 
     #[payable]
     // Adquisición de un servicio
-    pub fn buy_service(&mut self, token_id: TokenId) -> Token {
+    pub fn buy_service(&mut self, service_id: ServiceId) -> Service {
         // Verificar que el servicio exista
-        let u_token_id = token_id.trim().parse::<u128>().unwrap();
+        let u_service_id = service_id.trim().parse::<u128>().unwrap();
         assert_eq!(
-            u_token_id < self.total_supply, true,
-            "The indicated TokenID doesn't exist"
+            u_service_id < self.total_supply, true,
+            "The indicated ServiceID doesn't exist"
         );
-        let mut token = self.get_service_by_id(token_id.clone());
+        let mut service = self.get_service_by_id(service_id.clone());
         // Si no cuenta con los fondos se hace rollback
         assert_eq!(
-            token.metadata.active, true,
+            service.metadata.active, true,
             "No esta a la venta"
         );
         let amount = env::attached_deposit() / YOCTO_NEAR;
         assert_eq!(
-            token.metadata.price as u128, amount,
+            service.metadata.price as u128, amount,
             "Fondos insuficientes"
         );
         
@@ -250,8 +177,8 @@ impl Marketplace {
         );
 
         
-        let owner_id = token.owner_id.clone();
-        assert_eq!(buyer.account_id == owner_id, false, "Already is the token owner");
+        let owner_id = service.owner_id.clone();
+        assert_eq!(buyer.account_id == owner_id, false, "Already is the service owner");
 
         // Transferir los nears
         Promise::new(owner_id.clone()).transfer(amount * YOCTO_NEAR);
@@ -259,28 +186,156 @@ impl Marketplace {
         env::log(
             format!(
                 "Transfer {} from @{} to @{}",
-                token_id, &owner_id, &buyer.account_id
+                service_id, &owner_id, &buyer.account_id
             )
             .as_bytes(),
         );
 
-        // Quitarle el token al owner
-        self.delete_token(&token_id, &owner_id);
+        // Quitarle el service al owner
+        self.delete_service(&service_id, &owner_id);
 
-        // Anadirle el nuevo token al comprador
-        self.add_token(&token_id, &buyer.account_id);
+        // Anadirle el nuevo service al comprador
+        self.add_service(&service_id, &buyer.account_id);
 
-        // Modificar la metadata del token
-        token.actual_employer_account_id = Some(buyer.account_id.clone());
-        token.employers_account_ids.insert(buyer.account_id.clone());
-        self.services_by_id.insert(&token_id, &token);
+        // Modificar la metadata del service
+        service.actual_employer_account_id = Some(buyer.account_id.clone());
+        service.employers_account_ids.insert(buyer.account_id.clone());
+        self.services_by_id.insert(&service_id, &service);
 
         // if let Some(memo) = memo {
         //     env::log(format!("Memo: {}", memo).as_bytes());
         // }
 
-        return self.get_service_by_id(token_id)
+        return self.get_service_by_id(service_id)
     }
+
+    /// Modificar la metadata de u servicio
+    /// 
+    pub fn update_service_metadata(&self, service_id: ServiceId, metadata: ServiceMetadata) -> Service {
+        // Verificar que el servicio exista
+        let _service_id = service_id.trim().parse::<u128>().unwrap();
+        assert_eq!( _service_id < self.total_supply, true,
+            "The indicated ServiceID doesn't exist"
+        );
+
+        let mut service = self.get_service_by_id(service_id.clone());
+
+        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let sender = self.get_user(sender_id.clone());
+
+        let is_bought = service.actual_employer_account_id.is_some();
+        let is_employer = sender.account_id == (*service.actual_employer_account_id.as_ref().unwrap());
+        assert_eq!(
+            (!is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(), false,
+            "Only the creator or admins can change metadata services"
+        );
+
+        service.metadata = metadata;
+
+        service
+    }
+
+    // Quitar un servicio ofrecido
+    pub fn deactive_service(&mut self, service_id: ServiceId) -> Service {
+        // Verificar que el servicio exista
+        assert_eq!(
+            service_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            true,
+            "The indicated ServiceID doesn't exist"
+        );
+
+        let mut service = self.get_service_by_id(service_id.clone());
+        let sender = env::predecessor_account_id();
+        let user = self.get_user(string_to_valid_account_id(&sender));
+        let is_admin = user.roles.get(&UserRoles::Admin).is_some();
+        let is_owner = service.owner_id == sender;
+
+        assert_eq!(
+            is_admin || is_owner, true,
+            "Only the owner or the ower can desactivate the service"
+        );
+
+        service.metadata.active = false;
+        self.services_by_id.insert(&service_id, &service);
+
+        return service
+    }
+
+    /// Retornar un servicio
+    /// 
+    pub fn give_back_service(&mut self, service_id: ServiceId) -> Service {
+        // Verificar que el servicio exista
+        let u_service_id = service_id.trim().parse::<u128>().unwrap();
+        assert_eq!(
+            u_service_id < self.total_supply,
+            true,
+            "The indicated ServiceID doesn't exist"
+        );
+
+        let mut service = self.get_service_by_id(service_id.clone());
+
+        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let sender = self.get_user(sender_id.clone());
+
+        let is_bought = service.actual_employer_account_id.is_some();
+        let is_employer = sender.account_id == (*service.actual_employer_account_id.as_ref().unwrap());
+        assert_eq!(
+            (is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(),
+            false,
+            "Only the employer or admins can give back the services"
+        );
+
+        self.delete_service(&service_id, &sender.account_id);
+        self.add_service(&service_id, &service.owner_id);
+
+        // modificar la metadata del service
+        service.actual_employer_account_id = None;
+        self.services_by_id.insert(&service_id, &service);
+
+        return service
+    }
+
+    #[private]
+    fn add_service(&mut self, service_id: &ServiceId, account_id: &String) {
+        let mut services_set = self
+            .services_by_account
+            .get(account_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&account_id)));
+        services_set.insert(service_id);
+        self.services_by_account.insert(account_id, &services_set);
+    }
+
+    #[private]
+    fn delete_service(&mut self, service_id: &ServiceId, account_id: &String) {
+        let mut services_set = self.services_by_account.get(account_id).expect("Service should be owned by the sender");
+        services_set.remove(service_id);
+        self.services_by_account.insert(&account_id, &services_set);
+    }
+
+    /// #Arguments
+    /// * `service_id`
+    pub fn get_service_by_id(&self, service_id: ServiceId) -> Service {
+        return self.services_by_id.get(&service_id.into()).expect("No users found. Register the user first");
+    }
+
+    // TODO(Sebas): Optimizar con colocar un limite
+    /// Obtener los service y sus metadata de un usuario
+    ///
+    /// #Arguments
+    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
+    pub fn get_service_by_ids(&self, ids: HashSet<ServiceId>) -> Vec<Service> {
+        if ids.len() > self.services_by_id.len() as usize {
+            env::panic(b"The amounts of ids supere the amount of services");
+        }
+        let mut services: Vec<Service> = Vec::new();
+        for id in ids.iter() {
+            services.push(self.services_by_id.get(&id.to_string()).expect("Service id dont match"));
+        }
+        return services
+    }
+
+
+    /*** USERS FUNCTIONS ***/
 
     /// Registra usuarios! Asignandoles un role y a que se dedican por categorias
     ///
@@ -297,8 +352,8 @@ impl Marketplace {
         }
 
         let s_account_id: AccountId = account_id.into();
-        let tokens_set = UnorderedSet::new(unique_prefix(&s_account_id));
-        self.services_by_account.insert(&s_account_id, &tokens_set);
+        let services_set = UnorderedSet::new(unique_prefix(&s_account_id));
+        self.services_by_account.insert(&s_account_id, &services_set);
 
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
@@ -318,10 +373,10 @@ impl Marketplace {
             env::panic(b"User account already added");
         }
 
-        let new_tokens_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New tokens size in bytes: {}", new_tokens_size_in_bytes).as_bytes());
+        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
 
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_token + new_tokens_size_in_bytes;
+        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund_to(required_storage_in_bytes, s_account_id);
@@ -329,7 +384,7 @@ impl Marketplace {
         return new_user
     }
 
-    /// Elimina un usuarios y sus tokens
+    /// Elimina un usuarios y sus services
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -359,7 +414,7 @@ impl Marketplace {
         return user;
     }
 
-    /// Agrega un role mas al usuario
+    /// Agrega un rol mas al usuario
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -411,60 +466,38 @@ impl Marketplace {
     }
 
 
-    /// #Arguments
-    /// * `token_id`
-    pub fn get_service_by_id(&self, token_id: TokenId) -> Token {
-        return self.services_by_id.get(&token_id.into()).expect("No users found. Register the user first");
-    }
-
-    // TODO(Sebas): Optimizar con colocar un limite
-    /// Obtener los token y sus metadata de un usuario
-    ///
-    /// #Arguments
-    /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_service_by_ids(&self, ids: HashSet<TokenId>) -> Vec<Token> {
-        if ids.len() > self.services_by_id.len() as usize {
-            env::panic(b"The amounts of ids supere the amount of tokens");
-        }
-        let mut tokens: Vec<Token> = Vec::new();
-        for id in ids.iter() {
-            tokens.push(self.services_by_id.get(&id.to_string()).expect("Token id dont match"));
-        }
-        return tokens
-    }
-
-    /// Obtener id de los tokens de un usuario
+    /// Obtener id de los services de un usuario
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<String> {
-        return self.services_by_account.get(&account_id.into()).expect("No users found or dont have any token").to_vec();
+        return self.services_by_account.get(&account_id.into()).expect("No users found or dont have any service").to_vec();
     }
 
-    /// Obtener los token y sus metadata de un usuario
+    /// Obtener los service y sus metadata de un usuario
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    /// * `only_active`  - Retornar solo los tokens activos.
-    pub fn get_user_services(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Token> {
-        let mut tokens: Vec<Token> = Vec::new();
-        let tokens_id = self.get_user_services_id(account_id.clone());
-        for i in 0 .. tokens_id.len() {
-            let token = self.services_by_id.get(&tokens_id[i]).expect("Token id dont match");
+    /// * `only_active`  - Retornar solo los services activos.
+    pub fn get_user_services(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Service> {
+        let mut services: Vec<Service> = Vec::new();
+        let services_id = self.get_user_services_id(account_id.clone());
+        for i in 0 .. services_id.len() {
+            let service = self.services_by_id.get(&services_id[i]).expect("Service id dont match");
             if only_active {
-                if token.metadata.active {
-                    tokens.push( token ); 
+                if service.metadata.active {
+                    services.push( service ); 
                 }
             }
             else {
-                tokens.push( token );
+                services.push( service );
             }
         }
-        return tokens
+        return services
     }
 
     #[private]
-    fn measure_min_token_storage_cost(&mut self) {
+    fn measure_min_service_storage_cost(&mut self) {
         let initial_storage_usage = env::storage_usage();
         let tmp_account_id = "a".repeat(64);
         let u = UnorderedSet::new(unique_prefix(&tmp_account_id));
@@ -473,14 +506,14 @@ impl Marketplace {
         let services_by_account_entry_in_bytes = env::storage_usage() - initial_storage_usage;
         let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
 
-        self.extra_storage_in_bytes_per_token =
+        self.extra_storage_in_bytes_per_service =
             services_by_account_entry_in_bytes + owner_id_extra_cost_in_bytes;
 
         self.services_by_account.remove(&tmp_account_id);
     }
 
     #[private]
-    fn user_update_mint(&mut self) -> User {
+    fn update_user_mint(&mut self) -> User {
         let sender_id = env::predecessor_account_id();
         let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
         assert!(
@@ -492,13 +525,17 @@ impl Marketplace {
         return user
     }
 
+
+    /*** ASSERTS  ***/
+
+    /// Verificar que sea el admin
     #[private]
     fn admin_assert(&self, account_id: &AccountId) {
         assert_eq!(*account_id, self.contract_owner, "Must be owner_id how call its function");
     }
 
     // #[private]
-    // fn string_to_json(&self, token_id: TokenId) -> Category {
+    // fn string_to_json(&self, service_id: ServiceId) -> Category {
     //     let example = Category {
     //         category: "Programmer".to_string(),
     //         subcategory: "Backend".to_string(),
@@ -509,7 +546,7 @@ impl Marketplace {
     //     let string = format!("String: {}", &serialized);
     //     env::log(string.as_bytes());
 
-    // // pub fn string_to_json(&self, token_id: TokenId) -> Category {
+    // // pub fn string_to_json(&self, service_id: ServiceId) -> Category {
     // pub fn string_to_json(&self) -> Category {
     //     let example = Category {
     //         category: "Programmer".to_string(),
@@ -548,20 +585,20 @@ pub enum Panic {
     #[panic_msg = "Invalid argument for service description `{}`: {}"]
     InvalidDescription { len_description: usize, reason: String },
 
-    #[panic_msg = "Token ID must have a positive quantity and less than 10"]
+    #[panic_msg = "Service ID must have a positive quantity and less than 10"]
     InvalidMintAmount { },
     /*
     #[panic_msg = "Operation is allowed only for admin"]
     AdminRestrictedOperation,
     #[panic_msg = "Unable to delete Account ID `{}`"]
     NotAuthorized { account_id: AccountId },
-    #[panic_msg = "Token ID `{:?}` was not found"]
-    TokenIdNotFound { token_id: U64 },
-    #[panic_msg = "Token ID `{:?}` does not belong to account `{}`"]
-    TokenIdNotOwnedBy { token_id: U64, owner_id: AccountId },
+    #[panic_msg = "Service ID `{:?}` was not found"]
+    ServiceIdNotFound { service_id: U64 },
+    #[panic_msg = "Service ID `{:?}` does not belong to account `{}`"]
+    ServiceIdNotOwnedBy { service_id: U64, owner_id: AccountId },
     #[panic_msg = "Sender `{}` is not authorized to make transfer"]
     SenderNotAuthToTransfer { sender_id: AccountId },
-    #[panic_msg = "The token owner and the receiver should be different"]
+    #[panic_msg = "The service owner and the receiver should be different"]
     ReceiverIsOwner,
     */
 }
@@ -597,7 +634,7 @@ mod tests {
             (admin.mints == false) &&
             (admin.account_id == admin_id.to_string()) &&
             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-            (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun token
+            (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun service
             ,
             true
         );
@@ -612,7 +649,7 @@ mod tests {
         testing_env!(context);
         let mut marketplace = Marketplace::new(admin_id.clone());
 
-        let jose_token = marketplace.mint_service(TokenMetadata {
+        let jose_service = marketplace.mint_service(ServiceMetadata {
             fullname: "Jose Antoio".to_string(),
             profile_photo_url: "Jose_Antoio.png".to_string(),
             price: 10,
@@ -636,7 +673,7 @@ mod tests {
         // );
         // context.attached_deposit = 58700000000000000000000;
         // testing_env!(context);
-        // marketplace.mint_service(TokenMetadata {
+        // marketplace.mint_service(ServiceMetadata {
         //     fullname: "Maria Jose".to_string(),
         //     profile_photo_url: "Maria_Jose.png".to_string(),
         //     price: 10,
@@ -649,7 +686,7 @@ mod tests {
         // );
         // context.attached_deposit = 58700000000000000000000;
         // testing_env!(context);
-        // marketplace.mint_service(TokenMetadata {
+        // marketplace.mint_service(ServiceMetadata {
         //     fullname: "Ed Robet".to_string(),
         //     profile_photo_url: "Ed_Robet.png".to_string(),
         //     price: 10,
