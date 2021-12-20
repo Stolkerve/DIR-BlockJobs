@@ -17,22 +17,6 @@ pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
     prefix
 }
 
-pub(crate) fn assert_one_yocto() {
-    assert_eq!(
-        env::attached_deposit(),
-        1,
-        "Requires attached deposit of exactly 1 yoctoNEAR"
-    )
-}
-
-pub(crate) fn assert_self() {
-    assert_eq!(
-        env::predecessor_account_id(),
-        env::current_account_id(),
-        "Method is private"
-    );
-}
-
 pub(crate) fn deposit_refund(storage_used: u64) {
     let required_cost = STORAGE_PRICE_PER_BYTE * Balance::from(storage_used);
     let attached_deposit = env::attached_deposit();
@@ -63,21 +47,21 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
     }
 }
 
-pub(crate) fn bytes_for_approved_account_id(account_id: &AccountId) -> u64 {
-    // The extra 4 bytes are coming from Borsh serialization to store the length of the string.
-    account_id.len() as u64 + 4
-}
+// pub(crate) fn bytes_for_approved_account_id(account_id: &AccountId) -> u64 {
+//     // The extra 4 bytes are coming from Borsh serialization to store the length of the string.
+//     account_id.len() as u64 + 4
+// }
 
-pub(crate) fn refund_approved_account_ids(
-    account_id: AccountId,
-    approved_account_ids: &HashSet<AccountId>,
-) -> Promise {
-    let storage_released: u64 = approved_account_ids
-        .iter()
-        .map(bytes_for_approved_account_id)
-        .sum();
-    Promise::new(account_id).transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE)
-}
+// pub(crate) fn refund_approved_account_ids(
+//     account_id: AccountId,
+//     approved_account_ids: &HashSet<AccountId>,
+// ) -> Promise {
+//     let storage_released: u64 = approved_account_ids
+//         .iter()
+//         .map(bytes_for_approved_account_id)
+//         .sum();
+//     Promise::new(account_id).transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE)
+// }
 
 impl Marketplace {
     // pub(crate) fn admin_assert(&self) {
@@ -88,35 +72,22 @@ impl Marketplace {
     //     );
     // }
 
-    pub(crate) fn internal_add_service_to_owner(
-        &mut self,
-        account_id: &AccountId,
-        service_id: &ServiceId,
-    ) {
-        let mut services_set = self
-            .services_by_account
-            .get(account_id)
-            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(account_id)));
-        services_set.insert(service_id);
-        self.services_by_account.insert(account_id, &services_set);
-    }
-
-    pub(crate) fn internal_remove_service_from_owner(
-        &mut self,
-        account_id: &AccountId,
-        service_id: &ServiceId,
-    ) {
-        let mut services_set = self
-            .services_by_account
-            .get(account_id)
-            .expect("Service should be owned by the sender");
-        services_set.remove(service_id);
-        if services_set.is_empty() {
-            self.services_by_account.remove(account_id);
-        } else {
-            self.services_by_account.insert(account_id, &services_set);
-        }
-    }
+    // pub(crate) fn internal_remove_service_from_owner(
+    //     &mut self,
+    //     account_id: &AccountId,
+    //     service_id: &ServiceId,
+    // ) {
+    //     let mut services_set = self
+    //         .services_by_account
+    //         .get(account_id)
+    //         .expect("Service should be owned by the sender");
+    //     services_set.remove(service_id);
+    //     if services_set.is_empty() {
+    //         self.services_by_account.remove(account_id);
+    //     } else {
+    //         self.services_by_account.insert(account_id, &services_set);
+    //     }
+    // }
 
     // pub(crate) fn internal_transfer(
     //     &mut self,
