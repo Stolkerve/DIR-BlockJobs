@@ -11,7 +11,7 @@ use near_sdk::collections::{LookupMap, UnorderedMap};
 static ALLOC: near_sdk::wee_alloc::WeeAlloc<'_> = near_sdk::wee_alloc::WeeAlloc::INIT;
 
 pub type DisputeId = u128;
-pub type TokenAmount = u64;
+pub type ServiceAmount = u64;
 
 #[derive(Serialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -46,8 +46,8 @@ pub struct Dispute {
     id: DisputeId,
     // Cantidad de  miembros de jurado para la disputa
     number_jurors: u8,
-    // Lista de miembros del jurado y sus respectivos tokens a retirar
-    jury: LookupMap<AccountId, TokenAmount>,
+    // Lista de miembros del jurado y sus respectivos services a retirar
+    jury: LookupMap<AccountId, ServiceAmount>,
     dispute_status: DisputeStatus,
     vote: Vote,
     vote_counter: VoteCounter,

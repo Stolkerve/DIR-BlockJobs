@@ -39,7 +39,7 @@ pub(crate) fn deposit_refund(storage_used: u64) {
 
     assert!(
         required_cost <= attached_deposit,
-        "Requires to attach {:.1$} NEAR tokens to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
+        "Requires to attach {:.1$} NEAR services to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
     );
 
     let refund = attached_deposit - required_cost;
@@ -54,7 +54,7 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
 
     assert!(
         required_cost <= attached_deposit,
-        "Requires to attach {:.1$} NEAR tokens to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
+        "Requires to attach {:.1$} NEAR services to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
     );
 
     let refund = attached_deposit - required_cost;
@@ -88,33 +88,33 @@ impl Marketplace {
     //     );
     // }
 
-    pub(crate) fn internal_add_token_to_owner(
+    pub(crate) fn internal_add_service_to_owner(
         &mut self,
         account_id: &AccountId,
-        token_id: &TokenId,
+        service_id: &ServiceId,
     ) {
-        let mut tokens_set = self
+        let mut services_set = self
             .services_by_account
             .get(account_id)
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(account_id)));
-        tokens_set.insert(token_id);
-        self.services_by_account.insert(account_id, &tokens_set);
+        services_set.insert(service_id);
+        self.services_by_account.insert(account_id, &services_set);
     }
 
-    pub(crate) fn internal_remove_token_from_owner(
+    pub(crate) fn internal_remove_service_from_owner(
         &mut self,
         account_id: &AccountId,
-        token_id: &TokenId,
+        service_id: &ServiceId,
     ) {
-        let mut tokens_set = self
+        let mut services_set = self
             .services_by_account
             .get(account_id)
-            .expect("Token should be owned by the sender");
-        tokens_set.remove(token_id);
-        if tokens_set.is_empty() {
+            .expect("Service should be owned by the sender");
+        services_set.remove(service_id);
+        if services_set.is_empty() {
             self.services_by_account.remove(account_id);
         } else {
-            self.services_by_account.insert(account_id, &tokens_set);
+            self.services_by_account.insert(account_id, &services_set);
         }
     }
 
@@ -122,16 +122,16 @@ impl Marketplace {
     //     &mut self,
     //     sender_id: &AccountId,
     //     receiver_id: &AccountId,
-    //     token_id: &TokenId,
+    //     service_id: &ServiceId,
     //     enforce_approval_id: Option<u64>,
     //     memo: Option<String>,
     // ) -> (AccountId, HashSet<AccountId>) {
-    //     let Token {
+    //     let Service {
     //         owner_id,
     //         metadata,
     //         employer_account_ids,
     //         employer_id,
-    //     } = self.services_by_id.get(token_id).expect("Token not found");
+    //     } = self.services_by_id.get(service_id).expect("Service not found");
     //     if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
     //         env::panic(b"Unauthorized");
     //     }
@@ -140,33 +140,33 @@ impl Marketplace {
     //         assert_eq!(
     //             employer_id,
     //             enforce_approval_id,
-    //             "The token approval_id is different from provided"
+    //             "The service approval_id is different from provided"
     //         );
     //     }
 
     //     assert_ne!(
     //         &owner_id, receiver_id,
-    //         "The token owner and the receiver should be different"
+    //         "The service owner and the receiver should be different"
     //     );
 
     //     env::log(
     //         format!(
     //             "Transfer {} from @{} to @{}",
-    //             token_id, &owner_id, receiver_id
+    //             service_id, &owner_id, receiver_id
     //         )
     //         .as_bytes(),
     //     );
 
-    //     self.internal_remove_token_from_owner(&owner_id, token_id);
-    //     self.internal_add_token_to_owner(receiver_id, token_id);
+    //     self.internal_remove_service_from_owner(&owner_id, service_id);
+    //     self.internal_add_service_to_owner(receiver_id, service_id);
 
-    //     let token = Token {
+    //     let service = Service {
     //         owner_id: receiver_id.clone(),
     //         metadata,
     //         employer_account_ids: Default::default(),
     //         employer_id: employer_id + 1,
     //     };
-    //     self.services_by_id.insert(token_id, &token);
+    //     self.services_by_id.insert(service_id, &service);
 
     //     if let Some(memo) = memo {
     //         env::log(format!("Memo: {}", memo).as_bytes());
