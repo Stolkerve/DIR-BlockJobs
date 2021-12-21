@@ -83,20 +83,10 @@ impl Mediator {
             disputes: UnorderedMap::new(b"d"),
             disputes_counter: 0
         };
-
         return this;
     }
 
     pub fn new_dispute(services_id: u64, max_juries: u8, accused: ValidAccountId, proves: String) {
         
     }
-    // #[private]
-    // fn finished_assert(&self, dispute_id: &DisputeId) {
-    //     assert_eq!(*dispute_id, DisputeStatus::Finished, "The dispute must be finished");
-    // }
-
-    // #[private]
-    // fn admin_assert(&self, account_id: &AccountId) {
-    //     assert_eq!(*account_id, self.admin, "Must be admin_id how call its function");
-    // }
 }
