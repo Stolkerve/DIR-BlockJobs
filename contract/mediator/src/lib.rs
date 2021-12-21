@@ -72,13 +72,13 @@ impl Default for Mediator {
 #[near_bindgen]
 impl Mediator {
 
-    #[private]
-    fn finished_assert(&self, dispute_id: &DisputeId) {
-        assert_eq!(*dispute_id, DisputeStatus::Finished, "The dispute must be finished");
-    }
+    // #[private]
+    // fn finished_assert(&self, dispute_id: &DisputeId) {
+    //     assert_eq!(*dispute_id, DisputeStatus::Finished, "The dispute must be finished");
+    // }
 
-    #[private]
-    fn admin_assert(&self, account_id: &AccountId) {
-        assert_eq!(*account_id, self.admin, "Must be admin_id how call its function");
-    }
+    // #[private]
+    // fn admin_assert(&self, account_id: &AccountId) {
+    //     assert_eq!(*account_id, self.admin, "Must be admin_id how call its function");
+    // }
 }
