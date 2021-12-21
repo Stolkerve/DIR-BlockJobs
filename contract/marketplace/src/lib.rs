@@ -24,7 +24,7 @@ near_sdk::setup_alloc!();
 // const ACCESS_KEY_ALLOWANCE: u128 = 100_000_000_000_000_000_000_000;
 // const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
 
-const USER_MINT_LIMIT: u8 = 5;
+const USER_MINT_LIMIT: u8 = 15;
 const USERS_LIMIT: u16 = u16::MAX;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -101,11 +101,12 @@ impl Marketplace {
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
     /// * `active_services`      - La cantidad de services que se desea mintear.
     #[payable]
-    pub fn mint_service(&mut self, metadata: ServiceMetadata, mut _active_services: u8) -> Service {
+    pub fn mint_service(&mut self, metadata: ServiceMetadata, mut _quantity: u8) -> Service {
         let sender_id = env::predecessor_account_id();
         let user = self.update_user_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
+        //Verificar que sea un profesional
         let is_professional = user.roles.get(&UserRoles::Professional).is_none();
         let is_admin = user.roles.get(&UserRoles::Admin).is_none();
         assert_eq!(is_professional || is_admin, true, "Only professional can mint a service");
@@ -125,12 +126,12 @@ impl Marketplace {
             .get(&sender_id)
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender_id)));
 
-        for _i in 0 .. USER_MINT_LIMIT {
-            service.metadata.active = false;
-            if _active_services != 0 {
-                service.metadata.active = true;
-                _active_services -= 1;
-            }
+        for _i in 0 .. _quantity {
+            service.metadata.active = true;
+            // if quantity != 0 {
+            //     service.metadata.active = true;
+            //     quantity -= 1;
+            // }
             assert!(
                 self.services_by_id.insert(&self.total_supply, &service).is_none(),
                 "Service already exists"
@@ -152,7 +153,7 @@ impl Marketplace {
 
         deposit_refund(required_storage_in_bytes);
 
-        return service
+        service
     }
 
     #[payable]
@@ -500,6 +501,10 @@ impl Marketplace {
             }
         }
         return services
+    }
+
+    pub fn get_total_supply(&self) -> u64 {
+        self.total_supply
     }
 
     #[private]
