@@ -1,7 +1,7 @@
 use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
-use near_sdk::json_types::ValidAccountId;
+use near_sdk::json_types::{ValidAccountId};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage};
 
@@ -27,8 +27,6 @@ near_sdk::setup_alloc!();
 const USER_MINT_LIMIT: u8 = 5;
 const USERS_LIMIT: u16 = u16::MAX;
 
-pub type ServiceId = String;
-
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Service {
@@ -50,9 +48,9 @@ pub struct ServiceMetadata {
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Marketplace {
-    pub services_by_id: UnorderedMap<ServiceId, Service>,
-    pub services_by_account: LookupMap<AccountId, UnorderedSet<ServiceId>>,
-    pub total_supply: u128,
+    pub services_by_id: UnorderedMap<u64, Service>,
+    pub services_by_account: LookupMap<AccountId, UnorderedSet<u64>>,
+    pub total_supply: u64,
     
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
@@ -95,7 +93,7 @@ impl Marketplace {
         return this;
     }
     
-    /*** SERVICE FUNCTIONS ***/
+    /*** SERVICES FUNCTIONS ***/
 
     /// Mintea uno o varios servios de un usuario que sea un profesional (tambien si eres un admin)
     ///
@@ -134,11 +132,11 @@ impl Marketplace {
                 _active_services -= 1;
             }
             assert!(
-                self.services_by_id.insert(&self.total_supply.to_string(), &service).is_none(),
+                self.services_by_id.insert(&self.total_supply, &service).is_none(),
                 "Service already exists"
             );
 
-            services_set.insert(&self.total_supply.to_string());
+            services_set.insert(&self.total_supply);
             
             // self.internal_add_service_to_owner(&service.owner_id, &self.total_supply.to_string());
             self.total_supply += 1;
@@ -159,18 +157,18 @@ impl Marketplace {
 
     #[payable]
     // Adquisición de un servicio
-    pub fn buy_service(&mut self, service_id: ServiceId) -> Service {
+    pub fn buy_service(&mut self, service_id: u64) -> Service {
         // Verificar que el servicio exista
-        let u_service_id = service_id.trim().parse::<u128>().unwrap();
+        let _service_id = service_id;
         assert_eq!(
-            u_service_id < self.total_supply, true,
+            _service_id < self.total_supply, true,
             "The indicated ServiceID doesn't exist"
         );
         let mut service = self.get_service_by_id(service_id.clone());
         // Si no cuenta con los fondos se hace rollback
         assert_eq!(
             service.metadata.active, true,
-            "No esta a la venta"
+            "The service is not on sale"
         );
         let amount = env::attached_deposit() / YOCTO_NEAR;
         assert_eq!(
@@ -184,9 +182,8 @@ impl Marketplace {
         assert_eq!(
             buyer.roles.get(&UserRoles::Admin).is_some() || buyer.roles.get(&UserRoles::Employeer).is_some(),
             true,
-            "Solo los adminy empleadores pueden comprar servicios"
+            "Only employers can buy services"
         );
-
         
         let owner_id = service.owner_id.clone();
         assert_eq!(buyer.account_id == owner_id, false, "Already is the service owner");
@@ -199,10 +196,14 @@ impl Marketplace {
             .as_bytes(),
         );
 
-        // Quitarle el service al owner
+        //TODO: transfer the tokens to mediator contract
+        // Transferir los nears
+        //Promise::new(service.owner_id.clone()).transfer(service.metadata.price as u128 * YOCTO_NEAR);
+
+        // Quitarle el servicio al owner
         self.delete_service(&service_id, &owner_id);
 
-        // Anadirle el nuevo service al comprador
+        // Anadirle el servicio al comprador
         self.add_service(&service_id, &buyer.account_id);
 
         // Modificar la metadata del service
@@ -217,36 +218,39 @@ impl Marketplace {
         return self.get_service_by_id(service_id)
     }
 
+
     /// Modificar la metadata de u servicio
-    pub fn update_service_metadata(&self, service_id: ServiceId, metadata: ServiceMetadata) -> Service {
+    /// 
+    pub fn update_service_metadata(&self, service_id: u64, metadata: ServiceMetadata) -> Service {
         // Verificar que el servicio exista
-        let _service_id = service_id.trim().parse::<u128>().unwrap();
+        let _service_id = service_id;
         assert_eq!( _service_id < self.total_supply, true,
             "The indicated ServiceID doesn't exist"
         );
 
         let mut service = self.get_service_by_id(service_id.clone());
 
+        // Verificar que sea el creador quien ejecuta la funcion
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         let sender = self.get_user(sender_id.clone());
-
-        let is_bought = service.actual_employer_account_id.is_some();
-        let is_employer = sender.account_id == (*service.actual_employer_account_id.as_ref().unwrap());
+        let owner = service.owner_id.clone();
+        let owner_id = string_to_valid_account_id(&owner);
         assert_eq!(
-            (!is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(), false,
+            (sender_id == owner_id) || sender.roles.get(&UserRoles::Admin).is_some(), true,
             "Only the creator or admins can change metadata services"
         );
 
+        // Insertar nueva metadata
         service.metadata = metadata;
 
         service
     }
 
-    // Quitar un servicio ofrecido
-    pub fn set_service(&mut self, service_id: ServiceId, active: bool) -> Service {
+    // Cambiar el estado de un servicio activo o no
+    pub fn set_service_status(&mut self, service_id: u64, active: bool) -> Service {
         // Verificar que el servicio exista
         assert_eq!(
-            service_id.trim().parse::<u128>().unwrap() < self.total_supply,
+            service_id < self.total_supply,
             true,
             "The indicated ServiceID doesn't exist"
         );
@@ -259,7 +263,7 @@ impl Marketplace {
 
         assert_eq!(
             is_admin || is_owner, true,
-            "Only the owner or the ower can desactivate the service"
+            "Only the owner or admin can desactivate the service"
         );
 
         service.metadata.active = active;
@@ -270,12 +274,11 @@ impl Marketplace {
 
     /// Retornar un servicio
     /// 
-    pub fn give_back_service(&mut self, service_id: ServiceId) -> Service {
+    pub fn give_back_service(&mut self, service_id: u64) -> Service {
         // Verificar que el servicio exista
-        let u_service_id = service_id.trim().parse::<u128>().unwrap();
+        let _service_id = service_id;
         assert_eq!(
-            u_service_id < self.total_supply,
-            true,
+            _service_id < self.total_supply, true,
             "The indicated ServiceID doesn't exist"
         );
 
@@ -283,22 +286,15 @@ impl Marketplace {
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         let sender = self.get_user(sender_id.clone());
-
-        let is_bought = service.actual_employer_account_id.is_some();
-        let is_employer = sender.account_id == (*service.actual_employer_account_id.as_ref().unwrap());
         assert_eq!(
-            (is_bought && is_employer) || sender.roles.get(&UserRoles::Admin).is_some(),
-            false,
-            "Only the employer or admins can give back the services"
+            sender.roles.get(&UserRoles::Admin).is_some(), true,
+            "Only admins can give back the services"
         );
-
-        // Transferir los nears
-        Promise::new(service.owner_id.clone()).transfer(service.metadata.price as u128 * YOCTO_NEAR);
 
         self.delete_service(&service_id, &sender.account_id);
         self.add_service(&service_id, &service.owner_id);
 
-        // modificar la metadata del service
+        // Modificar la metadata del servicio
         service.actual_employer_account_id = None;
         self.services_by_id.insert(&service_id, &service);
 
@@ -306,7 +302,7 @@ impl Marketplace {
     }
 
     #[private]
-    fn add_service(&mut self, service_id: &ServiceId, account_id: &String) {
+    fn add_service(&mut self, service_id: &u64, account_id: &String) {
         let mut services_set = self
             .services_by_account
             .get(account_id)
@@ -316,7 +312,7 @@ impl Marketplace {
     }
 
     #[private]
-    fn delete_service(&mut self, service_id: &ServiceId, account_id: &String) {
+    fn delete_service(&mut self, service_id: &u64, account_id: &String) {
         let mut services_set = self.services_by_account.get(account_id).expect("Service should be owned by the sender");
         services_set.remove(service_id);
         self.services_by_account.insert(&account_id, &services_set);
@@ -324,7 +320,7 @@ impl Marketplace {
 
     /// #Arguments
     /// * `service_id`
-    pub fn get_service_by_id(&self, service_id: ServiceId) -> Service {
+    pub fn get_service_by_id(&self, service_id: u64) -> Service {
         return self.services_by_id.get(&service_id.into()).expect("No users found. Register the user first");
     }
 
@@ -333,13 +329,13 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_service_by_ids(&self, ids: HashSet<ServiceId>) -> Vec<Service> {
+    pub fn get_service_by_ids(&self, ids: HashSet<u64>) -> Vec<Service> {
         if ids.len() > self.services_by_id.len() as usize {
             env::panic(b"The amounts of ids supere the amount of services");
         }
         let mut services: Vec<Service> = Vec::new();
         for id in ids.iter() {
-            services.push(self.services_by_id.get(&id.to_string()).expect("Service id dont match"));
+            services.push(self.services_by_id.get(&id).expect("Service id dont match"));
         }
         return services
     }
@@ -480,7 +476,7 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<String> {
+    pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<u64> {
         return self.services_by_account.get(&account_id.into()).expect("No users found or dont have any service").to_vec();
     }
 
@@ -597,15 +593,18 @@ pub enum Panic {
 
     #[panic_msg = "Service ID must have a positive quantity and less than 10"]
     InvalidMintAmount { },
+
+    #[panic_msg = "Service ID `{:?}` was not found"]
+    ServiceIdNotFound { service_id: u64 },
+
     /*
     #[panic_msg = "Operation is allowed only for admin"]
     AdminRestrictedOperation,
     #[panic_msg = "Unable to delete Account ID `{}`"]
     NotAuthorized { account_id: AccountId },
-    #[panic_msg = "Service ID `{:?}` was not found"]
-    ServiceIdNotFound { service_id: U64 },
+    
     #[panic_msg = "Service ID `{:?}` does not belong to account `{}`"]
-    ServiceIdNotOwnedBy { service_id: U64, owner_id: AccountId },
+    ServiceIdNotOwnedBy { service_id: u64, owner_id: AccountId },
     #[panic_msg = "Sender `{}` is not authorized to make transfer"]
     SenderNotAuthToTransfer { sender_id: AccountId },
     #[panic_msg = "The service owner and the receiver should be different"]
