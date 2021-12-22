@@ -5,6 +5,7 @@ use near_sdk::collections::{UnorderedMap, LazyOption, Vector, UnorderedSet};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Serialize};
 use near_sdk::json_types::{ValidAccountId};
+use std::fmt::{Debug};
 
 use std::convert::TryFrom;
 
@@ -148,7 +149,7 @@ impl Mediator {
             env::panic(b"Ya paso el tiempo para agregar juez");
         }
         if dispute.judges.len() > MAX_JUDGES as u64 {
-            env::panic(b"No hay espacio para mas juezes");
+            env::panic(b"No hay espacio para mas jueces");
         }
         if !dispute.judges.insert(&sender) {
             env::panic(b"Ya eres un juez");
@@ -259,7 +260,7 @@ mod tests {
 
     #[test]
     fn test1() {
-        let contract_account = "Mediator.near";
+        let contract_account = "mediator.near";
         let applicant = get_account(0);
         let accused = get_account(1);
         let judges = [get_account(2), get_account(3)];
@@ -316,8 +317,11 @@ mod tests {
             testing_env!(context.clone());
             dispute = contract.update_dispute_status(dispute.id.clone());
 
-
             println!("Epoca: {}, estatus: {:#?}, {:?}", context.epoch_height, dispute.dispute_status, dispute.votes.as_vector().to_vec());
         }
+        let winner = dispute.winner.get();
+
+        println!("");
+        println!("The winner is {:?}", winner);
     }
 }
