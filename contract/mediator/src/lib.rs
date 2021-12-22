@@ -1,12 +1,13 @@
 use near_sdk::{
-    env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, PanicOnDefault, EpochHeight, Gas
+    env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, PanicOnDefault, EpochHeight, Gas, PromiseResult
 };
-use near_sdk::collections::{UnorderedMap, LazyOption, Vector, UnorderedSet};
+use near_sdk::collections::{UnorderedMap};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Serialize};
 use near_sdk::json_types::{ValidAccountId};
 
 use std::convert::TryFrom;
+use std::collections::{HashSet};
 
 const YOCTO_NEAR: u128 = 1000000000000000000000000;
 const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
@@ -31,7 +32,7 @@ setup_alloc!();
 pub type DisputeId = u128;
 pub type ServiceAmount = u64;
 
-#[derive(Serialize, BorshDeserialize, BorshSerialize, Debug)]
+#[derive(Serialize, BorshDeserialize, BorshSerialize, Debug, Hash, Eq, PartialOrd, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Vote {
     // Miembro del jurado que emite el voto
@@ -50,7 +51,8 @@ pub enum DisputeStatus {
     Failed
 }
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize)]
+#[serde(crate = "near_sdk::serde")]
 pub struct Dispute {
     // Identificador para cada disputa
     id: DisputeId,
@@ -60,17 +62,17 @@ pub struct Dispute {
     num_of_judges: u8,
 
     // Lista de miembros del jurado y sus respectivos services a retirar
-    judges: UnorderedSet<AccountId>,
-    votes: UnorderedSet<Vote>,
+    judges: HashSet<AccountId>,
+    votes: HashSet<Vote>,
     dispute_status: DisputeStatus,
     initial_epoch_height: EpochHeight, //time
     
     applicant: AccountId, // demandante
     accused: AccountId, // acusado
-    winner: LazyOption<AccountId>,
+    winner: Option<AccountId>,
 
     applicant_proves: String, // Un markdown con todas las pruebas
-    accused_proves: LazyOption<String> // Un markdown con todas las pruebas
+    accused_proves: Option<String> // Un markdown con todas las pruebas
 }
 
 #[near_bindgen]
@@ -106,15 +108,15 @@ impl Mediator {
             id: self.disputes_counter.clone(),
             services_id: services_id.clone(),
             num_of_judges: 0,
-            judges: UnorderedSet::new(unique_prefix(&sender)),
-            votes: UnorderedSet::new(unique_prefix(&sender)),
+            judges: HashSet::new(),
+            votes: HashSet::new(),
             dispute_status: DisputeStatus::Open,
             initial_epoch_height: env::epoch_height(),
             applicant: sender.clone(),
             accused: accused.to_string(),
-            winner: LazyOption::new(unique_prefix(&sender), None),
+            winner: None,
             applicant_proves: proves,
-            accused_proves: LazyOption::new(unique_prefix(&sender), None)
+            accused_proves: None
         };
 
         self.disputes.insert(&self.disputes_counter, &dispute);
@@ -133,7 +135,7 @@ impl Mediator {
             env::panic(b"Usted ya subio pruebas!");
         }
 
-        dispute.accused_proves.set(&accused_proves);
+        dispute.accused_proves.insert(accused_proves);
 
         self.disputes.insert(&dispute_id, &dispute);
 
@@ -147,10 +149,10 @@ impl Mediator {
         if dispute.dispute_status != DisputeStatus::Open {
             env::panic(b"Ya paso el tiempo para agregar juez");
         }
-        if dispute.judges.len() > MAX_JUDGES as u64 {
+        if dispute.judges.len() > MAX_JUDGES as usize {
             env::panic(b"No hay espacio para mas juezes");
         }
-        if !dispute.judges.insert(&sender) {
+        if !dispute.judges.insert(sender) {
             env::panic(b"Ya eres un juez");
         }
 
@@ -165,7 +167,7 @@ impl Mediator {
             env::panic(b"No se puede votar cuando el estarus es distinto de resolviendo");
         }
 
-        if !dispute.votes.insert(&Vote {
+        if !dispute.votes.insert(Vote {
             account: sender.clone(),
             vote: vote
         }) {
@@ -209,10 +211,11 @@ impl Mediator {
             else {
                 dispute.dispute_status = DisputeStatus::Finished;
                 if pro_votes_counter > agains_votes_counter {
-                    dispute.winner.set(&dispute.applicant);
+                    // dispute.winner = Some(dispute.applicant);
+                    dispute.winner = Some(dispute.applicant.clone());
                 }
                 else {
-                    dispute.winner.set(&dispute.accused);
+                    dispute.winner = Some(dispute.accused.clone());
                 }
             }
         }
@@ -224,7 +227,12 @@ impl Mediator {
 
     fn add_judge(&mut self, dispute_id: DisputeId) {
         ext_marketplace::get_users_account_id(&self.marketplace_account_id, NO_DEPOSIT, BASE_GAS).
-        then(ext_self::callback_promise_result(&env::current_account_id(), NO_DEPOSIT, BASE_GAS));  
+        then(ext_self::on_get_users_account_id(&env::current_account_id(), NO_DEPOSIT, BASE_GAS));  
+    }
+
+    #[private]
+    fn on_get_users_account_id(&mut self) {
+        let success = is_promise_success();
     }
 }
 
@@ -234,7 +242,19 @@ pub trait Marketplace {
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn callback_promise_result() -> bool;
+    fn on_get_users_account_id() -> bool;
+}
+
+fn is_promise_success() -> bool {
+    assert_eq!(
+        env::promise_results_count(),
+        1,
+        "Contract expected a result on the callback"
+    );
+    match env::promise_result(0) {
+        PromiseResult::Successful(_) => true,
+        _ => false,
+    }
 }
 
 #[cfg(test)]
@@ -317,7 +337,7 @@ mod tests {
             dispute = contract.update_dispute_status(dispute.id.clone());
 
 
-            println!("Epoca: {}, estatus: {:#?}, {:?}", context.epoch_height, dispute.dispute_status, dispute.votes.as_vector().to_vec());
+            println!("Epoca: {}, estatus: {:#?}, {:?}", context.epoch_height, dispute.dispute_status, dispute.votes);
         }
     }
 }
