@@ -24,7 +24,7 @@ near_sdk::setup_alloc!();
 // const ACCESS_KEY_ALLOWANCE: u128 = 100_000_000_000_000_000_000_000;
 // const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
 
-const USER_MINT_LIMIT: u8 = 15;
+const USER_MINT_LIMIT: u8 = 5;
 const USERS_LIMIT: u16 = u16::MAX;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -45,6 +45,18 @@ pub struct ServiceMetadata {
     pub active: bool,
 }
 
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Category {
+    pub category: String,
+    pub subcategory: String,
+    pub areas: String,
+}
+
+fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
+    option.unwrap_or_else(|| env::panic(message))
+}
+
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Marketplace {
@@ -54,18 +66,10 @@ pub struct Marketplace {
     
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
+    pub mediator_owner: AccountId,
 
     // The storage size in bytes for one account.
     pub extra_storage_in_bytes_per_service: StorageUsage,
-}
-
-
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Category {
-    pub category: String,
-    pub subcategory: String,
-    pub areas: String,
 }
 
 #[near_bindgen]
@@ -76,8 +80,11 @@ impl Marketplace {
     /// * `owner_id`    - La cuenta de mainnet/testnet de quien sera el owner del contrato.
     #[init]
     #[payable]
-    pub fn new(owner_id: ValidAccountId) -> Self {
-        assert!(!env::state_exists(), "Contract already inicialized");
+    pub fn new(owner_id: ValidAccountId, mediator: ValidAccountId) -> Self {
+        if env::state_exists() {
+            env::panic("Contract already inicialized".as_bytes());
+        }
+
         let mut this = Self {
             total_supply: 0,
             services_by_account: LookupMap::new(b"a".to_vec()),
@@ -85,9 +92,12 @@ impl Marketplace {
             users: UnorderedMap::new(b"u".to_vec()),
             contract_owner: owner_id.clone().into(),
             extra_storage_in_bytes_per_service: 0,
+            mediator_owner: mediator.into()
         };
 
-        this.add_user(owner_id, UserRoles::Admin, "Categories { Programer: {Lenguajes: } }".to_string());
+        let mut roles: Vec<UserRoles> = Vec::new();
+        roles.push(UserRoles::Admin);
+        this.add_user(roles, "Categories { Programer: {Lenguajes: } }".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -101,15 +111,19 @@ impl Marketplace {
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
     /// * `active_services`      - La cantidad de services que se desea mintear.
     #[payable]
-    pub fn mint_service(&mut self, metadata: ServiceMetadata, mut _quantity: u8) -> Service {
+    pub fn mint_service(&mut self, metadata: ServiceMetadata) -> Service {
         let sender_id = env::predecessor_account_id();
         let user = self.update_user_mint(); // cantidad de servicios
         let owner_id = user.account_id;
 
         //Verificar que sea un profesional
-        let is_professional = user.roles.get(&UserRoles::Professional).is_none();
-        let is_admin = user.roles.get(&UserRoles::Admin).is_none();
-        assert_eq!(is_professional || is_admin, true, "Only professional can mint a service");
+        let is_professional = user.roles.get(&UserRoles::Professional).is_some();
+        let is_admin = user.roles.get(&UserRoles::Admin).is_some();
+        
+
+        if !is_professional || !is_admin {
+            env::panic("Only professional can mint a service".as_bytes());
+        }
 
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
@@ -126,16 +140,16 @@ impl Marketplace {
             .get(&sender_id)
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender_id)));
 
-        for _i in 0 .. _quantity {
+        for _i in 0 .. USER_MINT_LIMIT {
             service.metadata.active = true;
             // if quantity != 0 {
             //     service.metadata.active = true;
             //     quantity -= 1;
             // }
-            assert!(
-                self.services_by_id.insert(&self.total_supply, &service).is_none(),
-                "Service already exists"
-            );
+
+            if self.services_by_id.insert(&self.total_supply, &service).is_some() {
+                env::panic("Service already exists".as_bytes());
+            }
 
             services_set.insert(&self.total_supply);
             
@@ -161,33 +175,32 @@ impl Marketplace {
     pub fn buy_service(&mut self, service_id: u64) -> Service {
         // Verificar que el servicio exista
         let _service_id = service_id;
-        assert_eq!(
-            _service_id < self.total_supply, true,
-            "The indicated ServiceID doesn't exist"
-        );
+        if _service_id > self.total_supply {
+            env::panic("The indicated ServiceID doesn't exist".as_bytes());
+        }
+
         let mut service = self.get_service_by_id(service_id.clone());
         // Si no cuenta con los fondos se hace rollback
-        assert_eq!(
-            service.metadata.active, true,
-            "The service is not on sale"
-        );
+        if !service.metadata.active {
+            env::panic("The service is not on sale".as_bytes())
+        }
+
         let amount = env::attached_deposit() / YOCTO_NEAR;
-        assert_eq!(
-            service.metadata.price as u128, amount,
-            "Fondos insuficientes"
-        );
-        
+        if (service.metadata.price as u128) < amount {
+            env::panic("Fondos insuficientes".as_bytes());
+        }        
+
         let buyer_id = string_to_valid_account_id(&env::predecessor_account_id());
         let buyer = self.get_user(buyer_id.clone());
 
-        assert_eq!(
-            buyer.roles.get(&UserRoles::Admin).is_some() || buyer.roles.get(&UserRoles::Employeer).is_some(),
-            true,
-            "Only employers can buy services"
-        );
+        if buyer.roles.get(&UserRoles::Admin).is_none() || buyer.roles.get(&UserRoles::Employeer).is_none() {
+            env::panic("Only employers can buy services".as_bytes());
+        }
         
         let owner_id = service.owner_id.clone();
-        assert_eq!(buyer.account_id == owner_id, false, "Already is the service owner");
+        if buyer.account_id == owner_id {
+            env::panic("Already is the service owner".as_bytes());
+        }
 
         env::log(
             format!(
@@ -225,9 +238,9 @@ impl Marketplace {
     pub fn update_service_metadata(&self, service_id: u64, metadata: ServiceMetadata) -> Service {
         // Verificar que el servicio exista
         let _service_id = service_id;
-        assert_eq!( _service_id < self.total_supply, true,
-            "The indicated ServiceID doesn't exist"
-        );
+        if _service_id > self.total_supply {
+            env::panic("The indicated ServiceID doesn't exist".as_bytes());
+        }
 
         let mut service = self.get_service_by_id(service_id.clone());
 
@@ -236,10 +249,9 @@ impl Marketplace {
         let sender = self.get_user(sender_id.clone());
         let owner = service.owner_id.clone();
         let owner_id = string_to_valid_account_id(&owner);
-        assert_eq!(
-            (sender_id == owner_id) || sender.roles.get(&UserRoles::Admin).is_some(), true,
-            "Only the creator or admins can change metadata services"
-        );
+        if (sender_id != owner_id) || sender.roles.get(&UserRoles::Admin).is_none() {
+            env::panic("Only the creator or admins can change metadata services".as_bytes());
+        }
 
         // Insertar nueva metadata
         service.metadata = metadata;
@@ -262,10 +274,9 @@ impl Marketplace {
         let is_admin = user.roles.get(&UserRoles::Admin).is_some();
         let is_owner = service.owner_id == sender;
 
-        assert_eq!(
-            is_admin || is_owner, true,
-            "Only the owner or admin can desactivate the service"
-        );
+        if is_admin || !is_owner {
+            env::panic("Only the owner or admin can desactivate the service".as_bytes());
+        }
 
         service.metadata.active = active;
         self.services_by_id.insert(&service_id, &service);
@@ -278,24 +289,22 @@ impl Marketplace {
     pub fn give_back_service(&mut self, service_id: u64) -> Service {
         // Verificar que el servicio exista
         let _service_id = service_id;
-        assert_eq!(
-            _service_id < self.total_supply, true,
-            "The indicated ServiceID doesn't exist"
-        );
+        if _service_id > self.total_supply {
+            env::panic("The indicated ServiceID doesn't exist".as_bytes());
+        }
 
         let mut service = self.get_service_by_id(service_id.clone());
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         let sender = self.get_user(sender_id.clone());
-        assert_eq!(
-            sender.roles.get(&UserRoles::Admin).is_some(), true,
-            "Only admins can give back the services"
-        );
+        if sender.roles.get(&UserRoles::Admin).is_some() {
+            env::panic("Only admins can give back the services".as_bytes());
+        }
 
         self.delete_service(&service_id, &sender.account_id);
         self.add_service(&service_id, &service.owner_id);
 
-        // Modificar la metadata del servicio
+        // Modificar la metadata del serviciopay_to_emplee
         service.actual_employer_account_id = None;
         self.services_by_id.insert(&service_id, &service);
 
@@ -314,7 +323,7 @@ impl Marketplace {
 
     #[private]
     fn delete_service(&mut self, service_id: &u64, account_id: &String) {
-        let mut services_set = self.services_by_account.get(account_id).expect("Service should be owned by the sender");
+        let mut services_set = expect_value_found(self.services_by_account.get(account_id), "Service should be owned by the sender".as_bytes());
         services_set.remove(service_id);
         self.services_by_account.insert(&account_id, &services_set);
     }
@@ -322,7 +331,7 @@ impl Marketplace {
     /// #Arguments
     /// * `service_id`
     pub fn get_service_by_id(&self, service_id: u64) -> Service {
-        return self.services_by_id.get(&service_id.into()).expect("No users found. Register the user first");
+        return expect_value_found(self.services_by_id.get(&service_id.into()), "No users found. Register the user first".as_bytes());
     }
 
     // TODO(Sebas): Optimizar con colocar un limite
@@ -351,22 +360,21 @@ impl Marketplace {
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
-    pub fn add_user(&mut self, account_id: ValidAccountId, role: UserRoles, categories: String) -> User {
-        self.admin_assert(&env::predecessor_account_id());
+    pub fn add_user(&mut self, roles: Vec<UserRoles>, categories: String) -> User {
 
         if self.users.len() >= USERS_LIMIT as u64 {
             env::panic(b"Users amount over limit");
         }
 
-        let s_account_id: AccountId = account_id.into();
-        let services_set = UnorderedSet::new(unique_prefix(&s_account_id));
-        self.services_by_account.insert(&s_account_id, &services_set);
+        let account_id: AccountId = env::predecessor_account_id();
+        let services_set = UnorderedSet::new(unique_prefix(&account_id));
+        self.services_by_account.insert(&account_id, &services_set);
 
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut new_user = User{
-            account_id: s_account_id.clone(),
+            account_id: account_id.clone(),
             mints: false,
             roles: HashSet::new(),
             rep: 0,
@@ -374,9 +382,12 @@ impl Marketplace {
             links: None,
             education: None, 
         };
-        new_user.roles.insert(role);
 
-        if self.users.insert(&s_account_id, &new_user).is_some() {
+        for r in roles.iter() {
+            new_user.roles.insert(*r);
+        }
+
+        if self.users.insert(&account_id, &new_user).is_some() {
             env::panic(b"User account already added");
         }
 
@@ -386,7 +397,7 @@ impl Marketplace {
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
-        deposit_refund_to(required_storage_in_bytes, s_account_id);
+        deposit_refund_to(required_storage_in_bytes, account_id);
 
         return new_user
     }
@@ -454,14 +465,13 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user(&self, account_id: ValidAccountId) -> User {
-        self.users.get(&account_id.into()).expect("No users found. Register the user first")
+        return expect_value_found(self.users.get(&account_id.into()), "No users found. Register the user first".as_bytes())
     }
 
     // TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_users_by_role(&self, role: UserRoles) -> Vec<User> {
-
         let mut users: Vec<User> = Vec::new();
         for (_account_id, user) in self.users.iter() {
             if user.roles.get(&role).is_some() {
@@ -478,7 +488,7 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<u64> {
-        return self.services_by_account.get(&account_id.into()).expect("No users found or dont have any service").to_vec();
+        return expect_value_found(self.services_by_account.get(&account_id.into()), "No users found or dont have any service".as_bytes()).to_vec();
     }
 
     /// Obtener los service y sus metadata de un usuario
@@ -490,7 +500,7 @@ impl Marketplace {
         let mut services: Vec<Service> = Vec::new();
         let services_id = self.get_user_services_id(account_id.clone());
         for i in 0 .. services_id.len() {
-            let service = self.services_by_id.get(&services_id[i]).expect("Service id dont match");
+            let service = expect_value_found(self.services_by_id.get(&services_id[i]), "Service id dont match".as_bytes());
             if only_active {
                 if service.metadata.active {
                     services.push( service ); 
@@ -505,6 +515,22 @@ impl Marketplace {
 
     pub fn get_total_supply(&self) -> u64 {
         self.total_supply
+    }
+
+    #[allow(unused_variables)]
+    pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
+        if amount > 10 {
+            env::panic(b"No se puede pedir mas de 10");
+        }
+        let users = self.get_users_by_role(UserRoles::Jugde);
+        if amount as usize > users.len() {
+            env::panic(b"La cantidad pedida es mayor a la existente");
+        }
+        return users
+            .iter()
+            .take(amount as usize)
+            .map(|x| x.account_id.clone())
+            .collect();
     }
 
     #[private]
@@ -526,11 +552,11 @@ impl Marketplace {
     #[private]
     fn update_user_mint(&mut self) -> User {
         let sender_id = env::predecessor_account_id();
-        let mut user = self.users.get(&sender_id).expect("Before mint a nft, create an user");
-        assert!(
-            user.mints == false,
-            "Exceeded user mint limit {}", USER_MINT_LIMIT
-        );
+        let mut user = expect_value_found(self.users.get(&sender_id), "Before mint a nft, create an user".as_bytes());
+        if user.mints == true {
+            env::panic(format!("Exceeded user mint limit {}", USER_MINT_LIMIT).as_bytes());
+        }
+
         user.mints = true;
         self.users.insert(&sender_id, &user);
         return user
@@ -541,8 +567,11 @@ impl Marketplace {
 
     /// Verificar que sea el admin
     #[private]
+    #[allow(dead_code)]
     fn admin_assert(&self, account_id: &AccountId) {
-        assert_eq!(*account_id, self.contract_owner, "Must be owner_id how call its function");
+        if *account_id != self.contract_owner {
+            env::panic("Must be owner_id how call its function".as_bytes())
+        }
     }
 
     // #[private]
@@ -639,7 +668,7 @@ mod tests {
         let mut context = get_context(false);
         context.attached_deposit = 58700000000000000000000;
         testing_env!(context.clone());
-        let marketplace = Marketplace::new(admin_id.clone());
+        let marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
 
         let admin: User = marketplace.get_user(admin_id.clone());
 
@@ -661,14 +690,14 @@ mod tests {
         context.attached_deposit = 58700000000000000000000;
         context.predecessor_account_id = accounts(1).to_string();
         testing_env!(context);
-        let mut marketplace = Marketplace::new(admin_id.clone());
+        let mut marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
 
         let jose_service = marketplace.mint_service(ServiceMetadata {
             fullname: "Jose Antoio".to_string(),
             profile_photo_url: "Jose_Antoio.png".to_string(),
             price: 10,
             active: false,
-        }, 3);
+        });
 
         let admin: User = marketplace.get_user(admin_id.clone());
         let actives_services = marketplace.get_user_services(admin_id, true);
