@@ -33,7 +33,7 @@ pub(crate) fn deposit_refund(storage_used: u64) {
 }
 
 pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
-    let required_cost = STORAGE_PRICE_PER_BYTE * Balance::from(storage_used);
+    let required_cost = env::storage_byte_cost() * Balance::from(storage_used);
     let attached_deposit = env::attached_deposit();
 
     assert!(

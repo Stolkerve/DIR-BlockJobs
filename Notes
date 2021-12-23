@@ -2,9 +2,9 @@ source ./deploy.sh
 source ./clear.sh
 npx tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch
 
-near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID --amount 0.03
+near call $ID new '{"owner_id": "'$ID'", "mediator": "mediator.near"}' --accountId $ID --amount 0.03
 
-near call $ID add_user '{"account_id": "'$ID2'", "role": "Professional", "categories": "hola"}' --accountId $ID --amount 0.03
+near call $ID add_user '{"roles": ["Professional"], "categories": "hola"}' --accountId $ID2 --amount 0.03
 
 near call $ID update_user_categories '{"account_id": "'$ID2'", "categories": "hola2"}' --accountId $ID
 
