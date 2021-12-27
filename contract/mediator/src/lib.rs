@@ -249,12 +249,19 @@ impl Mediator {
             else {
                 dispute.dispute_status = DisputeStatus::Finished;
                 if pro_votes_counter > agains_votes_counter {
-                    // dispute.winner = Some(dispute.applicant);
                     dispute.winner = Some(dispute.applicant.clone());
                 }
                 else {
                     dispute.winner = Some(dispute.accused.clone());
                 }
+
+                let _res = ext_marketplace::give_back_service(
+                    dispute.services_id,
+                    &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
+                .then(ext_self::on_give_back_service(
+                    dispute.services_id,
+                    &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+                );
             }
         }
 
@@ -263,7 +270,7 @@ impl Mediator {
         return dispute;
     }
 //near call $id new_dispute '{"services_id": 0, "accused": "stolkerv.testnet", "proves": "asdasd"}' --accountId stolkerve.testnet --amount 0.1 --gas 300000000000000
-    fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
+    pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
         assert_eq!(
             env::promise_results_count(),
             1,
@@ -302,15 +309,32 @@ impl Mediator {
             PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
+
+    pub fn on_give_back_service(service_id: u64) {
+        assert_eq!(
+            env::promise_results_count(),
+            1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(data) => {
+                env::log(b"Token devuelto :)");
+            },
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
 }
 
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
     fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>);
+    fn give_back_service(service_id: u64);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
+    fn on_give_back_service(service_id: u64);
 }
 
 #[cfg(test)]
