@@ -1,0 +1,10 @@
+source test.sh
+source deploy.sh
+
+./build
+near dev-deploy ../../out/ft.wasm
+
+IDFT=
+
+near call $IDFT new_default_meta '{"owner_id": "'$IDFT'", "total_supply": 1000}' --accountId $IDFT --amount 0.01
+
