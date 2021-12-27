@@ -269,6 +269,7 @@ impl Mediator {
 
         return dispute;
     }
+
 //near call $id new_dispute '{"services_id": 0, "accused": "stolkerv.testnet", "proves": "asdasd"}' --accountId stolkerve.testnet --amount 0.1 --gas 300000000000000
     pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
         assert_eq!(

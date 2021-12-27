@@ -1,4 +1,3 @@
-
 source build.sh
 
 near dev-deploy ../../out/mediator.wasm
