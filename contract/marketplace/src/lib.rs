@@ -298,6 +298,7 @@ impl Marketplace {
         let mut service = self.get_service_by_id(service_id.clone());
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
         if sender.roles.get(&UserRoles::Admin).is_some() {
             env::panic("Only admins can give back the services".as_bytes());
