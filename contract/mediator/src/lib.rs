@@ -277,7 +277,7 @@ impl Mediator {
     }
 
     fn add_judge(&mut self, dispute: &Dispute) {
-        let res = ext_marketplace::get_random_users_account_by_role_jugde(
+        let _res = ext_marketplace::get_random_users_account_by_role_jugde(
             2, vec!(),
             &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
         .then(ext_self::on_get_random_users_account_by_role_jugde(dispute.clone(), &env::current_account_id(), NO_DEPOSIT, BASE_GAS));
@@ -404,7 +404,7 @@ mod tests {
             println!("Epoca: {}, estatus: {:#?}, {:?}", context.block_timestamp, dispute.dispute_status, dispute.votes);
 
         }
-        let winner = dispute.winner.expect("Bebe haber un ganador");
+        let winner = dispute.winner.expect("Debe haber un ganador");
 
         println!("");
         println!("The winner is {:?}", winner);
