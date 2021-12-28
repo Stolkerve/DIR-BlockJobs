@@ -9,13 +9,13 @@ cd contract
 cd ..
 
 #echo "Deployando el contrato del token"
-#near dev-deploy out/ft.wasm
+#near dev-deploy contract/out/ft.wasm
 
 echo "Deployando el contrato de marketplace"
-near dev-deploy out/marketplace.wasm
+near dev-deploy contract/out/marketplace.wasm
 
 #echo "Deployando el contrato de mediator"
-#near dev-deploy out/mediator.wasm
+#near dev-deploy contract/out/mediator.wasm
 
 echo "Exportanto la cuenta de test a la variable ID"
 
