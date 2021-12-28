@@ -298,6 +298,7 @@ impl Marketplace {
         let mut service = self.get_service_by_id(service_id.clone());
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
         if sender.roles.get(&UserRoles::Admin).is_some() {
             env::panic("Only admins can give back the services".as_bytes());
@@ -653,131 +654,131 @@ pub enum Panic {
     */
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use near_sdk::MockedBlockchain;
-    use near_sdk::test_utils::{VMContextBuilder, accounts};
-    use near_sdk::{testing_env, VMContext};
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use near_sdk::MockedBlockchain;
+//     use near_sdk::test_utils::{VMContextBuilder, accounts};
+//     use near_sdk::{testing_env, VMContext};
 
-    fn get_context(is_view: bool) -> VMContext {
-        VMContextBuilder::new()
-            .signer_account_id(accounts(1))
-            .predecessor_account_id(accounts(2))
-            .attached_deposit(100000000000000000)
-            .is_view(is_view)
-            .build()
-    }
+//     fn get_context(is_view: bool) -> VMContext {
+//         VMContextBuilder::new()
+//             .signer_account_id(accounts(1))
+//             .predecessor_account_id(accounts(2))
+//             .attached_deposit(100000000000000000)
+//             .is_view(is_view)
+//             .build()
+//     }
 
-    #[test]
-    fn test_basic() {
-        let admin_id = string_to_valid_account_id(&accounts(1).to_string());
-        let mut context = get_context(false);
-        context.attached_deposit = 58700000000000000000000;
-        testing_env!(context.clone());
-        let marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
+//     #[test]
+//     fn test_basic() {
+//         let admin_id = string_to_valid_account_id(&accounts(1).to_string());
+//         let mut context = get_context(false);
+//         context.attached_deposit = 58700000000000000000000;
+//         testing_env!(context.clone());
+//         let marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
 
-        let admin: User = marketplace.get_user(admin_id.clone());
+//         let admin: User = marketplace.get_user(admin_id.clone());
 
-        // Verificar que el admin sea creado correctamente
-        assert_eq!(
-            (admin.mints == false) &&
-            (admin.account_id == admin_id.to_string()) &&
-            (admin.roles.get(&UserRoles::Admin).is_some()) &&
-            (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun service
-            ,
-            true
-        );
-    }
-    #[test]
+//         // Verificar que el admin sea creado correctamente
+//         assert_eq!(
+//             (admin.mints == false) &&
+//             (admin.account_id == admin_id.to_string()) &&
+//             (admin.roles.get(&UserRoles::Admin).is_some()) &&
+//             (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun service
+//             ,
+//             true
+//         );
+//     }
+//     #[test]
 
-    fn test_mint() {
-        let mut context = get_context(false);
-        let admin_id = string_to_valid_account_id(&accounts(1).to_string());
-        context.attached_deposit = 58700000000000000000000;
-        context.predecessor_account_id = accounts(1).to_string();
-        testing_env!(context);
-        let mut marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
+//     fn test_mint() {
+//         let mut context = get_context(false);
+//         let admin_id = string_to_valid_account_id(&accounts(1).to_string());
+//         context.attached_deposit = 58700000000000000000000;
+//         context.predecessor_account_id = accounts(1).to_string();
+//         testing_env!(context);
+//         let mut marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
 
-        let jose_service = marketplace.mint_service(ServiceMetadata {
-            fullname: "Jose Antoio".to_string(),
-            profile_photo_url: "Jose_Antoio.png".to_string(),
-            price: 10,
-            active: false,
-        });
+//         let jose_service = marketplace.mint_service(ServiceMetadata {
+//             fullname: "Jose Antoio".to_string(),
+//             profile_photo_url: "Jose_Antoio.png".to_string(),
+//             price: 10,
+//             active: false,
+//         });
 
-        let admin: User = marketplace.get_user(admin_id.clone());
-        let actives_services = marketplace.get_user_services(admin_id, true);
+//         let admin: User = marketplace.get_user(admin_id.clone());
+//         let actives_services = marketplace.get_user_services(admin_id, true);
 
-        assert_eq!(
-            (admin.roles.get(&UserRoles::Admin).is_some()) &&
-            actives_services.len() == 3 &&
-            admin.mints == true
-            ,
-            true
-        );  
+//         assert_eq!(
+//             (admin.roles.get(&UserRoles::Admin).is_some()) &&
+//             actives_services.len() == 3 &&
+//             admin.mints == true
+//             ,
+//             true
+//         );  
 
-        // let user2 = marketplace.add_user(
-        //     "maria.testnet".to_string(),
-        //     UserRoles::Professional, vec!(category2, category3)
-        // );
-        // context.attached_deposit = 58700000000000000000000;
-        // testing_env!(context);
-        // marketplace.mint_service(ServiceMetadata {
-        //     fullname: "Maria Jose".to_string(),
-        //     profile_photo_url: "Maria_Jose.png".to_string(),
-        //     price: 10,
-        //     active: true,
-        // }, 3);
+//         // let user2 = marketplace.add_user(
+//         //     "maria.testnet".to_string(),
+//         //     UserRoles::Professional, vec!(category2, category3)
+//         // );
+//         // context.attached_deposit = 58700000000000000000000;
+//         // testing_env!(context);
+//         // marketplace.mint_service(ServiceMetadata {
+//         //     fullname: "Maria Jose".to_string(),
+//         //     profile_photo_url: "Maria_Jose.png".to_string(),
+//         //     price: 10,
+//         //     active: true,
+//         // }, 3);
 
-        // let user3 = marketplace.add_user(
-        //     "ed.testnet".to_string(),
-        //     UserRoles::Professional, vec!(category4)
-        // );
-        // context.attached_deposit = 58700000000000000000000;
-        // testing_env!(context);
-        // marketplace.mint_service(ServiceMetadata {
-        //     fullname: "Ed Robet".to_string(),
-        //     profile_photo_url: "Ed_Robet.png".to_string(),
-        //     price: 10,
-        //     active: true,
-        // }, 1);
-    }
+//         // let user3 = marketplace.add_user(
+//         //     "ed.testnet".to_string(),
+//         //     UserRoles::Professional, vec!(category4)
+//         // );
+//         // context.attached_deposit = 58700000000000000000000;
+//         // testing_env!(context);
+//         // marketplace.mint_service(ServiceMetadata {
+//         //     fullname: "Ed Robet".to_string(),
+//         //     profile_photo_url: "Ed_Robet.png".to_string(),
+//         //     price: 10,
+//         //     active: true,
+//         // }, 1);
+//     }
 
-    // #[test]
-    // fn test_user() {
-    //     let mut context = get_context(false);
-    //     let admin_id = accounts(1).to_string();
-    //     context.attached_deposit = 58700000000000000000000;
-    //     context.predecessor_account_id = admin_id.clone();
-    //     testing_env!(context);
-    //     let mut marketplace = Marketplace::new(admin_id.clone());
+//     // #[test]
+//     // fn test_user() {
+//     //     let mut context = get_context(false);
+//     //     let admin_id = accounts(1).to_string();
+//     //     context.attached_deposit = 58700000000000000000000;
+//     //     context.predecessor_account_id = admin_id.clone();
+//     //     testing_env!(context);
+//     //     let mut marketplace = Marketplace::new(admin_id.clone());
 
-    //     // let mut context = get_context(false);
-    //     // context.attached_deposit = 58700000000000000000000;
-    //     // context.predecessor_account_id = accounts(2).to_string();
-    //     // testing_env!(context);
+//     //     // let mut context = get_context(false);
+//     //     // context.attached_deposit = 58700000000000000000000;
+//     //     // context.predecessor_account_id = accounts(2).to_string();
+//     //     // testing_env!(context);
 
-    //     let user_id = "andres.testnet";
-    //     marketplace.add_user(
-    //         user_id.to_string(),
-    //         UserRoles::Professional,
-    //         vec!(generate_category1())
-    //     );
+//     //     let user_id = "andres.testnet";
+//     //     marketplace.add_user(
+//     //         user_id.to_string(),
+//     //         UserRoles::Professional,
+//     //         vec!(generate_category1())
+//     //     );
 
-    //     assert_eq!(
-    //         true,
-    //         true
-    //     );
-    // }
+//     //     assert_eq!(
+//     //         true,
+//     //         true
+//     //     );
+//     // }
 
-    #[test]
-    fn test_roles() {
+//     #[test]
+//     fn test_roles() {
 
-    }
+//     }
 
-    #[test]
-    fn test_categories() {
+//     #[test]
+//     fn test_categories() {
 
-    }
-}
+//     }
+// }
