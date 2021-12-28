@@ -3,9 +3,10 @@ use near_contract_standards::fungible_token::metadata::{
 };
 use near_contract_standards::fungible_token::FungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::LazyOption;
+use near_sdk::collections::{LazyOption, LookupMap};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
+use std::convert::TryFrom;
 
 near_sdk::setup_alloc!();
 
@@ -16,6 +17,7 @@ pub struct Token {
     metadata: LazyOption<FungibleTokenMetadata>,
     pub owner: ValidAccountId,
     pub minters: Vec<AccountId>,
+    allowance: LookupMap<AccountId, Balance>,
 }
 
 const DATA_IMAGE_SVG_NEAR_ICON: &str = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 288 288'%3E%3Cg id='l' data-name='l'%3E%3Cpath d='M187.58,79.81l-30.1,44.69a3.2,3.2,0,0,0,4.75,4.2L191.86,103a1.2,1.2,0,0,1,2,.91v80.46a1.2,1.2,0,0,1-2.12.77L102.18,77.93A15.35,15.35,0,0,0,90.47,72.5H87.34A15.34,15.34,0,0,0,72,87.84V201.16A15.34,15.34,0,0,0,87.34,216.5h0a15.35,15.35,0,0,0,13.08-7.31l30.1-44.69a3.2,3.2,0,0,0-4.75-4.2L96.14,186a1.2,1.2,0,0,1-2-.91V104.61a1.2,1.2,0,0,1,2.12-.77l89.55,107.23a15.35,15.35,0,0,0,11.71,5.43h3.13A15.34,15.34,0,0,0,216,201.16V87.84A15.34,15.34,0,0,0,200.66,72.5h0A15.35,15.35,0,0,0,187.58,79.81Z'/%3E%3C/g%3E%3C/svg%3E";
@@ -55,6 +57,7 @@ impl Token {
             metadata: LazyOption::new(b"m".to_vec(), Some(&metadata)),
             minters: vec![owner_id.to_string()],
             owner: owner_id.clone(),
+            allowance: LookupMap::new(b"a".to_vec()),
         };
         this.token.internal_register_account(owner_id.as_ref());
         this.token.internal_deposit(owner_id.as_ref(), total_supply.into());
@@ -70,10 +73,9 @@ impl Token {
         self.mint_into(&receiver.to_string(), quantity.0)
     }
 
-    // #[payable]
     pub fn add_minter(&mut self, account_id: AccountId) {
-        // self.assert_one_yocto();
         self.assert_owner();
+
         if let Some(_) = self.minters.iter().position(|x| *x == account_id) {
             //found
             panic!("Already in the list");
@@ -81,10 +83,9 @@ impl Token {
         self.minters.push(account_id);
     }
 
-    //#[payable]
     pub fn remove_minter(&mut self, account_id: &AccountId) {
-        // self.assert_one_yocto();
         self.assert_owner();
+
         if let Some(inx) = self.minters.iter().position(|x| x == account_id) {
             //found
             let _removed = self.minters.swap_remove(inx);
@@ -92,6 +93,36 @@ impl Token {
             panic!("Not a minter")
         }
     }
+
+    pub fn block_tokens(&mut self, amount: Balance) -> Balance {
+        let sender = env::signer_account_id();
+        let contract = self.owner.clone();
+        self.ft_transfer(contract, amount.into(), None);
+
+        self.allowance.insert(&sender, &amount);
+        let allow = self.allowance.get(&sender).unwrap_or(0);
+        allow
+    }
+
+    pub fn withdraw_tokens(&mut self, amount: Balance) -> Balance {
+        let sender = env::signer_account_id();
+        let sender_id = ValidAccountId::try_from(sender.clone()).unwrap();
+
+        if self.allowance.get(&sender) >= Some(amount) {
+            self.ft_transfer(sender_id, amount.into(), None)
+        };
+
+        let allow = self.allowance.get(&sender).unwrap_or(0);
+
+        self.allowance.insert(&sender, &(allow - amount));
+
+        allow
+    }
+
+    // pub fn set_mediator(&self, mediator_account_id: AccountId) {
+    //     self.assert_owner();
+    //     &self.mediator = &mediator_account_id;
+    // }
 
     /*** 
      * GET FUNCTIONS 
@@ -101,18 +132,22 @@ impl Token {
         self.token.total_supply
     }
 
+    pub fn ft_get_balance_of(&self, account_id: &AccountId) -> Balance {
+        self.token.accounts.get(&account_id).unwrap_or(0)
+    }
+
+    pub fn ft_get_minters(self) -> Vec<AccountId> {
+        self.minters
+    }
+
     /*** 
      * PRIVATE FUNCTIONS 
     ***/
 
     fn mint_into(&mut self, account_id: &AccountId, amount: Balance) {
-        let balance = self.internal_unwrap_balance_of(account_id);
+        let balance = self.ft_get_balance_of(account_id);
         self.internal_update_account(&account_id, balance + amount);
         self.token.total_supply += amount;
-    }
-
-    fn internal_unwrap_balance_of(&self, account_id: &AccountId) -> Balance {
-        self.token.accounts.get(&account_id).unwrap_or(0)
     }
 
     fn internal_update_account(&mut self, account_id: &AccountId, balance: u128) {
