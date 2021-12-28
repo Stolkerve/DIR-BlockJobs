@@ -338,96 +338,96 @@ pub trait ExtSelf {
     fn on_give_back_service(service_id: u64);
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use near_sdk::test_utils::{VMContextBuilder, accounts};
-    use near_sdk::MockedBlockchain;
-    use near_sdk::{testing_env, VMContext};
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+//     use near_sdk::test_utils::{VMContextBuilder, accounts};
+//     use near_sdk::MockedBlockchain;
+//     use near_sdk::{testing_env, VMContext};
 
-    fn get_context(is_view: bool) -> VMContext {
-        VMContextBuilder::new()
-            .signer_account_id(accounts(1))
-            .predecessor_account_id(accounts(2))
-            .attached_deposit(100000000000000000)
-            .is_view(is_view)
-            .build()
-    }
+//     fn get_context(is_view: bool) -> VMContext {
+//         VMContextBuilder::new()
+//             .signer_account_id(accounts(1))
+//             .predecessor_account_id(accounts(2))
+//             .attached_deposit(100000000000000000)
+//             .is_view(is_view)
+//             .build()
+//     }
 
-    fn get_account(id: usize) -> String {
-        return accounts(id).to_string()
-    }
+//     fn get_account(id: usize) -> String {
+//         return accounts(id).to_string()
+//     }
 
-    #[test]
-    fn test1() {
-        let contract_account = "mediator.near";
-        let applicant = get_account(0);
-        let accused = get_account(1);
-        let judges = [get_account(2), get_account(3)];
+//     #[test]
+//     fn test1() {
+//         let contract_account = "mediator.near";
+//         let applicant = get_account(0);
+//         let accused = get_account(1);
+//         let judges = [get_account(2), get_account(3)];
 
-        let mut context = get_context(false);
-        context.attached_deposit = 58700000000000000000000;
-        context.epoch_height = 0;
-        context.predecessor_account_id = applicant.clone();
-        context.block_timestamp = 1640283546;
-        context.current_account_id = contract_account.to_string();
-        testing_env!(context);
+//         let mut context = get_context(false);
+//         context.attached_deposit = 58700000000000000000000;
+//         context.epoch_height = 0;
+//         context.predecessor_account_id = applicant.clone();
+//         context.block_timestamp = 1640283546;
+//         context.current_account_id = contract_account.to_string();
+//         testing_env!(context);
 
-        let mut contract = Mediator::new("marketplace.near".to_string());
-        let mut dispute = contract.new_dispute_test(2, string_to_valid_account_id(&"employer".to_string()), "Prueba en markdown".to_string());
+//         let mut contract = Mediator::new("marketplace.near".to_string());
+//         let mut dispute = contract.new_dispute_test(2, string_to_valid_account_id(&"employer".to_string()), "Prueba en markdown".to_string());
 
-        let mut context = get_context(false);
-        context.attached_deposit = 58700000000000000000000;
-        context.block_timestamp = 1640283546 + ONE_DAY;
-        context.epoch_height = 0;
-        context.predecessor_account_id = judges[0].clone();
-        context.current_account_id = contract_account.to_string();
-        testing_env!(context);
-        contract.add_judge_test(dispute.id.clone());
+//         let mut context = get_context(false);
+//         context.attached_deposit = 58700000000000000000000;
+//         context.block_timestamp = 1640283546 + ONE_DAY;
+//         context.epoch_height = 0;
+//         context.predecessor_account_id = judges[0].clone();
+//         context.current_account_id = contract_account.to_string();
+//         testing_env!(context);
+//         contract.add_judge_test(dispute.id.clone());
 
-        let mut context = get_context(false);
-        context.attached_deposit = 58700000000000000000000;
-        context.epoch_height = 0;
-        context.block_timestamp = 1640283546 + (ONE_DAY * 2);
-        context.predecessor_account_id = judges[1].clone();
-        context.current_account_id = contract_account.to_string();
-        testing_env!(context);
-        contract.add_judge_test(dispute.id.clone());
+//         let mut context = get_context(false);
+//         context.attached_deposit = 58700000000000000000000;
+//         context.epoch_height = 0;
+//         context.block_timestamp = 1640283546 + (ONE_DAY * 2);
+//         context.predecessor_account_id = judges[1].clone();
+//         context.current_account_id = contract_account.to_string();
+//         testing_env!(context);
+//         contract.add_judge_test(dispute.id.clone());
 
-        let mut context = get_context(false);
-        context.attached_deposit = 58700000000000000000000;
-        context.epoch_height = 0;
-        context.block_timestamp = 1640283546 + (ONE_DAY * 2);
-        context.predecessor_account_id = accused.clone();
-        context.current_account_id = contract_account.to_string();
-        testing_env!(context);
-        contract.add_accused_proves(dispute.id.clone(), "Markdown accused proves".to_string());
+//         let mut context = get_context(false);
+//         context.attached_deposit = 58700000000000000000000;
+//         context.epoch_height = 0;
+//         context.block_timestamp = 1640283546 + (ONE_DAY * 2);
+//         context.predecessor_account_id = accused.clone();
+//         context.current_account_id = contract_account.to_string();
+//         testing_env!(context);
+//         contract.add_accused_proves(dispute.id.clone(), "Markdown accused proves".to_string());
 
-        let max_epochs = 26;
-        let mut judges_votes = 0;
-        for i in 2..max_epochs {
-            let mut context = get_context(false);
-            if dispute.dispute_status == DisputeStatus::Resolving && judges_votes < 2{
-                context.predecessor_account_id = judges[judges_votes].clone();
-                contract.vote(dispute.id.clone(), true); //judges_votes != 0
-                judges_votes += 1;
-            }
-            else {
-                context.predecessor_account_id = applicant.clone();
-            }
-            context.attached_deposit = 58700000000000000000000;
-            context.epoch_height = i;
-            context.current_account_id = contract_account.to_string();
-            context.block_timestamp = 1640283546 + (ONE_DAY * i);
-            testing_env!(context.clone());
-            dispute = contract.update_dispute_status(dispute.id.clone());
+//         let max_epochs = 26;
+//         let mut judges_votes = 0;
+//         for i in 2..max_epochs {
+//             let mut context = get_context(false);
+//             if dispute.dispute_status == DisputeStatus::Resolving && judges_votes < 2{
+//                 context.predecessor_account_id = judges[judges_votes].clone();
+//                 contract.vote(dispute.id.clone(), true); //judges_votes != 0
+//                 judges_votes += 1;
+//             }
+//             else {
+//                 context.predecessor_account_id = applicant.clone();
+//             }
+//             context.attached_deposit = 58700000000000000000000;
+//             context.epoch_height = i;
+//             context.current_account_id = contract_account.to_string();
+//             context.block_timestamp = 1640283546 + (ONE_DAY * i);
+//             testing_env!(context.clone());
+//             dispute = contract.update_dispute_status(dispute.id.clone());
 
-            println!("Epoca: {}, estatus: {:#?}, {:?}", context.block_timestamp, dispute.dispute_status, dispute.votes);
+//             println!("Epoca: {}, estatus: {:#?}, {:?}", context.block_timestamp, dispute.dispute_status, dispute.votes);
 
-        }
-        let winner = dispute.winner.expect("Debe haber un ganador");
+//         }
+//         let winner = dispute.winner.expect("Debe haber un ganador");
 
-        println!("");
-        println!("The winner is {:?}", winner);
-    }
-}
+//         println!("");
+//         println!("The winner is {:?}", winner);
+//     }
+// }

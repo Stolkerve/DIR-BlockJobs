@@ -3,12 +3,22 @@
 use near_sdk_sim::{call, deploy, init_simulator, to_yocto, ContractAccount, UserAccount};
 
 near_sdk_sim::lazy_static_include::lazy_static_include_bytes! {
-    MEDIATOR_WASM_BYTES => "../../../out/mediator.wasm",
-    MARKETPLACE_WASM_BYTES => "../../../out/marketplace.wasm",
-    FT_WASM_BYTES => "../../../out/ft.wasm",
+    MEDIATOR_WASM_BYTES => "./out/mediator.wasm",
+    MARKETPLACE_WASM_BYTES => "./out/marketplace.wasm",
+    FT_WASM_BYTES => "./out/ft.wasm",
 }
 
-// #[test]
+#[test]
+fn s() {
+//     let root = init_simulator(None);
+
+    // let marketplace: ContractAccount<Marketplace> = deploy!(
+    //     contract: Marketplace,
+    //     contract_id: "counter".to_string(),
+    //     bytes: &MARKETPLACE_WASM_BYTES,
+    //     signer_account: root
+    // );
+}
 // fn simulate_increment() {
 //     let root = init_simulator(None);
 
