@@ -22,7 +22,8 @@ const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
 const BASE_GAS: Gas = 30_000_000_000_000;
-const ONE_DAY: u64 = 86400;
+const NANO_SECONDS: u64 = 1_000_000_000;
+const ONE_DAY: u64 = 86400000000000;
 
 pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
     return ValidAccountId::try_from((*account_id).to_string()).unwrap();
@@ -131,36 +132,6 @@ impl Mediator {
         return self.disputes_counter;
     }
 
-    #[payable]
-    pub fn new_dispute_test(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> Dispute{
-        if env::attached_deposit() < 1 {
-            env::panic(b"Para crear una nueva disputa, deposita 0.1 near");
-        }
-
-        let sender = env::predecessor_account_id();
-        let dispute = Dispute {
-            id: self.disputes_counter.clone(),
-            services_id: services_id.clone(),
-            num_of_judges: 0,
-            judges: HashSet::new(),
-            votes: HashSet::new(),
-            dispute_status: DisputeStatus::Open,
-            initial_time_stamp: env::block_timestamp(),
-            finish_time_stamp: None,
-            applicant: sender.clone(),
-            accused: accused.to_string(),
-            winner: None,
-            applicant_proves: proves,
-            accused_proves: None
-        };
-
-        self.disputes.insert(&self.disputes_counter, &dispute);
-
-        self.disputes_counter += 1;
-
-        return dispute;
-    }
-
     #[allow(unused_must_use)]
     pub fn add_accused_proves(&mut self, dispute_id: DisputeId, accused_proves: String) -> Dispute {
         let mut dispute = self.update_dispute_status(dispute_id);
@@ -170,28 +141,11 @@ impl Mediator {
         if dispute.accused_proves.is_some() {
             env::panic(b"Usted ya subio pruebas!");
         }
-
+        
         dispute.accused_proves.insert(accused_proves);
+        dispute.dispute_status = DisputeStatus::Resolving;
 
         self.disputes.insert(&dispute_id, &dispute);
-
-        return dispute;
-    }
-    
-    pub fn add_judge_test(&mut self, dispute_id: DisputeId) -> Dispute {
-        let sender = env::predecessor_account_id();
-        let mut dispute = self.update_dispute_status(dispute_id);
-
-        if dispute.dispute_status != DisputeStatus::Open {
-            env::panic(b"Ya paso el tiempo para agregar juez");
-        }
-
-        if dispute.judges.len() > MAX_JUDGES as usize {
-            env::panic(b"No hay espacio para mas juezes");
-        }
-        if !dispute.judges.insert(sender) {
-            env::panic(b"Ya eres un juez");
-        }
 
         return dispute;
     }
@@ -201,7 +155,7 @@ impl Mediator {
         let mut dispute = self.update_dispute_status(dispute_id);
 
         if dispute.dispute_status != DisputeStatus::Resolving {
-            env::panic(b"No se puede votar cuando el estarus es distinto de resolviendo");
+            env::panic(b"No se puede votar cuando el estatus es distinto de resolviendo");
         }
 
         if !dispute.votes.insert(Vote {
@@ -210,7 +164,12 @@ impl Mediator {
         }) {
             env::panic(b"Usted ya voto");
         }
+        if dispute.votes.len() == dispute.num_of_judges as usize {
+            dispute.dispute_status = DisputeStatus::Executable
+        }
+
         self.disputes.insert(&dispute_id, &dispute);
+
         return dispute;
     }
 
@@ -223,6 +182,7 @@ impl Mediator {
 
         // el perido de open sera de 5 dias y resolving
 
+        // actualizar por tiempo
         if actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
             dispute.dispute_status = DisputeStatus::Resolving;
         }
@@ -270,8 +230,15 @@ impl Mediator {
         return dispute;
     }
 
+    pub fn get_dispute(&mut self, dispute_id: DisputeId) ->Dispute {
+        return self.update_dispute_status(dispute_id);
+    }
+
 //near call $id new_dispute '{"services_id": 0, "accused": "stolkerv.testnet", "proves": "asdasd"}' --accountId stolkerve.testnet --amount 0.1 --gas 300000000000000
     pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
         assert_eq!(
             env::promise_results_count(),
             1,
@@ -312,6 +279,10 @@ impl Mediator {
     }
 
     pub fn on_give_back_service(service_id: u64) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
+
         assert_eq!(
             env::promise_results_count(),
             1,
