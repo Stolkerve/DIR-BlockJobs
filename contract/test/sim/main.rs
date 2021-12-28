@@ -1,12 +1,12 @@
 // use marketplace::Marketplace;
 
-// use near_sdk_sim::{call, deploy, init_simulator, to_yocto, ContractAccount, UserAccount};
+use near_sdk_sim::{call, deploy, init_simulator, to_yocto, ContractAccount, UserAccount};
 
-// near_sdk_sim::lazy_static_include::lazy_static_include_bytes! {
-//     MEDIATOR_WASM_BYTES => "../../out/mediator.wasm",
-//     MARKETPLACE_WASM_BYTES => "../../../out/marketplace.wasm",
-//     FT_WASM_BYTES => "../../../out/ft.wasm",
-// }
+near_sdk_sim::lazy_static_include::lazy_static_include_bytes! {
+    MEDIATOR_WASM_BYTES => "./out/mediator.wasm",
+    MARKETPLACE_WASM_BYTES => "./out/marketplace.wasm",
+    FT_WASM_BYTES => "./out/ft.wasm",
+}
 
 #[test]
 fn s() {
