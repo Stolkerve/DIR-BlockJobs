@@ -8,7 +8,10 @@ near call $IDFT mint '{"receiver": "'$IDFT2'", "quantity": "500"}' --accountId $
 near call $IDFT transfer_tokens '{"amount": 100}' --accountId $IDFT2 --depositYocto 1
 near call $IDFT block_tokens '{"amount": 100}' --accountId $IDFT2 --depositYocto 1
 near call $IDFT withdraw_tokens '{"amount": 100}' --accountId $IDFT2 --depositYocto 1
-near call $IDFT  '{"": "", "": ""}' --accountId $IDFT
+
+near call $IDFT increase_allowance '{"account": "'$IDFT2'"}' --accountId $IDFT
+near call $IDFT decrease_allowance '{"account": "'$IDFT2'"}' --accountId $IDFT
+
 near call $IDFT  '{"": "", "": ""}' --accountId $IDFT
 near call $IDFT  '{"": "", "": ""}' --accountId $IDFT
 

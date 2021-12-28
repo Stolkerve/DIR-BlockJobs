@@ -6,7 +6,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LazyOption, LookupMap};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
-use std::convert::TryFrom;
+//use std::convert::TryFrom;
 
 near_sdk::setup_alloc!();
 
@@ -94,31 +94,66 @@ impl Token {
         }
     }
 
+    #[payable]
+    pub fn transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
+        let sender = env::signer_account_id();
+
+        self.token.internal_transfer(&sender, &to, amount, None);
+        amount
+    }
+
+    #[payable]
     pub fn block_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
         let contract = self.owner.clone();
         self.ft_transfer(contract, amount.into(), None);
 
-        self.allowance.insert(&sender, &amount);
-        let allow = self.allowance.get(&sender).unwrap_or(0);
-        allow
+        // Modificar allowance sumando lo bloqueado
+        self.allowance.insert(&sender, &(amount + self.allowance.get(&sender).unwrap_or(0)));
+
+        // Retornar allowance
+        self.allowance.get(&sender).unwrap_or(0)
     }
 
+    #[payable]
     pub fn withdraw_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
-        let sender_id = ValidAccountId::try_from(sender.clone()).unwrap();
+        let contract = self.owner.clone().into();
 
         if self.allowance.get(&sender) >= Some(amount) {
-            self.ft_transfer(sender_id, amount.into(), None)
+            self.token.internal_transfer(&contract, &sender, amount, None);
         };
 
-        let allow = self.allowance.get(&sender).unwrap_or(0);
-
-        self.allowance.insert(&sender, &(allow - amount));
-
-        allow
+        // Modificar allowance restando lo que se retira
+        self.allowance.insert(&sender, &(self.allowance.get(&sender).unwrap_or(0) - amount));
+        
+        // Retornar la allowance actualizada
+        self.allowance.get(&sender).unwrap_or(0)
     }
 
+    pub fn increase_allowance(&mut self, account: AccountId) -> Balance {
+        self.assert_minter(env::signer_account_id());
+
+        let new_allowance = self.allowance.get(&account).unwrap_or(0) /100 *103;
+
+        // Modificar allowance aumentando en 3%
+        self.allowance.insert(&account, &new_allowance);
+
+        // Retornar la allowance actualizada
+        self.allowance.get(&account).unwrap_or(0)
+    }
+
+    pub fn decrease_allowance(&mut self, account: AccountId) -> Balance {
+        self.assert_minter(env::signer_account_id());
+
+        let new_allowance = self.allowance.get(&account).unwrap_or(0) /103 *100;
+
+        // Modificar allowance disminuyendo en 3%
+        self.allowance.insert(&account, &new_allowance);
+
+        // Retornar la allowance actualizada
+        self.allowance.get(&account).unwrap_or(0)
+    }
     // pub fn set_mediator(&self, mediator_account_id: AccountId) {
     //     self.assert_owner();
     //     &self.mediator = &mediator_account_id;
