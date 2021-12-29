@@ -116,7 +116,7 @@ impl Mediator {
     #[payable]
     pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u128 {
         if env::attached_deposit() < 1 {
-            env::panic(b"Para crear una nueva disputa, deposita 0.1 near");
+            env::panic(b"To create a new dispute, deposit 0.1 near");
         }
 
         let sender = env::predecessor_account_id();
@@ -136,12 +136,20 @@ impl Mediator {
     pub fn add_accused_proves(&mut self, dispute_id: DisputeId, accused_proves: String) -> Dispute {
         let mut dispute = self.update_dispute_status(dispute_id);
         if dispute.dispute_status != DisputeStatus::Open {
-            env::panic(b"El tiempo para subir las pruebas ya paso");
+            env::panic(b"Time to upload proofs is over");
         }
+
+        // Verificar que sea la persona acusada
+        let sender = env::predecessor_account_id();
+        if sender != dispute.accused {
+            env::panic(b"Address without permissions to upload proofs")
+        };
+
+        // Verificar que no haya subido ya las pruebas
         if dispute.accused_proves.is_some() {
-            env::panic(b"Usted ya subio pruebas!");
+            env::panic(b"You already upload the proofs!");
         }
-        
+
         dispute.accused_proves.insert(accused_proves);
         dispute.dispute_status = DisputeStatus::Resolving;
 
@@ -155,15 +163,23 @@ impl Mediator {
         let mut dispute = self.update_dispute_status(dispute_id);
 
         if dispute.dispute_status != DisputeStatus::Resolving {
-            env::panic(b"No se puede votar cuando el estatus es distinto de resolviendo");
+            env::panic(b"You cannot vote when the status is different from resolving");
         }
 
+        // Verificar que sea miembro del jurado
+        if !dispute.judges.contains(&sender) {
+            env::panic(b"You are not a Jury Member");
+        };
+
+        // Verificar que no haya ya votado
         if !dispute.votes.insert(Vote {
             account: sender.clone(),
             vote: vote
         }) {
-            env::panic(b"Usted ya voto");
+            env::panic(b"You already vote");
         }
+
+        // Una vez completados los votos se pasa la siguiente etapa
         if dispute.votes.len() == dispute.num_of_judges as usize {
             dispute.dispute_status = DisputeStatus::Executable
         }
@@ -179,10 +195,9 @@ impl Mediator {
         let actual_time = env::block_timestamp();
 
         // Open is 4 epochs, resolve 8 epochs and execute 1 epoch, finish 0 epoch
-
         // el perido de open sera de 5 dias y resolving
 
-        // actualizar por tiempo
+        // Actualizar por tiempo
         if actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
             dispute.dispute_status = DisputeStatus::Resolving;
         }
@@ -231,10 +246,11 @@ impl Mediator {
     }
 
     pub fn get_dispute(&mut self, dispute_id: DisputeId) ->Dispute {
-        return self.update_dispute_status(dispute_id);
+        self.update_dispute_status(dispute_id)
     }
 
-//near call $id new_dispute '{"services_id": 0, "accused": "stolkerv.testnet", "proves": "asdasd"}' --accountId stolkerve.testnet --amount 0.1 --gas 300000000000000
+    /// Verificar datos de la disputa desde el contrato del marketplace
+    /// 
     pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
@@ -278,6 +294,8 @@ impl Mediator {
         };
     }
 
+    /// Retornar el servicio al profesional
+    /// 
     pub fn on_give_back_service(service_id: u64) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
@@ -298,6 +316,7 @@ impl Mediator {
     }
 }
 
+/// Llamados a los demás contratos
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
     fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>);
@@ -307,6 +326,11 @@ pub trait Marketplace {
 pub trait ExtSelf {
     fn on_validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
     fn on_give_back_service(service_id: u64);
+}
+#[ext_contract(ext_ft)]
+pub trait ExtFT {
+    fn increase_allowance(account: AccountId);
+    fn decrease_allowance(account: AccountId);
 }
 
 // #[cfg(test)]
