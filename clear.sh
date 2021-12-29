@@ -2,8 +2,7 @@
 
 echo "Inicio"
 
-rm -rf ./out
-rm -rf ./neardev
+rm -rf ./contract/out
 rm -rf ./dist
 rm -rf ./.cache
 rm -rf ./contract/build
