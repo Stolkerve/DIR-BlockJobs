@@ -215,6 +215,8 @@ impl Mediator {
                     dispute.winner = Some(dispute.accused.clone());
                 }
 
+                dispute.finish_time_stamp = Some(env::block_timestamp());
+
                 let _res = ext_marketplace::give_back_service(
                     dispute.services_id,
                     &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
@@ -252,7 +254,7 @@ impl Mediator {
                     let dispute = Dispute {
                         id: self.disputes_counter.clone(),
                         services_id: service_id,
-                        num_of_judges: 0,
+                        num_of_judges: MAX_JUDGES,
                         judges: jugdes.unwrap().into_iter().collect(),
                         votes: HashSet::new(),
                         dispute_status: DisputeStatus::Open,

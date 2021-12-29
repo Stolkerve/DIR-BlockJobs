@@ -67,7 +67,6 @@ pub struct Marketplace {
     
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
-    pub mediator_owner: AccountId,
 
     // The storage size in bytes for one account.
     pub extra_storage_in_bytes_per_service: StorageUsage,
@@ -81,7 +80,7 @@ impl Marketplace {
     /// * `owner_id`    - La cuenta de mainnet/testnet de quien sera el owner del contrato.
     #[init]
     #[payable]
-    pub fn new(owner_id: ValidAccountId, mediator: ValidAccountId) -> Self {
+    pub fn new(owner_id: ValidAccountId, mediator: ValidAccountId, ft: ValidAccountId) -> Self {
         if env::state_exists() {
             env::panic("Contract already inicialized".as_bytes());
         }
@@ -93,12 +92,13 @@ impl Marketplace {
             users: UnorderedMap::new(b"u".to_vec()),
             contract_owner: owner_id.clone().into(),
             extra_storage_in_bytes_per_service: 0,
-            mediator_owner: mediator.into()
         };
 
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Admin);
-        this.add_user(roles, "Categories { Programer: {Lenguajes: } }".to_string());
+        this.add_user_p(roles.clone(), owner_id.into(), "Categories { Programer: {Lenguajes: } }".to_string());
+        this.add_user_p(roles.clone(), mediator.into(), "Categories { Programer: {Lenguajes: } }".to_string());
+        this.add_user_p(roles, ft.into(), "Categories { Programer: {Lenguajes: } }".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -300,7 +300,7 @@ impl Marketplace {
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
-        if sender.roles.get(&UserRoles::Admin).is_some() {
+        if sender.roles.get(&UserRoles::Admin).is_none() {
             env::panic("Only admins can give back the services".as_bytes());
         }
 
@@ -370,6 +370,43 @@ impl Marketplace {
         }
 
         let account_id: AccountId = env::predecessor_account_id();
+        let services_set = UnorderedSet::new(unique_prefix(&account_id));
+        self.services_by_account.insert(&account_id, &services_set);
+
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
+
+        let mut new_user = User{
+            account_id: account_id.clone(),
+            mints: false,
+            roles: HashSet::new(),
+            rep: 0,
+            categories: categories,
+            links: None,
+            education: None, 
+        };
+
+        for r in roles.iter() {
+            new_user.roles.insert(*r);
+        }
+
+        if self.users.insert(&account_id, &new_user).is_some() {
+            env::panic(b"User account already added");
+        }
+
+        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
+
+        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
+        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+
+        deposit_refund_to(required_storage_in_bytes, account_id);
+
+        return new_user
+    }
+
+    #[payable]
+    fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, categories: String) -> User {
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
 
