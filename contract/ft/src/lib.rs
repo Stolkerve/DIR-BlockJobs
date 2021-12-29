@@ -16,7 +16,7 @@ pub struct Token {
     token: FungibleToken,
     metadata: LazyOption<FungibleTokenMetadata>,
     pub owner: ValidAccountId,
-    pub minters: Vector<AccountId>,
+    pub minter: AccountId,
     allowance: LookupMap<AccountId, Balance>,
 }
 
@@ -55,7 +55,7 @@ impl Token {
         let mut this = Self {
             token: FungibleToken::new(b"a".to_vec()),
             metadata: LazyOption::new(b"m".to_vec(), Some(&metadata)),
-            minters: vec![owner_id.to_string()],
+            minter: env::predecessor_account_id(),
             owner: owner_id.clone(),
             allowance: LookupMap::new(b"a".to_vec()),
         };
@@ -73,25 +73,9 @@ impl Token {
         self.mint_into(&receiver.to_string(), quantity.0)
     }
 
-    pub fn add_minter(&mut self, account_id: AccountId) {
+    pub fn update_minter(&mut self, account_id: AccountId) {
         self.assert_owner();
-
-        if let Some(_) = self.minters.iter().position(|x| *x == account_id) {
-            //found
-            panic!("Already in the list");
-        }
-        self.minters.push(&account_id);
-    }
-
-    pub fn remove_minter(&mut self, account_id: AccountId) {
-        self.assert_owner();
-
-        if let Some(inx) = self.minters.iter().position(|x| x == account_id) {
-            //found
-            let _removed = self.minters.swap_remove( inx as u64);
-        } else {
-            panic!("Not a minter")
-        }
+        self.minter = account_id;
     }
 
     #[payable]
@@ -106,7 +90,7 @@ impl Token {
     pub fn block_tokens(&mut self, to: ValidAccountId, amount: Balance) -> Balance {
         // if env::predecessor_account_id() == self.owner.to_string()
 
-        // self.minters.
+        // self.minter.
         let sender = to.to_string();
         let contract = self.owner.clone();
         self.ft_transfer(contract, amount.into(), None);
@@ -187,8 +171,8 @@ impl Token {
         self.token.accounts.get(&account_id).unwrap_or(0)
     }
 
-    pub fn ft_get_minters(self) -> Vec<AccountId> {
-        self.minters.to_vec()
+    pub fn ft_get_minter(self) -> AccountId {
+        self.minter
     }
 
     /*** 
@@ -215,7 +199,7 @@ impl Token {
 
     // Verificar que tenga permisos para mintear tokens
     fn assert_minter(&self, account_id: String) {
-        assert!(self.minters.to_vec().contains(&account_id), "Not a minter");
+        assert_eq!(self.minter == account_id, false, "Not is the minter");
     }
 
     // Verificar deposito

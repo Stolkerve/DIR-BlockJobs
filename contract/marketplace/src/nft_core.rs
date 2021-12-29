@@ -156,7 +156,7 @@
 //     //     let storage_required = bytes_for_approved_account_id(&account_id);
 //     //     assert!(deposit >= storage_required as u128, "Deposit doesn't cover storage of account_id: {}", account_id.clone());
 
-//     //     let mut service = self.services_by_id.get(&service_id).expect("Service not found");
+//     //     let mut service = self.service_by_id.get(&service_id).expect("Service not found");
 //     //     assert_eq!(&env::predecessor_account_id(), &service.owner_id);
 
 //     //     if service.employer_account_ids.insert(account_id.clone()) {
@@ -164,7 +164,7 @@
 
 //     //         service.employer_id += 1;
 
-//     //         self.services_by_id.insert(&service_id, &service);
+//     //         self.service_by_id.insert(&service_id, &service);
 //     //         ext_non_fungible_approval_receiver::nft_on_approve(
 //     //             env::current_account_id(),
 //     //             service_id,
@@ -188,14 +188,14 @@
 //     //     account_id: ValidAccountId,
 //     // ) -> bool {
 //     //     assert_one_yocto();
-//     //     let mut service = self.services_by_id.get(&service_id).expect("Service not found");
+//     //     let mut service = self.service_by_id.get(&service_id).expect("Service not found");
 //     //     let predecessor_account_id = env::predecessor_account_id();
 //     //     assert_eq!(&predecessor_account_id, &service.owner_id);
 //     //     if service.employer_account_ids.remove(account_id.as_ref()) {
 //     //         let storage_released = bytes_for_approved_account_id(account_id.as_ref());
 //     //         Promise::new(env::predecessor_account_id())
 //     //             .transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE);
-//     //         self.services_by_id.insert(&service_id, &service);
+//     //         self.service_by_id.insert(&service_id, &service);
 //     //         true
 //     //     } else {
 //     //         false
@@ -208,13 +208,13 @@
 //     //     service_id: ServiceId,
 //     // ) -> bool {
 //     //     assert_one_yocto();
-//     //     let mut service = self.services_by_id.get(&service_id).expect("Service not found");
+//     //     let mut service = self.service_by_id.get(&service_id).expect("Service not found");
 //     //     let predecessor_account_id = env::predecessor_account_id();
 //     //     assert_eq!(&predecessor_account_id, &service.owner_id);
 //     //     if !service.employer_account_ids.is_empty() {
 //     //         refund_approved_account_ids(predecessor_account_id, &service.employer_account_ids);
 //     //         service.employer_account_ids.clear();
-//     //         self.services_by_id.insert(&service_id, &service);
+//     //         self.service_by_id.insert(&service_id, &service);
 //     //         true
 //     //     } else {
 //     //         false
@@ -222,7 +222,7 @@
 //     // }
 
 //     // fn nft_service(&self, service_id: ServiceId) -> Option<Service> {
-//     //     self.services_by_id.get(&service_id)
+//     //     self.service_by_id.get(&service_id)
 //     // }
 // }
 
@@ -249,7 +249,7 @@
 // //             }
 // //         }
 
-// //         let mut service = if let Some(service) = self.services_by_id.get(&service_id) {
+// //         let mut service = if let Some(service) = self.service_by_id.get(&service_id) {
 // //             if &service.owner_id != &receiver_id {
 // //                 // The service is not owner by the receiver anymore. Can't return it.
 // //                 refund_approved_account_ids(owner_id, &approved_account_ids);
@@ -269,7 +269,7 @@
 // //         service.owner_id = owner_id;
 // //         refund_approved_account_ids(receiver_id, &service.employer_account_ids);
 // //         service.employer_account_ids = approved_account_ids;
-// //         self.services_by_id.insert(&service_id, &service);
+// //         self.service_by_id.insert(&service_id, &service);
 
 // //         false
 // //     }
