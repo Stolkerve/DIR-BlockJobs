@@ -80,15 +80,15 @@ impl Token {
             //found
             panic!("Already in the list");
         }
-        self.minters.push(account_id);
+        self.minters.push(&account_id);
     }
 
-    pub fn remove_minter(&mut self, account_id: &AccountId) {
+    pub fn remove_minter(&mut self, account_id: AccountId) {
         self.assert_owner();
 
         if let Some(inx) = self.minters.iter().position(|x| x == account_id) {
             //found
-            let _removed = self.minters.swap_remove(inx);
+            let _removed = self.minters.swap_remove( inx as u64);
         } else {
             panic!("Not a minter")
         }
@@ -215,7 +215,7 @@ impl Token {
 
     // Verificar que tenga permisos para mintear tokens
     fn assert_minter(&self, account_id: String) {
-        assert!(self.minters.contains(&account_id), "Not a minter");
+        assert!(self.minters.to_vec().contains(&account_id), "Not a minter");
     }
 
     // Verificar deposito
