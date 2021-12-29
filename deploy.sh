@@ -46,3 +46,12 @@ cd ../../
 read -p "Escribe una cuenta de testnet: " cuenta
 export ID=$cuenta
 echo "Exportando $cuenta a la variable ID"
+
+echo "inicializando el contrato de TF y agregando minters"
+near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "total_supply": "1000"}' --accountId $FT_ID
+near call $FT_ID add_minter '{"account_id": "'$MA_ID'"}' --accountId $FT_ID
+near call $FT_ID add_minter '{"account_id": "'$ME_ID'"}' --accountId $FT_ID
+
+# near call $FT_ID mint '{"receiver": "'$MA_ID'", "quantity": "500"}' --accountId $FT_ID
+# near call $FT_ID mint '{"receiver": "'$ME_ID'", "quantity": "500"}' --accountId $FT_ID
+# near call $FT_ID mint '{"receiver": "'$ID'", "quantity": "500"}' --accountId $FT_ID

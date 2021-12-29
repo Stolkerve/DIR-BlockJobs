@@ -3,7 +3,7 @@ use near_contract_standards::fungible_token::metadata::{
 };
 use near_contract_standards::fungible_token::FungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LazyOption, LookupMap};
+use near_sdk::collections::{LazyOption, LookupMap, Vector};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
 //use std::convert::TryFrom;
@@ -16,7 +16,7 @@ pub struct Token {
     token: FungibleToken,
     metadata: LazyOption<FungibleTokenMetadata>,
     pub owner: ValidAccountId,
-    pub minters: Vec<AccountId>,
+    pub minters: Vector<AccountId>,
     allowance: LookupMap<AccountId, Balance>,
 }
 
@@ -103,8 +103,11 @@ impl Token {
     }
 
     #[payable]
-    pub fn block_tokens(&mut self, amount: Balance) -> Balance {
-        let sender = env::signer_account_id();
+    pub fn block_tokens(&mut self, to: ValidAccountId, amount: Balance) -> Balance {
+        // if env::predecessor_account_id() == self.owner.to_string()
+
+        // self.minters.
+        let sender = to.to_string();
         let contract = self.owner.clone();
         self.ft_transfer(contract, amount.into(), None);
 
@@ -114,6 +117,19 @@ impl Token {
         // Retornar allowance
         self.allowance.get(&sender).unwrap_or(0)
     }
+
+    // #[payable]
+    // pub fn block_tokens(&mut self, amount: Balance) -> Balance {
+    //     let sender = env::signer_account_id();
+    //     let contract = self.owner.clone();
+    //     self.ft_transfer(contract, amount.into(), None);
+
+    //     // Modificar allowance sumando lo bloqueado
+    //     self.allowance.insert(&sender, &(amount + self.allowance.get(&sender).unwrap_or(0)));
+
+    //     // Retornar allowance
+    //     self.allowance.get(&sender).unwrap_or(0)
+    // }
 
     #[payable]
     pub fn withdraw_tokens(&mut self, amount: Balance) -> Balance {
@@ -172,7 +188,7 @@ impl Token {
     }
 
     pub fn ft_get_minters(self) -> Vec<AccountId> {
-        self.minters
+        self.minters.to_vec()
     }
 
     /*** 
