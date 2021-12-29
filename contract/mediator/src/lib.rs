@@ -4,7 +4,6 @@ use near_sdk::{
 use near_sdk::collections::{UnorderedMap};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Serialize, Deserialize};
-use near_sdk::serde_json;
 use near_sdk::json_types::{ValidAccountId};
 use std::fmt::{Debug};
 
@@ -22,7 +21,7 @@ const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
 const BASE_GAS: Gas = 30_000_000_000_000;
-const NANO_SECONDS: u64 = 1_000_000_000;
+//const NANO_SECONDS: u64 = 1_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 
 pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
@@ -122,7 +121,7 @@ impl Mediator {
         let sender = env::predecessor_account_id();
 
         let _res = ext_marketplace::validate_dispute(
-            sender.clone(), accused.to_string(), services_id, 2, vec!(),
+            sender.clone(), accused.to_string(), services_id, MAX_JUDGES, vec!(),
             &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
         .then(ext_self::on_validate_dispute(
             sender, accused.to_string(), services_id, proves,
