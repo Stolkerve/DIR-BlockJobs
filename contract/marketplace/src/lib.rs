@@ -25,24 +25,33 @@ const NO_DEPOSIT: Balance = 0;
 const BASE_GAS: Gas = 30_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 25;
 const USERS_LIMIT: u16 = u16::MAX;
+const ONE_DAY: u64 = 86400000000000;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Service {
     pub id: u64,
-    pub owner_id: AccountId,
     pub metadata: ServiceMetadata,
-    pub actual_employer_account_id: Option<AccountId>,
+    pub creator_id: AccountId,
+    pub actual_owner: AccountId,
     pub employers_account_ids: HashSet<AccountId>,
+    // Días que va a durar el trabajo ofrecido 
+    pub duration: u16,
+    // Uso de timestamp para fijar momento de compra
+    pub buy_moment: u64,
+    // Determinar si esta en manos del profesional (false) o de un empleador (true)
+    pub sold: bool,
+    // Determinar si esta en venta
+    pub on_sale: bool,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ServiceMetadata {
-    pub fullname: String,
-    pub profile_photo_url: String,
+    pub title: String,
+    pub description: String,
+    pub icon: String,
     pub price: u128,
-    pub active: bool,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -113,15 +122,14 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `metadata`             - La metadata que el profesional asigna a su servicio.
-    /// * `active_services`      - La cantidad de services que se desea mintear.
+    /// * `on_sale_services`      - La cantidad de services que se desea mintear.
     #[payable]
-    pub fn mint_service(&mut self, metadata: ServiceMetadata, quantity: u16) -> Service {
+    pub fn mint_service(&mut self, metadata: ServiceMetadata, quantity: u16, duration: u16) -> Service {
         let sender = env::predecessor_account_id();
         let user = self.update_user_mints(quantity); // Cantidad de servicios
 
         //Verificar que sea un profesional
-        let is_professional = user.roles.get(&UserRoles::Professional).is_some();
-        if !is_professional {
+        if !user.roles.get(&UserRoles::Professional).is_some() {
             env::panic("Only professionals can mint a service".as_bytes());
         }
 
@@ -130,10 +138,14 @@ impl Marketplace {
 
         let mut service = Service {
             id: self.total_supply,
-            owner_id: sender.clone(),
+            creator_id: sender.clone(),
             metadata: metadata,
             employers_account_ids: Default::default(),
-            actual_employer_account_id: None
+            actual_owner: sender.clone(),
+            duration: duration,
+            buy_moment: 0,
+            sold: false,
+            on_sale: true,
         };
         
         let mut services_set = self
@@ -142,7 +154,7 @@ impl Marketplace {
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender)));
 
         for _i in 0 .. quantity {
-            service.metadata.active = true;
+            service.on_sale = true;
 
             if self.service_by_id.insert(&self.total_supply, &service).is_some() {
                 env::panic("Service already exists".as_bytes());
@@ -163,35 +175,49 @@ impl Marketplace {
 
         deposit_refund(required_storage_in_bytes);
 
+        // Retornar datos del servicio
         service
     }
 
     // Adquisición de un servicio
+    #[payable]
     pub fn buy_service(&mut self, service_id: u64) {
         // Verificar que el servicio exista
-        let _service_id = service_id;
-        if _service_id > self.total_supply {
-            env::panic("The indicated ServiceID doesn't exist".as_bytes());
+        if service_id > self.total_supply {
+            env::panic("The indicated service doesn't exist".as_bytes());
         }
 
-        let service = self.get_service_by_id(service_id.clone());
-        // Si no cuenta con los fondos se hace rollback
-        if !service.metadata.active {
-            env::panic("The service is not on sale".as_bytes())
+        let mut service = self.get_service_by_id(service_id.clone());
+        // Verificar que este en venta
+        if !service.on_sale {
+            env::panic("The indicated service is not on sale".as_bytes())
         }
 
-        let buyer_id = string_to_valid_account_id(&env::predecessor_account_id());
-        let buyer = self.get_user(buyer_id.clone());
+        let sender = env::predecessor_account_id();
+        let buyer = self.get_user(string_to_valid_account_id(&sender).clone());
 
+        // Verificar que sea empleador quien compra
         if buyer.roles.get(&UserRoles::Admin).is_none() && buyer.roles.get(&UserRoles::Employeer).is_none() {
             env::panic("Only employers can buy services".as_bytes());
         }
         
-        let owner_id = service.owner_id.clone();
-        if buyer.account_id == owner_id {
+        // Verificar que no lo haya comprado ya
+        if buyer.account_id == service.actual_owner.clone() {
             env::panic("Already is the service owner".as_bytes());
         }
 
+        // Establecer como servicio vendido y no en venta
+        service.sold = true;
+        service.on_sale = false;
+
+        // Cambiar propiedad del servicio
+        service.actual_owner = sender.clone();
+        self.delete_service(&service_id, &service.actual_owner);
+        self.add_service(&service_id, &buyer.account_id);
+
+        self.service_by_id.insert(&service_id, &service);
+
+        // Realizar el pago que quedara en el contrato mediador
         let _res = ext_token::block_tokens(
             service.metadata.price,
             &self.contract_ft, NO_DEPOSIT, BASE_GAS)
@@ -202,12 +228,11 @@ impl Marketplace {
     }
 
 
-    /// Modificar la metadata de u servicio
+    /// Modificar la metadata de un servicio
     /// 
-    pub fn update_service_metadata(&self, service_id: u64, metadata: ServiceMetadata) -> Service {
+    pub fn update_service_metadata(&mut self, service_id: u64, metadata: ServiceMetadata) -> Service {
         // Verificar que el servicio exista
-        let _service_id = service_id;
-        if _service_id > self.total_supply {
+        if service_id > self.total_supply {
             env::panic("The indicated ServiceID doesn't exist".as_bytes());
         }
 
@@ -216,69 +241,91 @@ impl Marketplace {
         // Verificar que sea el creador quien ejecuta la funcion
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         let sender = self.get_user(sender_id.clone());
-        let owner = service.owner_id.clone();
+        let owner = service.creator_id.clone();
         let owner_id = string_to_valid_account_id(&owner);
-        if (sender_id != owner_id) || sender.roles.get(&UserRoles::Admin).is_none() {
+        if (sender_id != owner_id) && sender.roles.get(&UserRoles::Admin).is_none() {
             env::panic("Only the creator or admins can change metadata services".as_bytes());
         }
 
         // Insertar nueva metadata
         service.metadata = metadata;
+        self.service_by_id.insert(&service_id, &service);
 
         service
     }
 
-    // Cambiar el estado de un servicio activo o no
-    pub fn set_service_status(&mut self, service_id: u64, active: bool) -> Service {
+    /// Cambio de la duración del servicio
+    /// Solo ejecutable por el profesional que lo posee
+    /// 
+    pub fn change_service_duration(&mut self, service_id: u64, new_duration: u16) -> Service {
+        let sender = env::signer_account_id();
+        let mut service = self.get_service_by_id(service_id);
+
+        // Verificar que sea el creador del servicio
+        if sender != service.creator_id {
+            env::panic(b"Cannot modify because isn't the owner")
+        }
+        // Verificar que no este comprado
+        if service.sold == true {
+            env::panic(b"You can't modify while the service is in hands of the employer")
+        }
+
+        service.duration = new_duration;
+        self.service_by_id.insert(&service_id, &service);
+
+        service
+    }
+
+    /// Cambiar el estado de un servicio segun este en venta o no
+    /// Solo para el profesional o administradores
+    /// 
+    pub fn change_service_on_sale(&mut self, service_id: u64, on_sale: bool) -> Service {
         // Verificar que el servicio exista
-        assert_eq!(
-            service_id < self.total_supply,
-            true,
-            "The indicated ServiceID doesn't exist"
-        );
+        if self.total_supply < service_id {
+            env::panic(b"The indicated ServiceID doesn't exist")
+        }
 
         let mut service = self.get_service_by_id(service_id.clone());
         let sender = env::predecessor_account_id();
         let user = self.get_user(string_to_valid_account_id(&sender));
-        let is_admin = user.roles.get(&UserRoles::Admin).is_some();
-        let is_owner = service.owner_id == sender;
 
-        if is_admin || !is_owner {
-            env::panic("Only the owner or admin can desactivate the service".as_bytes());
+        let is_creator = service.creator_id == sender;
+
+        if !user.roles.get(&UserRoles::Admin).is_some() && !is_creator {
+            env::panic("Only the owner or admin can desactivate or activate the service".as_bytes());
         }
 
-        service.metadata.active = active;
+        service.on_sale = on_sale;
         self.service_by_id.insert(&service_id, &service);
 
-        return service
+        service
     }
 
-    /// Retornar un servicio
+    /// Retornar un servicio al creador
     /// 
-    pub fn give_back_service(&mut self, service_id: u64) -> Service {
+    fn return_service(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
-        let _service_id = service_id;
-        if _service_id > self.total_supply {
-            env::panic("The indicated ServiceID doesn't exist".as_bytes());
+        if service_id > &self.total_supply {
+            env::panic("The indicated service doesn't exist".as_bytes());
         }
-
-        let mut service = self.get_service_by_id(service_id.clone());
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
-        if sender.roles.get(&UserRoles::Admin).is_none() {
+        if sender.roles.get(&UserRoles::Admin).is_none()  {
             env::panic("Only admins can give back the services".as_bytes());
         }
 
-        self.delete_service(&service_id, &sender.account_id);
-        self.add_service(&service_id, &service.owner_id);
+        let mut service = self.get_service_by_id(service_id.clone());
 
-        // Modificar la metadata del serviciopay_to_emplee
-        service.actual_employer_account_id = None;
+        self.delete_service(&service_id, &sender.account_id);
+        self.add_service(&service_id, &service.creator_id);
+
+        // Modificar la metadata del servicio pay_to_emplee
+        service.actual_owner = service.creator_id.clone();
         self.service_by_id.insert(&service_id, &service);
 
-        return service
+        service
     }
 
     #[private]
@@ -502,14 +549,14 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    /// * `only_active`  - Retornar solo los services activos.
-    pub fn get_user_services(&self, account_id: ValidAccountId, only_active: bool) -> Vec<Service> {
+    /// * `only_on_sale`  - Retornar solo los services activos.
+    pub fn get_user_services(&self, account_id: ValidAccountId, only_on_sale: bool) -> Vec<Service> {
         let mut services: Vec<Service> = Vec::new();
         let services_id = self.get_user_services_id(account_id.clone());
         for i in 0 .. services_id.len() {
             let service = expect_value_found(self.service_by_id.get(&services_id[i]), "Service id dont match".as_bytes());
-            if only_active {
-                if service.metadata.active {
+            if only_on_sale {
+                if service.on_sale {
                     services.push( service ); 
                 }
             }
@@ -526,14 +573,14 @@ impl Marketplace {
 
     pub fn validate_dispute(&self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
         let service = self.get_service_by_id(service_id);
-        let employer = expect_value_found(service.actual_employer_account_id, b"employer not found");
+        let employer = service.actual_owner.clone();
 
-        if service.owner_id != applicant && employer != applicant {
-            env::panic(b"applicant dont found");
+        if service.actual_owner != applicant && employer != applicant {
+            env::panic(b"Applicant dont found");
         }
 
-        if service.owner_id != accused && employer != accused {
-            env::panic(b"accused dont found");
+        if service.creator_id != accused && employer != accused {
+            env::panic(b"Accused dont found");
         }
     
         return self.get_random_users_account_by_role_jugde(jugdes, exclude);
@@ -541,7 +588,7 @@ impl Marketplace {
 
     pub fn on_block_tokens(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
         if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"only the contract can call its function")
+            env::panic(b"Only the contract can call its function")
         }
         assert_eq!(
             env::promise_results_count(),
@@ -562,7 +609,7 @@ impl Marketplace {
 
                     let mut service = self.get_service_by_id(service_id.clone());
                     // Modificar la metadata del service
-                    service.actual_employer_account_id = Some(buyer.clone());
+                    service.actual_owner = buyer.clone();
                     service.employers_account_ids.insert(buyer.clone());
                     self.service_by_id.insert(&service_id, &service);
 
@@ -762,15 +809,15 @@ pub enum Panic {
 //             fullname: "Jose Antoio".to_string(),
 //             profile_photo_url: "Jose_Antoio.png".to_string(),
 //             price: 10,
-//             active: false,
+//             on_sale: false,
 //         });
 
 //         let admin: User = marketplace.get_user(admin_id.clone());
-//         let actives_services = marketplace.get_user_services(admin_id, true);
+//         let on_sales_services = marketplace.get_user_services(admin_id, true);
 
 //         assert_eq!(
 //             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-//             actives_services.len() == 3 &&
+//             on_sales_services.len() == 3 &&
 //             admin.mints == true
 //             ,
 //             true
@@ -786,7 +833,7 @@ pub enum Panic {
 //         //     fullname: "Maria Jose".to_string(),
 //         //     profile_photo_url: "Maria_Jose.png".to_string(),
 //         //     price: 10,
-//         //     active: true,
+//         //     on_sale: true,
 //         // }, 3);
 
 //         // let user3 = marketplace.add_user(
@@ -799,7 +846,7 @@ pub enum Panic {
 //         //     fullname: "Ed Robet".to_string(),
 //         //     profile_photo_url: "Ed_Robet.png".to_string(),
 //         //     price: 10,
-//         //     active: true,
+//         //     on_sale: true,
 //         // }, 1);
 //     }
 
