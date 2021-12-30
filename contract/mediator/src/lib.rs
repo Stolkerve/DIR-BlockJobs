@@ -231,10 +231,10 @@ impl Mediator {
 
                 dispute.finish_time_stamp = Some(env::block_timestamp());
 
-                let _res = ext_marketplace::give_back_service(
+                let _res = ext_marketplace::return_service(
                     dispute.services_id,
                     &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
-                .then(ext_self::on_give_back_service(
+                .then(ext_self::on_return_service(
                     dispute.services_id,
                     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
                 );
@@ -297,7 +297,7 @@ impl Mediator {
 
     /// Retornar el servicio al profesional
     /// 
-    pub fn on_give_back_service(service_id: u64) {
+    pub fn on_return_service(service_id: u64) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -321,12 +321,12 @@ impl Mediator {
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
     fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>);
-    fn give_back_service(service_id: u64);
+    fn return_service(service_id: u64);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
-    fn on_give_back_service(service_id: u64);
+    fn on_return_service(service_id: u64);
 }
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
