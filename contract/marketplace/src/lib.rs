@@ -303,10 +303,16 @@ impl Marketplace {
 
     /// Retornar un servicio al creador
     /// 
-    fn return_service(&mut self, service_id: &u64) -> Service {
+    pub fn return_service(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
         if service_id > &self.total_supply {
             env::panic("The indicated service doesn't exist".as_bytes());
+        }
+
+        let mut service = self.get_service_by_id(service_id.clone());
+
+        if !(env::block_timestamp() > service.buy_moment + ONE_DAY*2) {
+            env::panic("Insuficient time to reclame the service".as_bytes());
         }
 
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
@@ -315,8 +321,6 @@ impl Marketplace {
         if sender.roles.get(&UserRoles::Admin).is_none()  {
             env::panic("Only admins can give back the services".as_bytes());
         }
-
-        let mut service = self.get_service_by_id(service_id.clone());
 
         self.delete_service(&service_id, &sender.account_id);
         self.add_service(&service_id, &service.creator_id);
