@@ -13,12 +13,15 @@ near call $MA_ID set_user_role '{"account_id": "'$ID'", "role": "Employeer", "re
 #debe fallar
 near call $MA_ID set_user_role '{"account_id": "'$ID'", "role": "Admin", "remove": false}' --accountId $ID
 
-near call $MA_ID mint_service '{"metadata": {"title": "Sebastian Gonzalez", "description": "description", "icon": "foto.png", "price": 1}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
+near call $MA_ID mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
 
 near call $MA_ID buy_service '{"service_id": 0}' --accountId $MA_ID --amount 1 --gas 300000000000000
 
-near call $MA_ID change_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
+near call $MA_ID reclaim_dispute '{"service_id": 0}' --accountId $MA_ID
+near call $MA_ID reclaim_service '{"service_id": 0}' --accountId $ID
 
+near call $MA_ID change_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
+near call $MA_ID change_service_duration '{"service_id": 0, "new_duration": 20}' --accountId $ID
 near call $MA_ID update_service_metadata '{"service_id": 0, "metadata": {"title": "Vitalik Buterin", "description": "description 2", "icon": "foto.png", "price": 2} }' --accountId $ID
 
 # Get functions
