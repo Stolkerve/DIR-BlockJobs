@@ -302,8 +302,38 @@ impl Marketplace {
     }
 
     /// Retornar un servicio al creador
+    /// Ejecutable solo por el admin, previa aprobacion de ambas partes
     /// 
     pub fn return_service(&mut self, service_id: &u64) -> Service {
+        // Verificar que el servicio exista
+        if service_id > &self.total_supply {
+            env::panic("The indicated service doesn't exist".as_bytes());
+        }
+
+        let mut service = self.get_service_by_id(service_id.clone());
+
+        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        env::log(sender_id.to_string().as_bytes());
+        let sender = self.get_user(sender_id.clone());
+        if sender.roles.get(&UserRoles::Admin).is_none()  {
+            env::panic("Only admins can give back the services".as_bytes());
+        }
+
+        self.delete_service(&service_id, &sender.account_id);
+        self.add_service(&service_id, &service.creator_id);
+
+        // Modificar la metadata del servicio pay_to_emplee
+        service.actual_owner = service.creator_id.clone();
+        service.on_sale = true;
+        service.buy_moment = 0;
+        self.service_by_id.insert(&service_id, &service);
+
+        service
+    }
+
+    /// Retornar un servicio al creador
+    /// 
+    pub fn reclaim_service(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
         if service_id > &self.total_supply {
             env::panic("The indicated service doesn't exist".as_bytes());
@@ -318,15 +348,18 @@ impl Marketplace {
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
-        if sender.roles.get(&UserRoles::Admin).is_none()  {
-            env::panic("Only admins can give back the services".as_bytes());
+
+        if service.creator_id != env::signer_account_id() {
+            env::panic(b"Only the corresponding professional can reclaim the service");
         }
 
         self.delete_service(&service_id, &sender.account_id);
         self.add_service(&service_id, &service.creator_id);
 
-        // Modificar la metadata del servicio pay_to_emplee
+        // Modificar los datos del servicio
         service.actual_owner = service.creator_id.clone();
+        service.on_sale = true;
+        service.buy_moment = 0;
         self.service_by_id.insert(&service_id, &service);
 
         service
@@ -460,18 +493,18 @@ impl Marketplace {
         return new_user
     }
 
-    /// Elimina un usuarios y sus services
+    /// Eliminar un usuario
+    /// Solo ejecutable por el admin
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
-    // pub fn remove_user(&mut self, account_id: AccountId) {
-    //     assert_eq!(env::predecessor_account_id(), self.owner_id, "must be owner_id");
-    //     let guest = self.users.get(&account_id.clone().into()).expect("Could not find the user");
-    //     // TODO transfer NFTs
-    //     self.services_by_account.remove(&guest.account_id);
-    //     self.users.remove(&account_id.into());
+    pub fn remove_user(&mut self, account_id: ValidAccountId) {
+        self.admin_assert(&env::predecessor_account_id());
+        let user = self.get_user(account_id.clone());
 
-    // }
+        self.services_by_account.remove(&user.account_id);
+        self.users.remove(&account_id.into());
+    }
 
     /// Reescribe las categorias del usuario
     ///
@@ -490,7 +523,7 @@ impl Marketplace {
         return user;
     }
 
-    /// Agrega un rol mas al usuario
+    /// Agregar o quitar un rol al usuario
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -523,7 +556,7 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user(&self, account_id: ValidAccountId) -> User {
-        return expect_value_found(self.users.get(&account_id.into()), "No users found. Register the user first".as_bytes())
+        expect_value_found(self.users.get(&account_id.into()), "No users found. Register the user first".as_bytes())
     }
 
     // TODO(Sebas): Optimizar con paginacion
@@ -536,8 +569,7 @@ impl Marketplace {
                 users.push(user);
             }
         }
-
-        return users
+        users
     }
 
 
@@ -549,7 +581,7 @@ impl Marketplace {
         return expect_value_found(self.services_by_account.get(&account_id.into()), "No users found or dont have any service".as_bytes()).to_vec();
     }
 
-    /// Obtener los service y sus metadata de un usuario
+    /// Obtener los servicios de determinado usuario
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
@@ -571,10 +603,14 @@ impl Marketplace {
         return services
     }
 
+    /// Obtener el total supply
+    /// 
     pub fn get_total_supply(&self) -> u64 {
         self.total_supply
     }
 
+    /// Verificacion de datos para una disputa
+    /// 
     pub fn validate_dispute(&self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
         let service = self.get_service_by_id(service_id);
         let employer = service.actual_owner.clone();
@@ -590,6 +626,8 @@ impl Marketplace {
         return self.get_random_users_account_by_role_jugde(jugdes, exclude);
     }
 
+    /// Callback para verificar bloqueo de tokens en contrato ft
+    /// 
     pub fn on_block_tokens(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"Only the contract can call its function")
