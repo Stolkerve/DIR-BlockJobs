@@ -64,7 +64,7 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
 // }
 
 impl Marketplace {
-    // pub(crate) fn admin_assert(&self) {
+    // pub(crate) fn assert_admin(&self) {
     //     assert_eq!(
     //         &env::predecessor_account_id(),
     //         &self.owner_id,
