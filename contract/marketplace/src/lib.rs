@@ -383,26 +383,6 @@ impl Marketplace {
         service
     }
 
-    /// Reclamar disputa 
-    /// Solo ejecutable por el empleador que adquirio el servicio
-    /// 
-    pub fn reclaim_dispute(&mut self, service_id: u64) -> Service {
-        self.assert_service_exists(&service_id);
-        let mut service = self.get_service_by_id(service_id.clone());
-
-        // Verificar que haya adquirido el servicio
-        if service.actual_owner != env::signer_account_id() {
-            env::panic(b"You aren't the owner ")
-        }
-
-        // Modificar datos del servicio
-        service.on_dispute = true;
-        self.service_by_id.insert(&service_id, &service);
-
-        service
-    }
-
-
     /*** USERS FUNCTIONS ***/
 
     /// Registra usuarios, asignando su rol y a que se dedican por categorias
@@ -638,14 +618,14 @@ impl Marketplace {
 
     /// Verificacion de datos para una disputa
     /// 
-    pub fn validate_dispute(&self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
+    pub fn validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
         if  (env::signer_account_id() != self.contract_me) ||
             (env::predecessor_account_id() != self.contract_me)
         {
             env::panic(b"Only the mediator contract can call this func");
         }
 
-        let service = self.get_service_by_id(service_id);
+        let mut service = self.get_service_by_id(service_id);
         let employer = service.actual_owner.clone();
 
         if service.actual_owner != applicant && employer != applicant {
@@ -655,7 +635,9 @@ impl Marketplace {
         if service.creator_id != accused && employer != accused {
             env::panic(b"Accused dont found");
         }
-    
+
+        service.on_dispute = true;
+        self.service_by_id.insert(&service.id, &service);
         return self.get_random_users_account_by_role_jugde(jugdes, exclude);
     }
 
