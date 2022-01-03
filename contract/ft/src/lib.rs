@@ -18,6 +18,7 @@ pub struct Token {
     pub owner: ValidAccountId,
     pub minter: AccountId,
     allowance: LookupMap<AccountId, Balance>,
+    pub pending_to_mint: u128,
 }
 
 const DATA_IMAGE_SVG_NEAR_ICON: &str = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 288 288'%3E%3Cg id='l' data-name='l'%3E%3Cpath d='M187.58,79.81l-30.1,44.69a3.2,3.2,0,0,0,4.75,4.2L191.86,103a1.2,1.2,0,0,1,2,.91v80.46a1.2,1.2,0,0,1-2.12.77L102.18,77.93A15.35,15.35,0,0,0,90.47,72.5H87.34A15.34,15.34,0,0,0,72,87.84V201.16A15.34,15.34,0,0,0,87.34,216.5h0a15.35,15.35,0,0,0,13.08-7.31l30.1-44.69a3.2,3.2,0,0,0-4.75-4.2L96.14,186a1.2,1.2,0,0,1-2-.91V104.61a1.2,1.2,0,0,1,2.12-.77l89.55,107.23a15.35,15.35,0,0,0,11.71,5.43h3.13A15.34,15.34,0,0,0,216,201.16V87.84A15.34,15.34,0,0,0,200.66,72.5h0A15.35,15.35,0,0,0,187.58,79.81Z'/%3E%3C/g%3E%3C/svg%3E";
@@ -27,10 +28,10 @@ impl Token {
     /// Inicializa el contrato estableciendo el total supply
     /// Asigna la metadata por default
     #[init]
-    pub fn new_default_meta(owner_id: ValidAccountId, total_supply: U128) -> Self {
+    pub fn new_default_meta(owner_id: ValidAccountId, initial_supply: U128) -> Self {
         Self::new(
             owner_id,
-            total_supply,
+            initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
                 name: "BlockJobs fungible token".to_string(),
@@ -47,7 +48,7 @@ impl Token {
     #[init]
     pub fn new(
         owner_id: ValidAccountId,
-        total_supply: U128,
+        total_services: U128,
         metadata: FungibleTokenMetadata,
     ) -> Self {
         assert!(!env::state_exists(), "Already initialized");
@@ -58,21 +59,30 @@ impl Token {
             minter: env::predecessor_account_id(),
             owner: owner_id.clone(),
             allowance: LookupMap::new(b"a".to_vec()),
+            pending_to_mint: 0,
         };
         this.token.internal_register_account(owner_id.as_ref());
-        this.token.internal_deposit(owner_id.as_ref(), total_supply.into());
+        this.token.internal_deposit(owner_id.as_ref(), total_services.into());
         this
     }
 
-    /*** 
-     * CORE FUNCTIONS 
-    ***/
+    /****************** 
+     * CORE FUNCTIONS *
+     ******************/
 
-    pub fn mint(&mut self, receiver: ValidAccountId, quantity: U128) {
+    /// Token mint, limited to the pending amount
+    /// Is not possible mint more of this amount
+    /// 
+    pub fn mint(&mut self, receiver: ValidAccountId) {
         self.assert_minter(env::predecessor_account_id());
-        self.mint_into(&receiver.to_string(), quantity.0)
+        self.mint_into(&receiver.to_string(), self.pending_to_mint);
+
+        self.pending_to_mint = 0;
     }
 
+    /// Change the minter
+    /// Only can be one minter at time
+    /// 
     pub fn update_minter(&mut self, account_id: AccountId) {
         self.assert_owner();
         self.minter = account_id;
@@ -82,29 +92,17 @@ impl Token {
     pub fn transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
 
+        self.token.internal_register_account(&to);
         self.token.internal_transfer(&sender, &to, amount, None);
         amount
     }
 
-    #[payable]
-    pub fn block_tokens(&mut self, to: ValidAccountId, amount: Balance) -> Balance {
-        // if env::predecessor_account_id() == self.owner.to_string()
-
-        // self.minter.
-        let sender = to.to_string();
-        let contract = self.owner.clone();
-        self.ft_transfer(contract, amount.into(), None);
-
-        // Modificar allowance sumando lo bloqueado
-        self.allowance.insert(&sender, &(amount + self.allowance.get(&sender).unwrap_or(0)));
-
-        // Retornar allowance
-        self.allowance.get(&sender).unwrap_or(0)
-    }
-
     // #[payable]
-    // pub fn block_tokens(&mut self, amount: Balance) -> Balance {
-    //     let sender = env::signer_account_id();
+    // pub fn block_tokens(&mut self, to: ValidAccountId, amount: Balance) -> Balance {
+    //     // if env::predecessor_account_id() == self.owner.to_string()
+
+    //     // self.minter.
+    //     let sender = to.to_string();
     //     let contract = self.owner.clone();
     //     self.ft_transfer(contract, amount.into(), None);
 
@@ -114,6 +112,19 @@ impl Token {
     //     // Retornar allowance
     //     self.allowance.get(&sender).unwrap_or(0)
     // }
+
+    #[payable]
+    pub fn block_tokens(&mut self, amount: Balance) -> Balance {
+        let sender = env::signer_account_id();
+        let contract = self.owner.clone();
+        self.ft_transfer(contract, amount.into(), None);
+
+        // Modificar allowance sumando lo bloqueado
+        self.allowance.insert(&sender, &(amount + self.allowance.get(&sender).unwrap_or(0)));
+
+        // Retornar allowance
+        self.allowance.get(&sender).unwrap_or(0)
+    }
 
     #[payable]
     pub fn withdraw_tokens(&mut self, amount: Balance) -> Balance {
@@ -134,6 +145,7 @@ impl Token {
     pub fn increase_allowance(&mut self, account: AccountId) -> Balance {
         self.assert_minter(env::signer_account_id());
 
+        self.pending_to_mint += self.allowance.get(&account).unwrap_or(0) / 100 * 103 - self.allowance.get(&account).unwrap_or(0);
         let new_allowance = self.allowance.get(&account).unwrap_or(0) /100 *103;
 
         // Modificar allowance aumentando en 3%
@@ -159,9 +171,9 @@ impl Token {
     //     &self.mediator = &mediator_account_id;
     // }
 
-    /*** 
-     * GET FUNCTIONS 
-    ***/
+    /******************
+     * GET FUNCTIONS  *
+     ******************/
 
     pub fn ft_get_total_supply(&self) -> Balance {
         self.token.total_supply
@@ -171,8 +183,12 @@ impl Token {
         self.token.accounts.get(&account_id).unwrap_or(0)
     }
 
-    pub fn ft_get_minter(self) -> AccountId {
-        self.minter
+    pub fn ft_get_minter(&self) -> AccountId {
+        self.minter.clone()
+    }
+
+    pub fn ft_get_pending_to_mint(&self) -> Balance {
+        self.pending_to_mint.clone()
     }
 
     /*** 
@@ -199,7 +215,7 @@ impl Token {
 
     // Verificar que tenga permisos para mintear tokens
     fn assert_minter(&self, account_id: String) {
-        assert_eq!(self.minter == account_id, false, "Not is the minter");
+        assert_eq!(self.minter == account_id, true, "Not is the minter");
     }
 
     // Verificar deposito
@@ -251,7 +267,7 @@ impl FungibleTokenMetadataProvider for Token {
 //         testing_env!(context.build());
 //         let contract = Token::new_default_meta(accounts(1).into(), TOTAL_SUPPLY.into());
 //         testing_env!(context.is_view(true).build());
-//         assert_eq!(contract.ft_total_supply().0, TOTAL_SUPPLY);
+//         assert_eq!(contract.ft_total_services().0, TOTAL_SUPPLY);
 //         assert_eq!(contract.ft_balance_of(accounts(1)).0, TOTAL_SUPPLY);
 //     }
 

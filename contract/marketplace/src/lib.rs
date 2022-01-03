@@ -75,7 +75,7 @@ fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
 pub struct Marketplace {
     pub service_by_id: UnorderedMap<u64, Service>,
     pub services_by_account: LookupMap<AccountId, UnorderedSet<u64>>,
-    pub total_supply: u64,
+    pub total_services: u64,
     
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
@@ -100,7 +100,7 @@ impl Marketplace {
         }
 
         let mut this = Self {
-            total_supply: 0,
+            total_services: 0,
             services_by_account: LookupMap::new(b"a".to_vec()),
             service_by_id: UnorderedMap::new(b"t".to_vec()),
             users: UnorderedMap::new(b"u".to_vec()),
@@ -141,7 +141,7 @@ impl Marketplace {
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
-            id: self.total_supply,
+            id: self.total_services,
             creator_id: sender.clone(),
             metadata: metadata,
             employers_account_ids: Default::default(),
@@ -161,12 +161,12 @@ impl Marketplace {
         for _i in 0 .. quantity {
             service.on_sale = true;
 
-            if self.service_by_id.insert(&self.total_supply, &service).is_some() {
+            if self.service_by_id.insert(&self.total_services, &service).is_some() {
                 env::panic("Service already exists".as_bytes());
             }
 
-            services_set.insert(&self.total_supply);
-            self.total_supply += 1;
+            services_set.insert(&self.total_services);
+            self.total_services += 1;
         }
 
         self.services_by_account.insert(&sender, &services_set);
@@ -632,8 +632,8 @@ impl Marketplace {
 
     /// Obtener el total supply
     /// 
-    pub fn get_total_supply(&self) -> u64 {
-        self.total_supply
+    pub fn get_total_services(&self) -> u64 {
+        self.total_services
     }
 
     /// Verificacion de datos para una disputa
@@ -792,7 +792,7 @@ impl Marketplace {
 
     #[private]
     fn assert_service_exists(&self, service_id: &u64) {
-        if *service_id > self.total_supply {
+        if *service_id > self.total_services {
             env::panic(b"The indicated service doesn't exist")
         }
     }

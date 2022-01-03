@@ -7,7 +7,7 @@ use near_sdk::serde::{Serialize, Deserialize};
 use near_sdk::json_types::{ValidAccountId};
 use std::fmt::{Debug};
 
-use std::convert::TryFrom;
+// use std::convert::TryFrom;
 use std::collections::{HashSet};
 
 #[allow(dead_code)]
@@ -24,16 +24,16 @@ const BASE_GAS: Gas = 30_000_000_000_000;
 //const NANO_SECONDS: u64 = 1_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 
-pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
-    return ValidAccountId::try_from((*account_id).to_string()).unwrap();
-}
+// pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
+//     return ValidAccountId::try_from((*account_id).to_string()).unwrap();
+// }
 
-pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
-    let mut prefix = Vec::with_capacity(33);
-    prefix.push(b'o');
-    prefix.extend(env::sha256(account_id.as_bytes()));
-    return prefix
-}
+// pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
+//     let mut prefix = Vec::with_capacity(33);
+//     prefix.push(b'o');
+//     prefix.extend(env::sha256(account_id.as_bytes()));
+//     return prefix
+// }
 
 setup_alloc!();
 
@@ -297,7 +297,7 @@ impl Mediator {
 
     /// Retornar el servicio al profesional
     /// 
-    pub fn on_return_service(service_id: u64) {
+    pub fn on_return_service(_service_id: u64) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -308,7 +308,7 @@ impl Mediator {
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
-            PromiseResult::Successful(data) => {
+            PromiseResult::Successful(_data) => {
                 env::log(b"Token devuelto :)");
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
