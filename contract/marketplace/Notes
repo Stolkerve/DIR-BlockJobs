@@ -40,4 +40,4 @@ near view $MA_ID get_user_services_id '{"account_id": "'$ID'"}' --accountId $MA_
 
 near view $MA_ID get_user_services '{"account_id": "'$ID'", "only_on_sale": false}' --accountId $MA_ID
 
-near view $MA_ID get_total_supply '{}' --accountId $MA_ID
+near view $MA_ID get_total_services '{}' --accountId $MA_ID
