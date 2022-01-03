@@ -1,0 +1,17 @@
+{
+  "name": "sim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "near-api-js": "^0.44.2",
+    "near-runner": "^1.0.0"
+  }
+}

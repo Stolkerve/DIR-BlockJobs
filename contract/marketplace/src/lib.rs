@@ -1,12 +1,14 @@
-use near_env::PanicMessage;
+// use near_env::PanicMessage;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
+use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet, Vector};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, PromiseResult, StorageUsage, ext_contract, Gas};
 
 use std::collections::{HashSet};
 use std::convert::TryFrom;
+
+use rand::seq::SliceRandom;
 
 use crate::internal::*;
 use crate::user::*;
@@ -562,14 +564,17 @@ impl Marketplace {
     // TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_users_by_role(&self, role: UserRoles) -> Vec<User> {
-        let mut users: Vec<User> = Vec::new();
-        for (_account_id, user) in self.users.iter() {
+    pub fn get_users_by_role(&self, role: UserRoles, from_index: u64, limit: u64) -> Vec<User> {
+        let mut users_by_role: Vec<User> = Vec::new();
+
+        let users = self.get_users(from_index, limit);
+
+        for (_account_id, user) in users.iter() {
             if user.roles.get(&role).is_some() {
-                users.push(user);
+                users_by_role.push((*user).clone());
             }
         }
-        users
+        users_by_role
     }
 
     /// Obtener id de los services de un usuario
@@ -634,6 +639,12 @@ impl Marketplace {
     /// Verificacion de datos para una disputa
     /// 
     pub fn validate_dispute(&self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
+        if  (env::signer_account_id() != self.contract_me) ||
+            (env::predecessor_account_id() != self.contract_me)
+        {
+            env::panic(b"Only the mediator contract can call this func");
+        }
+
         let service = self.get_service_by_id(service_id);
         let employer = service.actual_owner.clone();
 
@@ -693,6 +704,15 @@ impl Marketplace {
 
 
     #[private]
+    fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
+        let keys = self.users.keys_as_vector();
+        let values = self.users.values_as_vector();
+        (from_index..std::cmp::min(from_index + limit, self.users.len()))
+            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
+            .collect()
+    }
+
+    #[private]
     fn add_service(&mut self, service_id: &u64, account_id: &String) {
         let mut services_set = self
             .services_by_account
@@ -712,18 +732,18 @@ impl Marketplace {
     #[allow(unused_variables)]
     #[private]
     fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        let random = env::random_seed();
-        env::log(format!("{:?}", random).as_bytes());
         if amount > 10 {
             env::panic(b"No se puede pedir mas de 10");
         }
-        let users = self.get_users_by_role(UserRoles::Jugde);
+        let users = self.get_users_by_role(UserRoles::Jugde, 0, amount.into());
         if amount as usize > users.len() {
             env::panic(b"La cantidad pedida es mayor a la existente");
         }
-        return users
+
+        let sample = users.choose(&mut rand::thread_rng());
+        return sample
             .iter()
-            .take(amount as usize)
+            .filter(|x| exclude.contains(&string_to_valid_account_id(&x.account_id)))
             .map(|x| x.account_id.clone())
             .collect();
     }
@@ -778,13 +798,6 @@ impl Marketplace {
     }
 
     // #[private]
-    // fn assert_actual_owner(&self, service: &Service) {
-    //     if *service.actual_owner != env::predecessor_account_id() {
-    //         env::panic(b"You aren't the owner of the service")
-    //     }
-    // }
-
-    // #[private]
     // fn string_to_json(&self, service_id: ServiceId) -> Category {
     //     let example = Category {
     //         category: "Programmer".to_string(),
@@ -826,7 +839,8 @@ pub trait ExtSelf {
     fn on_block_tokens(service_id: u64);
 }
 
-/// Posibles errores que se usan posteriormente como Panic error
+// Posibles errores que se usan posteriormente como Panic error
+/*
 #[derive(Serialize, Deserialize, PanicMessage)]
 #[serde(crate = "near_sdk::serde", tag = "err")]
 pub enum Panic {
@@ -842,7 +856,6 @@ pub enum Panic {
     #[panic_msg = "Service ID `{:?}` was not found"]
     ServiceIdNotFound { service_id: u64 },
 
-    /*
     #[panic_msg = "Operation is allowed only for admin"]
     AdminRestrictedOperation,
     #[panic_msg = "Unable to delete Account ID `{}`"]
@@ -854,8 +867,8 @@ pub enum Panic {
     SenderNotAuthToTransfer { sender_id: AccountId },
     #[panic_msg = "The service owner and the receiver should be different"]
     ReceiverIsOwner,
-    */
 }
+*/
 
 // #[cfg(test)]
 // mod tests {
