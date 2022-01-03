@@ -47,9 +47,11 @@ read -p "Escribe una cuenta de testnet: " cuenta
 export ID=$cuenta
 echo "Exportando $cuenta a la variable ID"
 
-echo "inicializando el contrato de TF y agregando minters"
-near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "total_supply": "1000"}' --accountId $FT_ID
+echo "inicializando el contrato de FT"
+near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "initial_supply": "1000"}' --accountId $FT_ID
 
-# near call $FT_ID mint '{"receiver": "'$MA_ID'", "quantity": "500"}' --accountId $FT_ID
-# near call $FT_ID mint '{"receiver": "'$ME_ID'", "quantity": "500"}' --accountId $FT_ID
-# near call $FT_ID mint '{"receiver": "'$ID'", "quantity": "500"}' --accountId $FT_ID
+echo "inicializando el contrato de Marketplace"
+near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
+
+echo "inicializando el contrato Mediator"
+near call $ME_ID new '{"marketplace_account_id": "'$MA_ID'"}' --accountId $ME_ID
