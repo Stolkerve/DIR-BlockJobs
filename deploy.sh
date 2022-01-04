@@ -48,7 +48,7 @@ export ID=$cuenta
 echo "Exportando $cuenta a la variable ID"
 
 echo "inicializando el contrato de FT"
-near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "initial_supply": "1000"}' --accountId $FT_ID
+near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "initial_supply": "100000"}' --accountId $FT_ID
 
 echo "inicializando el contrato de Marketplace"
 near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
