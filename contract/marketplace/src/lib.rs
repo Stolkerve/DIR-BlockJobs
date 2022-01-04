@@ -245,6 +245,11 @@ impl Marketplace {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
+        // Verificar que no haya sido banneado quien solicita la disputa
+        let user_id = string_to_valid_account_id(&env::predecessor_account_id());
+        let user = self.get_user(user_id);
+        if user.banned == true {env::panic(b"You are already banned for fraudulent disputes"); }
+
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
@@ -319,7 +324,7 @@ impl Marketplace {
     /// Retornar un servicio al creador
     /// Ejecutable solo por el admin, previa aprobacion de ambas partes
     /// 
-    pub fn return_service(&mut self, service_id: &u64) -> Service {
+    pub fn return_service_by_admin(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
@@ -339,6 +344,8 @@ impl Marketplace {
         service.actual_owner = service.creator_id.clone();
         service.on_sale = true;
         service.buy_moment = 0;
+        service.sold = false;
+        service.on_dispute = false;
         self.service_by_id.insert(&service_id, &service);
 
         service
@@ -464,6 +471,7 @@ impl Marketplace {
             categories: categories,
             links: None,
             education: None, 
+            banned: false,
         };
 
         for r in roles.iter() {
@@ -501,6 +509,7 @@ impl Marketplace {
             categories: categories,
             links: None,
             education: None, 
+            banned: false,
         };
 
         for r in roles.iter() {
@@ -675,29 +684,47 @@ impl Marketplace {
     /****** CALLBACK FUNCTIONS *****/
     /*******************************/
 
-    /// Verificacion de datos para una disputa
+    /// Callback para retornar un servicio al creador.
+    /// Ejecutable solo el contrator mediador una vez finalizada la disputa.
     /// 
-    pub fn validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        if  (env::signer_account_id() != self.contract_me) ||
-            (env::predecessor_account_id() != self.contract_me)
-        {
-            env::panic(b"Only the mediator contract can call this func");
+    pub fn return_service_by_me(&mut self, service_id: &u64) -> Service {
+        let mut service = self.get_service_by_id(service_id.clone());
+
+        // Verificar que sea el contrator mediador quien ejecuta
+        let sender_id = env::predecessor_account_id();
+        if sender_id != self.contract_me  {
+            env::panic(b"Only mediator contract can execute this function");
         }
 
-        let mut service = self.get_service_by_id(service_id);
-        let employer = service.actual_owner.clone();
+        self.delete_service(&service_id, &service.actual_owner);
+        self.add_service(&service_id, &service.creator_id);
 
-        if service.actual_owner != applicant && employer != applicant {
-            env::panic(b"Applicant dont found");
+        // Modificar la metadata del servicio
+        service.actual_owner = service.creator_id.clone();
+        service.on_sale = true;
+        service.buy_moment = 0;
+        service.on_dispute = false;
+        self.service_by_id.insert(&service_id, &service);
+
+        service
+    }
+
+    /// Banear un usuario ante fraude en una disputa
+    /// Solo ejecutable por Admins del contrato mediadot
+    /// 
+    pub fn ban_user(&mut self, user: AccountId) -> User {
+        // Verificar que sea el contrator mediador quien ejecuta
+        let sender_id = env::predecessor_account_id();
+        if sender_id != self.contract_me  {
+            env::panic(b"Only mediator contract can execute this function");
         }
 
-        if service.creator_id != accused && employer != accused {
-            env::panic(b"Accused dont found");
-        }
+        let user_id = string_to_valid_account_id(&user);
+        let mut user = self.get_user(user_id);
 
-        service.on_dispute = true;
-        self.service_by_id.insert(&service.id, &service);
-        return self.get_random_users_account_by_role_jugde(jugdes, exclude);
+        user.banned = true;
+
+        user
     }
 
     /// Callback para verificar bloqueo de tokens en contrato ft
@@ -769,32 +796,6 @@ impl Marketplace {
         self.services_by_account.insert(&account_id, &services_set);
     }
 
-    #[allow(unused_variables)]
-    // #[private] near call $MA_ID get_random_users_account_by_role_jugde '{}' --account
-    pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        if amount > 10 {
-            env::panic(b"No se puede pedir mas de 10");
-        }
-        
-        let users = self.get_users_by_role(UserRoles::Jugde, 0, (amount as u64) + 1);
-        if amount as usize > users.len() {
-            env::panic(b"La cantidad pedida es mayor a la existente");
-        }
-        
-        let mut sample: Vec<AccountId> = Vec::new();
-        let seed = env::random_seed();
-        for i in 0..users.len() {
-            let m = (users.len() - 1 + 1);
-            let rn = 1 + ((*seed.get(i).unwrap() as usize) % m) as usize;
-            sample.push(users[rn - 1].account_id.clone());
-            env::log(format!("{:?}", rn).as_bytes());
-        }
-
-        // return users.iter().map(|x| x.account_id.clone()).collect();
-
-
-        return sample;
-    }
 
     #[private]
     fn measure_min_service_storage_cost(&mut self) {

@@ -99,12 +99,7 @@ impl Mediator {
     ///        CORE FUNCTIONS          ///
     //////////////////////////////////////
 
-    #[payable]
     pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u32 {
-        if env::attached_deposit() < 1 {
-            env::panic(b"To create a new dispute, deposit 0.1 near");
-        }
-
         let sender = env::predecessor_account_id();
 
         let _res = ext_marketplace::validate_dispute(
@@ -245,12 +240,14 @@ impl Mediator {
     ///         Metodos GET            ///
     //////////////////////////////////////
         
-    pub fn get_dispute(&mut self, dispute_id: DisputeId) -> Dispute {
+    pub fn get_dispute_status(&mut self, dispute_id: DisputeId) -> Dispute {
         self.update_dispute_status(dispute_id)
     }
 
-    pub fn get_dispute_status(& self, dispute_id: DisputeId) {
-
+    pub fn get_dispute(&self, dispute_id: DisputeId) -> Dispute {
+        let dispute = expect_value_found(self.disputes.get(&dispute_id), 
+        "Dispute not found".as_bytes());
+        dispute
     }
 
     pub fn get_total_disputes(&self) -> u32 {
@@ -267,17 +264,17 @@ impl Mediator {
     ///      Funciones internas        ///
     //////////////////////////////////////
     
-    fn assert_owner(&self, account: &AccountId) {
-        if *account != self.owner {
-            env::panic(b"Isn't the owner");
-        }
-    }
+    // fn assert_owner(&self, account: &AccountId) {
+    //     if *account != self.owner {
+    //         env::panic(b"Isn't the owner");
+    //     }
+    // }
 
-    fn assert_admin(&self, account: &AccountId) {
-        if !self.admins.contains(&account) {
-            env::panic(b"Isn't a Admin");
-        }
-    }
+    // fn assert_admin(&self, account: &AccountId) {
+    //     if !self.admins.contains(&account) {
+    //         env::panic(b"Isn't a Admin");
+    //     }
+    // }
     
     //////////////////////////////////////
     /// Llamados a los demás contratos ///

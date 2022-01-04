@@ -11,4 +11,5 @@ near call $ME_ID vote '{"dispute_id": 0, "vote": true}' --accountId stolkerve2.t
 
 near call $ME_ID update_dispute_status '{"dispute_id": 0}' --accountId $ME_ID --gas 300000000000000
 
-near call $ME_ID get_dispute '{"dispute_id": 0}' --accountId $ME_ID
+near view $ME_ID get_dispute '{"dispute_id": 0}' --accountId $ME_ID
+near view $ME_ID get_total_disputes '{}' --accountId $ME_ID
