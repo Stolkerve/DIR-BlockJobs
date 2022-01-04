@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{AccountId};
@@ -25,3 +24,11 @@ pub struct User {
     pub links: Option<String>,
     pub education: Option<String>
 }
+
+// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+// #[serde(crate = "near_sdk::serde")]
+// pub struct Category {
+//     pub category: String,
+//     pub subcategory: String,
+//     pub areas: String,
+// }
