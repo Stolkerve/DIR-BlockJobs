@@ -29,9 +29,9 @@ impl Token {
     /// Inicializa el contrato estableciendo el total supply
     /// Asigna la metadata por default
     #[init]
-    pub fn new_default_meta(owner: ValidAccountId, initial_supply: U128) -> Self {
+    pub fn new_default_meta(owner_id: ValidAccountId, initial_supply: U128) -> Self {
         Self::new(
-            owner,
+            owner_id,
             initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),

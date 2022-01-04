@@ -74,7 +74,7 @@ pub struct Mediator {
     disputes: UnorderedMap<DisputeId, Dispute>,
     disputes_counter: u32,
     owner: AccountId,
-    admins: vec!(ValidAccountId),
+    admins: Vec<AccountId>,
     marketplace_account_id: AccountId
 }
 
@@ -89,7 +89,7 @@ impl Mediator {
             disputes: UnorderedMap::new(b"d"),
             disputes_counter: 0,
             owner: env::signer_account_id(),
-            admins: vec!(b"a"),
+            admins: Vec::new(),
             marketplace_account_id: marketplace_account_id
         };
         return this;
@@ -257,9 +257,9 @@ impl Mediator {
         self.disputes_counter
     }
 
-    pub fn get_admins(&self) -> vec!() {
-        self.admins
-    }
+    // pub fn get_admins(&self) -> vec!() {
+    //     self.admins
+    // }
 
     
 
@@ -274,7 +274,7 @@ impl Mediator {
     }
 
     fn assert_admin(&self, account: &AccountId) {
-        if !self.admins.contains(*account) {
+        if !self.admins.contains(&account) {
             env::panic(b"Isn't a Admin");
         }
     }

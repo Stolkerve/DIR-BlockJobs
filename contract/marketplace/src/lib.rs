@@ -6,7 +6,7 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, PromiseResult, StorageUsage, ext_contract, Gas};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
-use rand::seq::SliceRandom;
+//use rand::seq::SliceRandom;
 
 use crate::internal::*;
 use crate::user::*;
@@ -240,9 +240,13 @@ impl Marketplace {
     /// Crear disputa en el contrato mediador
     /// Solo ejecutable por el empleador que compro el servicio
     /// 
-    pub fn reclaim_dispute(&mut self, service_id: &u64) -> Service {
+    #[payable]
+    pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) -> Service {
+        if env::attached_deposit() < 1 {
+            env::panic(b"To create a new dispute, deposit 0.1 near");
+        }
         // Verificar que el servicio exista
-        self.assert_service_exists(service_id);
+        self.assert_service_exists(&service_id);
 
         let mut service = self.get_service_by_id(service_id.clone());
 
@@ -252,6 +256,17 @@ impl Marketplace {
         }
         // Verificar que no este ya solicitada la disputa
         if service.on_dispute == true { env::panic(b"Actually the service is in dispute"); }
+
+        let _res = ext_mediator::new_dispute(
+            service_id, 
+            string_to_valid_account_id(&service.creator_id), 
+            proves,
+            &self.contract_me, 
+            NO_DEPOSIT, BASE_GAS);
+        // .then(ext_self::on_validate_dispute(
+        //     sender, accused.to_string(), services_id, proves,
+        //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+        // );
 
         // Modificar los datos del servicio
         service.on_dispute = true;
@@ -863,6 +878,10 @@ pub trait Token {
     fn mint(receiver: ValidAccountId, quantity: U128);
     fn transfer_tokens(to: AccountId, amount: Balance);
     fn block_tokens(amount: Balance);
+}
+#[ext_contract(ext_mediator)]
+pub trait Mediator {
+    fn new_dispute(services_id: u64, accused: ValidAccountId, proves: String);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
