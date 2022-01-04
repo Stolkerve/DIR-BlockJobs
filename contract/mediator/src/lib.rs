@@ -1,51 +1,37 @@
-use near_sdk::{
-    env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, PanicOnDefault, Gas, PromiseResult
-};
+use near_sdk::{ env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, 
+                PanicOnDefault, Gas,  PromiseResult};
 use near_sdk::collections::{UnorderedMap};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Serialize, Deserialize};
 use near_sdk::json_types::{ValidAccountId};
 use std::fmt::{Debug};
-
-// use std::convert::TryFrom;
 use std::collections::{HashSet};
+// use std::convert::TryFrom;
 
 #[allow(dead_code)]
 const YOCTO_NEAR: u128 = 1000000000000000000000000;
 #[allow(dead_code)]
 const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
-const MAX_JUDGES: u8 = 2;
+const MAX_JUDGES: u8 = 50;
 #[allow(dead_code)]
 const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days 
 #[allow(dead_code)]
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
 const BASE_GAS: Gas = 30_000_000_000_000;
-//const NANO_SECONDS: u64 = 1_000_000_000;
+//const NANO_SECONDS: u32 = 1_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
-
-// pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
-//     return ValidAccountId::try_from((*account_id).to_string()).unwrap();
-// }
-
-// pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
-//     let mut prefix = Vec::with_capacity(33);
-//     prefix.push(b'o');
-//     prefix.extend(env::sha256(account_id.as_bytes()));
-//     return prefix
-// }
 
 setup_alloc!();
 
-pub type DisputeId = u128;
-pub type ServiceAmount = u64;
+pub type DisputeId = u32;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Vote {
     // Miembro del jurado que emite el voto
     account: AccountId,
-    // Decisión tomada 
+    // Decision tomada 
     vote: bool,
 }
 
@@ -55,8 +41,7 @@ pub enum DisputeStatus {
     Open,
     Resolving,
     Executable,
-    Finished,
-    Failed
+    Finished
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
@@ -65,36 +50,32 @@ pub struct Dispute {
     // Identificador para cada disputa
     id: DisputeId,
     services_id: u64,
-
     // Cantidad de  miembros de jurado para la disputa
     num_of_judges: u8,
-
     // Lista de miembros del jurado y sus respectivos services a retirar
     judges: HashSet<AccountId>,
     votes: HashSet<Vote>,
     dispute_status: DisputeStatus,
+    // Tiempos
     initial_time_stamp: u64,
-    finish_time_stamp: Option<u64>, //time
-    
-    applicant: AccountId, // demandante
-    accused: AccountId, // acusado
+    finish_time_stamp: Option<u64>, //Time
+    // Partes
+    applicant: AccountId, // Empleador demandante
+    accused: AccountId, // Profesional acusado
     winner: Option<AccountId>,
-
-    applicant_proves: String, // Un markdown con todas las pruebas
-    accused_proves: Option<String> // Un markdown con todas las pruebas
+    // Pruebas
+    applicant_proves: String, // Un markdown con las pruebas
+    accused_proves: Option<String> // Un markdown con las pruebas
 }
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Mediator {
-    // admin: ValidAccountId,
     disputes: UnorderedMap<DisputeId, Dispute>,
-    disputes_counter: u128,
+    disputes_counter: u32,
+    owner: AccountId,
+    admins: vec!(ValidAccountId),
     marketplace_account_id: AccountId
-}
-
-fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
-    option.unwrap_or_else(|| env::panic(message))
 }
 
 #[near_bindgen]
@@ -107,13 +88,19 @@ impl Mediator {
         let this = Self {
             disputes: UnorderedMap::new(b"d"),
             disputes_counter: 0,
+            owner: env::signer_account_id(),
+            admins: vec!(b"a"),
             marketplace_account_id: marketplace_account_id
         };
         return this;
     }
 
+    //////////////////////////////////////
+    ///        CORE FUNCTIONS          ///
+    //////////////////////////////////////
+
     #[payable]
-    pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u128 {
+    pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u32 {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
@@ -128,25 +115,27 @@ impl Mediator {
             &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
         );
 
-        return self.disputes_counter;
+        self.disputes_counter += 1;
+
+        return self.disputes_counter-1;
     }
 
     #[allow(unused_must_use)]
     pub fn add_accused_proves(&mut self, dispute_id: DisputeId, accused_proves: String) -> Dispute {
         let mut dispute = self.update_dispute_status(dispute_id);
         if dispute.dispute_status != DisputeStatus::Open {
-            env::panic(b"Time to upload proofs is over");
+            env::panic(b"Time to upload proves is over");
         }
 
         // Verificar que sea la persona acusada
         let sender = env::predecessor_account_id();
         if sender != dispute.accused {
-            env::panic(b"Address without permissions to upload proofs")
+            env::panic(b"Address without permissions to upload proves")
         };
 
         // Verificar que no haya subido ya las pruebas
         if dispute.accused_proves.is_some() {
-            env::panic(b"You already upload the proofs!");
+            env::panic(b"You already upload the proves!");
         }
 
         dispute.accused_proves.insert(accused_proves);
@@ -157,6 +146,10 @@ impl Mediator {
         return dispute;
     }
 
+    /// Emitir un voto
+    /// Solo para miembros del jurado de la misma categoria del servicio en disputa
+    /// Se requiere cumplir con un minimo de tokens bloqueados
+    /// 
     pub fn vote(&mut self, dispute_id: DisputeId, vote: bool) -> Dispute {
         let sender = env::predecessor_account_id();
         let mut dispute = self.update_dispute_status(dispute_id);
@@ -178,7 +171,7 @@ impl Mediator {
             env::panic(b"You already vote");
         }
 
-        // Una vez completados los votos se pasa la siguiente etapa
+        // Si se completan los votos se pasa la siguiente etapa
         if dispute.votes.len() == dispute.num_of_judges as usize {
             dispute.dispute_status = DisputeStatus::Executable
         }
@@ -188,6 +181,8 @@ impl Mediator {
         return dispute;
     }
 
+    /// Para verificar y actualizar el estado de la disputa
+    /// 
     pub fn update_dispute_status(&mut self, dispute_id: DisputeId) -> Dispute {
         let mut dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
 
@@ -218,7 +213,7 @@ impl Mediator {
             }
 
             if pro_votes_counter == agains_votes_counter {
-                dispute.dispute_status = DisputeStatus::Failed;
+                dispute.dispute_status = DisputeStatus::Open;
             }
             else {
                 dispute.dispute_status = DisputeStatus::Finished;
@@ -246,9 +241,47 @@ impl Mediator {
         return dispute;
     }
 
-    pub fn get_dispute(&mut self, dispute_id: DisputeId) ->Dispute {
+    //////////////////////////////////////
+    ///         Metodos GET            ///
+    //////////////////////////////////////
+        
+    pub fn get_dispute(&mut self, dispute_id: DisputeId) -> Dispute {
         self.update_dispute_status(dispute_id)
     }
+
+    pub fn get_dispute_status(& self, dispute_id: DisputeId) {
+
+    }
+
+    pub fn get_total_disputes(&self) -> u32 {
+        self.disputes_counter
+    }
+
+    pub fn get_admins(&self) -> vec!() {
+        self.admins
+    }
+
+    
+
+    //////////////////////////////////////
+    ///      Funciones internas        ///
+    //////////////////////////////////////
+    
+    fn assert_owner(&self, account: &AccountId) {
+        if *account != self.owner {
+            env::panic(b"Isn't the owner");
+        }
+    }
+
+    fn assert_admin(&self, account: &AccountId) {
+        if !self.admins.contains(*account) {
+            env::panic(b"Isn't a Admin");
+        }
+    }
+    
+    //////////////////////////////////////
+    /// Llamados a los demás contratos ///
+    //////////////////////////////////////
 
     /// Verificar datos de la disputa desde el contrato del marketplace
     /// 
@@ -317,7 +350,6 @@ impl Mediator {
     }
 }
 
-/// Llamados a los demás contratos
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
     fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>);
@@ -333,6 +365,21 @@ pub trait ExtFT {
     fn increase_allowance(account: AccountId);
     fn decrease_allowance(account: AccountId);
 }
+
+fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
+    option.unwrap_or_else(|| env::panic(message))
+}
+
+// pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
+//     return ValidAccountId::try_from((*account_id).to_string()).unwrap();
+// }
+
+// pub(crate) fn unique_prefix(account_id: &AccountId) -> Vec<u8> {
+//     let mut prefix = Vec::with_capacity(33);
+//     prefix.push(b'o');
+//     prefix.extend(env::sha256(account_id.as_bytes()));
+//     return prefix
+// }
 
 // #[cfg(test)]
 // mod tests {
