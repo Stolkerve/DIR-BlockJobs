@@ -150,7 +150,6 @@ impl Marketplace {
         }
     }
 
-
     // pub(crate) fn internal_remove_service_from_owner(
     //     &mut self,
     //     account_id: &AccountId,
@@ -252,4 +251,4 @@ impl Marketplace {
     //     let deserialized: Category = serde_json::from_str(&serialized).unwrap();
     //     deserialized
     // }
-}
+]

@@ -25,6 +25,17 @@ const USER_MINT_LIMIT: u16 = 100;
 const USERS_LIMIT: u16 = u16::MAX;
 const ONE_DAY: u64 = 86400000000000;
 
+// pub fn pseudo_random(seed: u8, num_of_digits: usize){
+//     let n = (seed * seed).()
+//      while(n.length < num_of_digits * 2 ){
+//       n = "0" + n
+//     }
+//     start = Math.floor(num_of_digits / 2)
+//     end = start + num_of_digits
+//     seed = parseInt(n.substring(start, end))
+//     return seed
+//   }
+
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Service {
@@ -715,6 +726,136 @@ impl Marketplace {
         };
     }
 
+    /*** INTERNAL FUNCTIONS  ***/
+
+    #[private]
+    fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
+        let keys = self.users.keys_as_vector();
+        let values = self.users.values_as_vector();
+        (from_index..std::cmp::min(from_index + limit, self.users.len()))
+            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
+            .collect()
+    }
+
+    #[private]
+    fn add_service(&mut self, service_id: &u64, account_id: &String) {
+        let mut services_set = self
+            .services_by_account
+            .get(account_id)
+            .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&account_id)));
+        services_set.insert(service_id);
+        self.services_by_account.insert(account_id, &services_set);
+    }
+
+    #[private]
+    fn delete_service(&mut self, service_id: &u64, account_id: &String) {
+        let mut services_set = expect_value_found(self.services_by_account.get(account_id), "Service should be owned by the sender".as_bytes());
+        services_set.remove(service_id);
+        self.services_by_account.insert(&account_id, &services_set);
+    }
+
+    #[allow(unused_variables)]
+    // #[private] near call $MA_ID get_random_users_account_by_role_jugde '{}' --account
+    pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
+        if amount > 10 {
+            env::panic(b"No se puede pedir mas de 10");
+        }
+        
+        let users = self.get_users_by_role(UserRoles::Jugde, 0, (amount as u64) + 1);
+        if amount as usize > users.len() {
+            env::panic(b"La cantidad pedida es mayor a la existente");
+        }
+        
+        let mut sample: Vec<AccountId> = Vec::new();
+        let seed = env::random_seed();
+        for i in 0..users.len() {
+            let m = (users.len() - 1 + 1);
+            let rn = 1 + ((*seed.get(i).unwrap() as usize) % m) as usize;
+            sample.push(users[rn - 1].account_id.clone());
+            env::log(format!("{:?}", rn).as_bytes());
+        }
+
+        // return users.iter().map(|x| x.account_id.clone()).collect();
+
+
+        return sample;
+    }
+
+    #[private]
+    fn measure_min_service_storage_cost(&mut self) {
+        let initial_storage_usage = env::storage_usage();
+        let tmp_account_id = "a".repeat(64);
+        let u = UnorderedSet::new(unique_prefix(&tmp_account_id));
+        self.services_by_account.insert(&tmp_account_id, &u);
+
+        let services_by_account_entry_in_bytes = env::storage_usage() - initial_storage_usage;
+        let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
+
+        self.extra_storage_in_bytes_per_service =
+            services_by_account_entry_in_bytes + owner_id_extra_cost_in_bytes;
+
+        self.services_by_account.remove(&tmp_account_id);
+    }
+
+    #[private]
+    fn update_user_mints(&mut self, quantity: u16) -> User {
+        let sender = env::predecessor_account_id();
+        let mut user = expect_value_found(self.users.get(&sender), "Before mint a nft, create an user".as_bytes());
+        
+        if user.mints + quantity > USER_MINT_LIMIT {
+            env::panic(format!("Exceeded user mint limit {}", USER_MINT_LIMIT).as_bytes());
+        }
+        user.mints += quantity;
+
+        self.users.insert(&sender, &user);
+
+        return user
+    }
+
+
+    /*** ASSERTS  ***/
+
+    /// Verificar que sea el admin
+    #[private]
+    fn assert_admin(&self, account_id: &AccountId) {
+        if *account_id != self.contract_owner {
+            env::panic("Must be owner_id how call its function".as_bytes())
+        }
+    }
+
+    #[private]
+    fn assert_service_exists(&self, service_id: &u64) {
+        if *service_id > self.total_services {
+            env::panic(b"The indicated service doesn't exist")
+        }
+    }
+
+    // #[private]
+    // fn string_to_json(&self, service_id: ServiceId) -> Category {
+    //     let example = Category {
+    //         category: "Programmer".to_string(),
+    //         subcategory: "Backend".to_string(),
+    //         areas: "Python, SQL".to_string()
+    //     };
+    //     let serialized = serde_json::to_string(&example).unwrap();
+
+    //     let string = format!("String: {}", &serialized);
+    //     env::log(string.as_bytes());
+
+    // // pub fn string_to_json(&self, service_id: ServiceId) -> Category {
+    // pub fn string_to_json(&self) -> Category {
+    //     let example = Category {
+    //         category: "Programmer".to_string(),
+    //         subcategory: "Backend".to_string(),
+    //         areas: "Python, SQL".to_string()
+    //     };
+    //     let serialized = serde_json::to_string(&example).unwrap();
+
+    //     let string = format!("String: {}", &serialized);
+    //     env::log(string.as_bytes());
+
+    //     let deserialized: Category = serde_json::from_str(&serialized).unwrap();
+    //     deserialized
 }
 
 #[ext_contract(ext_token)]
