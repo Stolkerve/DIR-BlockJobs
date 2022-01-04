@@ -1,0 +1,51 @@
+    #[allow(unused_variables)]
+    // #[private] near call $MA_ID get_random_users_account_by_role_jugde '{}' --account
+    pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
+        if amount > 10 {
+            env::panic(b"No se puede pedir mas de 10");
+        }
+        
+        let users = self.get_users_by_role(UserRoles::Jugde, 0, (amount as u64) + 1);
+        if amount as usize > users.len() {
+            env::panic(b"La cantidad pedida es mayor a la existente");
+        }
+        
+        let mut sample: Vec<AccountId> = Vec::new();
+        let seed = env::random_seed();
+        for i in 0..users.len() {
+            let m = users.len();
+            let rn = 1 + ((*seed.get(i).unwrap() as usize) % m) as usize;
+            sample.push(users[rn - 1].account_id.clone());
+            env::log(format!("{:?}", rn).as_bytes());
+        }
+
+        // return users.iter().map(|x| x.account_id.clone()).collect();
+
+
+        return sample;
+    }
+
+    /// Verificacion de datos para una disputa
+    /// 
+    pub fn validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) {
+        if  (env::signer_account_id() != self.contract_me) ||
+            (env::predecessor_account_id() != self.contract_me)
+        {
+            env::panic(b"Only the mediator contract can call this func");
+        }
+
+        let mut service = self.get_service_by_id(service_id);
+        let employer = service.actual_owner.clone();
+
+        if service.actual_owner != applicant && employer != applicant {
+            env::panic(b"Applicant dont found");
+        }
+
+        if service.creator_id != accused && employer != accused {
+            env::panic(b"Accused dont found");
+        }
+
+        service.on_dispute = true;
+        self.service_by_id.insert(&service.id, &service);
+
+    }

@@ -9,8 +9,6 @@ pub enum UserRoles {
     Professional = 0,
     Employeer = 1,
     Admin = 2,
-    Mod = 3,
-    Jugde = 4,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
@@ -22,7 +20,8 @@ pub struct User {
     pub rep: i16,
     pub categories: String,
     pub links: Option<String>,
-    pub education: Option<String>
+    pub education: Option<String>,
+    pub banned: bool,
 }
 
 // #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
