@@ -68,9 +68,9 @@ impl Token {
         this
     }
 
-    /****************** 
-     * CORE FUNCTIONS *
-     ******************/
+    /*******************/
+    /*  CORE FUNCTIONS */
+    /*******************/
 
     /// Token mint, limited to the pending amount
     /// Is not possible mint more of this amount
@@ -176,9 +176,9 @@ impl Token {
     }
 
 
-    /******************
-     * GET FUNCTIONS  *
-     ******************/
+    /**********************/
+    /*** GET FUNCTIONS  ***/
+    /**********************/
 
     pub fn get_total_supply(&self) -> Balance {
         self.token.total_supply
@@ -204,9 +204,7 @@ impl Token {
         if self.get_allowance_of(account) >= self.min_blocked_amount {
             return true;
         }
-        else {
-            return false;
-        }
+        else { return false; }
     }
 
     /*** 

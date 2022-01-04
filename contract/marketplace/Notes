@@ -20,8 +20,8 @@ near call $MA_ID buy_service '{"service_id": 0}' --accountId $MA_ID --amount 1 -
 near call $MA_ID reclaim_dispute '{"service_id": 0}' --accountId $MA_ID
 near call $MA_ID reclaim_service '{"service_id": 0}' --accountId $ID
 
-near call $MA_ID change_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
-near call $MA_ID change_service_duration '{"service_id": 0, "new_duration": 20}' --accountId $ID
+near call $MA_ID update_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
+near call $MA_ID update_service_duration '{"service_id": 0, "new_duration": 20}' --accountId $ID
 near call $MA_ID update_service_metadata '{"service_id": 0, "metadata": {"title": "Vitalik Buterin", "description": "description 2", "icon": "foto.png", "price": 2} }' --accountId $ID
 
 # Get functions
