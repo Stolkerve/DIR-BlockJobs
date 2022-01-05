@@ -50,6 +50,10 @@ pub struct Dispute {
     // Identificador para cada disputa
     id: DisputeId,
     service_id: u64,
+    // Cantidad de  miembros de jurado para la disputa
+    num_of_judges: u8,
+    // Lista de miembros del jurado y sus respectivos services a retirar
+    judges: HashSet<AccountId>,
     // Lista de miembros del jurado y sus respectivos services a retirar
     votes: HashSet<Vote>,
     dispute_status: DisputeStatus,
@@ -97,34 +101,24 @@ impl Mediator {
     //////////////////////////////////////
 
     #[payable]
-    pub fn new_dispute(&mut self, contract_ma: AccountId, method_name: String, service_id: u64, accused: ValidAccountId, proves: String) -> Promise {
+    pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u64 {
+        if env::attached_deposit() < 1 {
+            env::panic(b"To create a new dispute, deposit 0.1 near");
+        }
+
         let sender = env::predecessor_account_id();
 
-        let dispute = Dispute {
-            id: self.disputes_counter.clone(),
-            service_id: service_id,
-            votes: HashSet::new(),
-            dispute_status: DisputeStatus::Open,
-            initial_time_stamp: env::block_timestamp(),
-            finish_time_stamp: None,
-            applicant: sender,
-            accused: accused.to_string(),
-            winner: None,
-            applicant_proves: proves,
-            accused_proves: None
-        };
-        env::log(format!("{:?}", dispute).as_bytes());
-        
-        self.disputes.insert(&dispute.id, &dispute);
+        let _res = ext_marketplace::validate_dispute(
+            sender.clone(), accused.to_string(), services_id, MAX_JUDGES, vec!(),
+            &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
+        .then(ext_self::on_validate_dispute(
+            sender, accused.to_string(), services_id, proves,
+            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+        );
 
         self.disputes_counter += 1;
-        
-        Promise::new(contract_ma).function_call(
-            method_name.into_bytes(),
-            json!({ "service_id": service_id }).to_string().as_bytes().to_vec(),
-            NO_DEPOSIT,
-            BASE_GAS,
-        )
+
+        return self.disputes_counter-1;
     }
 
     #[allow(unused_must_use)]
@@ -291,7 +285,7 @@ impl Mediator {
 
     /// Verificar datos de la disputa desde el contrato del marketplace
     /// 
-    pub fn on_validate_dispute(&mut self) {
+    pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -301,8 +295,33 @@ impl Mediator {
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
-            PromiseResult::Successful(_data) => {
-                env::log(b"Dispute created");
+            PromiseResult::Successful(data) => {
+                let jugdes = near_sdk::serde_json::from_slice::<Vec<AccountId>>(&data);
+                if jugdes.is_ok() {
+                    // let j = jugdes.unwrap().into_iter().collect();
+                    let dispute = Dispute {
+                        id: self.disputes_counter.clone(),
+                        service_id: service_id,
+                        num_of_judges: MAX_JUDGES,
+                        judges: jugdes.unwrap().into_iter().collect(),
+                        votes: HashSet::new(),
+                        dispute_status: DisputeStatus::Open,
+                        initial_time_stamp: env::block_timestamp(),
+                        finish_time_stamp: None,
+                        applicant: applicant,
+                        accused: accused.to_string(),
+                        winner: None,
+                        applicant_proves: proves,
+                        accused_proves: None
+                    };
+                    env::log(format!("{:?}", dispute).as_bytes());
+                    
+                    self.disputes.insert(&dispute.id, &dispute);
+
+                    self.disputes_counter += 1;
+                } else {
+                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
+                }
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),

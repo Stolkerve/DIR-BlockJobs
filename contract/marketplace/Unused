@@ -70,3 +70,74 @@
             PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
+
+
+    #[payable]
+    pub fn reclaim_dispute_s(&mut self, service_id: u64, proves: String, accused: AccountId) -> Promise {
+        Promise::new(self.contract_me.clone()).function_call(
+            b"new_dispute".to_vec(), 
+            json!({ "contract_ma": self.contract_owner, "method_name": "on_new_dispute", 
+            "service_id": service_id, "accused": accused, "proves": proves })
+            .to_string().as_bytes().to_vec(), 
+            env::attached_deposit(), 
+            BASE_GAS)
+    }
+
+    /// Verificar datos de la disputa desde el contrato del marketplace
+    /// 
+    pub fn on_new_dispute(&mut self, service_id: u64) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
+        assert_eq!(
+            env::promise_results_count(),
+            1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                // Modificar los datos del servicio
+                let mut service = self.get_service_by_id(service_id.clone());
+                service.on_dispute = true;
+                self.service_by_id.insert(&service_id, &service);
+
+                env::log(b"Dispute created");
+            },
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
+
+, PromiseResult
+, serde_json::{json}
+
+    #[payable]
+    pub fn new_dispute(&mut self, contract_ma: AccountId, method_name: String, service_id: u64, accused: ValidAccountId, proves: String) -> Promise {
+        let sender = env::predecessor_account_id();
+
+        let dispute = Dispute {
+            id: self.disputes_counter.clone(),
+            service_id: service_id,
+            votes: HashSet::new(),
+            dispute_status: DisputeStatus::Open,
+            initial_time_stamp: env::block_timestamp(),
+            finish_time_stamp: None,
+            applicant: sender,
+            accused: accused.to_string(),
+            winner: None,
+            applicant_proves: proves,
+            accused_proves: None
+        };
+        env::log(format!("{:?}", dispute).as_bytes());
+        
+        self.disputes.insert(&dispute.id, &dispute);
+
+        self.disputes_counter += 1;
+        
+        Promise::new(contract_ma).function_call(
+            method_name.into_bytes(),
+            json!({ "service_id": service_id }).to_string().as_bytes().to_vec(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        )
+    }
