@@ -48,7 +48,7 @@ $ ./build.sh
 $ cd ..
 $ cd sim
 $ npm install
-$ npm run test
+$ npm run test -- --verbose --timeout=10m
 ```
 Autores
 =======
