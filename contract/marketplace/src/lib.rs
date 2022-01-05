@@ -3,7 +3,8 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, PromiseResult, StorageUsage, ext_contract, Gas};
+use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, PromiseResult, StorageUsage, 
+    ext_contract, Gas, serde_json::{json}};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
 //use rand::seq::SliceRandom;
@@ -19,8 +20,8 @@ near_sdk::setup_alloc!();
 // const GAS_FOR_RESOLVE_TRANSFER: Gas = 10_000_000_000_000;
 // const GAS_FOR_NFT_TRANSFER_CALL: Gas = 25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER;
 // const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
-const NO_DEPOSIT: Balance = 0;
-const BASE_GAS: Gas = 30_000_000_000_000;
+// const NO_DEPOSIT: Balance = 0;
+const BASE_GAS: Gas = 300_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const USERS_LIMIT: u16 = u16::MAX;
 const ONE_DAY: u64 = 86400000000000;
@@ -236,12 +237,11 @@ impl Marketplace {
         // );
     }
 
-
     /// Crear disputa en el contrato mediador
     /// Solo ejecutable por el empleador que compro el servicio
     /// 
     #[payable]
-    pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) -> Service {
+    pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) -> Promise {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
@@ -253,7 +253,7 @@ impl Marketplace {
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
-        let mut service = self.get_service_by_id(service_id.clone());
+        let service = self.get_service_by_id(service_id.clone());
 
         // Verificar que efectivamente haya comprado el servicio
         if service.actual_owner != env::signer_account_id() || service.actual_owner == service.creator_id {
@@ -262,23 +262,104 @@ impl Marketplace {
         // Verificar que no este ya solicitada la disputa
         if service.on_dispute == true { env::panic(b"Actually the service is in dispute"); }
 
-        let _res = ext_mediator::new_dispute(
-            service_id, 
-            string_to_valid_account_id(&service.creator_id), 
-            proves.clone(),
-            &self.contract_me, 
-            NO_DEPOSIT, BASE_GAS)
-        .then(ext_self::on_new_dispute(
-            //env::predecessor_account_id(), service.creator_id.to_string(), service_id, proves,
-            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        );
-
-        // Modificar los datos del servicio
-        service.on_dispute = true;
-        self.service_by_id.insert(&service_id, &service);
-
-        service
+        Promise::new(self.contract_me.clone()).function_call(
+            b"new_dispute".to_vec(), 
+            json!({ "contract_ma": self.contract_owner, "method_name": "on_new_dispute", "service_id": service_id, "accused": service.creator_id, "proves": proves }).to_string().as_bytes().to_vec(), 
+            env::attached_deposit(), 
+            BASE_GAS)
     }
+
+
+    /// Verificar datos de la disputa desde el contrato del marketplace
+    /// 
+    pub fn on_new_dispute(&mut self, service_id: u64) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
+        assert_eq!(
+            env::promise_results_count(),
+            1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                // Modificar los datos del servicio
+                let mut service = self.get_service_by_id(service_id.clone());
+                service.on_dispute = true;
+                self.service_by_id.insert(&service_id, &service);
+
+                env::log(b"Dispute created");
+            },
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
+
+
+    // /// Crear disputa en el contrato mediador
+    // /// Solo ejecutable por el empleador que compro el servicio
+    // /// 
+    // #[payable]
+    // pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) -> Service {
+    //     if env::attached_deposit() < 1 {
+    //         env::panic(b"To create a new dispute, deposit 0.1 near");
+    //     }
+    //     // Verificar que no haya sido banneado quien solicita la disputa
+    //     let user_id = string_to_valid_account_id(&env::predecessor_account_id());
+    //     let user = self.get_user(user_id);
+    //     if user.banned == true {env::panic(b"You are already banned for fraudulent disputes"); }
+
+    //     // Verificar que el servicio exista
+    //     self.assert_service_exists(&service_id);
+
+    //     let service = self.get_service_by_id(service_id.clone());
+
+    //     // Verificar que efectivamente haya comprado el servicio
+    //     if service.actual_owner != env::signer_account_id() || service.actual_owner == service.creator_id {
+    //         env::panic(b"Only the employeer that buy the service can init a dispute");
+    //     }
+    //     // Verificar que no este ya solicitada la disputa
+    //     if service.on_dispute == true { env::panic(b"Actually the service is in dispute"); }
+
+    //     let _res = ext_mediator::new_dispute(
+    //         service_id, 
+    //         string_to_valid_account_id(&service.creator_id), 
+    //         proves.clone(),
+    //         &self.contract_me, 
+    //         NO_DEPOSIT, BASE_GAS)
+    //     .then(ext_self::on_new_dispute(
+    //         //env::predecessor_account_id(), service.creator_id.to_string(), service_id, proves,
+    //         &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+    //     );
+
+    //     service
+    // }
+
+
+    // /// Verificar datos de la disputa desde el contrato del marketplace
+    // /// 
+    // pub fn on_new_dispute(&mut self, service_id: u64) {
+    //     if env::predecessor_account_id() != env::current_account_id() {
+    //         env::panic(b"only the contract can call its function")
+    //     }
+    //     assert_eq!(
+    //         env::promise_results_count(),
+    //         1,
+    //         "Contract expected a result on the callback"
+    //     );
+    //     match env::promise_result(0) {
+    //         PromiseResult::Successful(_data) => {
+    //             // Modificar los datos del servicio
+    //             let mut service = self.get_service_by_id(service_id.clone());
+    //             service.on_dispute = true;
+    //             self.service_by_id.insert(&service_id, &service);
+
+    //             env::log(b"Dispute created");
+    //         },
+    //         PromiseResult::Failed => env::panic(b"Callback faild"),
+    //         PromiseResult::NotReady => env::panic(b"Callback faild"),
+    //     };
+    // }
 
 
     /// Retornar un servicio al creador.
@@ -726,45 +807,6 @@ impl Marketplace {
         user
     }
 
-    /// Verificar datos de la disputa desde el contrato del marketplace
-    /// 
-    pub fn on_validate_dispute(&mut self) {
-        if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"only the contract can call its function")
-        }
-        assert_eq!(
-            env::promise_results_count(),
-            1,
-            "Contract expected a result on the callback"
-        );
-        match env::promise_result(0) {
-            PromiseResult::Successful(_data) => {
-                env::log(b"Dispute created");
-            },
-            PromiseResult::Failed => env::panic(b"Callback faild"),
-            PromiseResult::NotReady => env::panic(b"Callback faild"),
-        };
-    }
-
-    /// Verificar datos de la disputa desde el contrato del marketplace
-    /// 
-    pub fn on_new_dispute(&mut self) {
-        if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"only the contract can call its function")
-        }
-        assert_eq!(
-            env::promise_results_count(),
-            1,
-            "Contract expected a result on the callback"
-        );
-        match env::promise_result(0) {
-            PromiseResult::Successful(_data) => {
-                env::log(b"Dispute created");
-            },
-            PromiseResult::Failed => env::panic(b"Callback faild"),
-            PromiseResult::NotReady => env::panic(b"Callback faild"),
-        };
-    }
 
     /*** INTERNAL FUNCTIONS  ***/
 
