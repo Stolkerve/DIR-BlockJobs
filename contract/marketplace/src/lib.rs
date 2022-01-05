@@ -21,9 +21,10 @@ near_sdk::setup_alloc!();
 // const GAS_FOR_RESOLVE_TRANSFER: Gas = 10_000_000_000_000;
 // const GAS_FOR_NFT_TRANSFER_CALL: Gas = 25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER;
 // const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
+#[allow(dead_code)]
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
-const BASE_GAS: Gas = 30_000_000_000_000;
+const BASE_GAS: Gas = 100_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 
@@ -46,7 +47,7 @@ pub struct Service {
     pub creator_id: AccountId,
     pub actual_owner: AccountId,
     pub employers_account_ids: HashSet<AccountId>,
-    // Días que va a durar el trabajo ofrecido 
+    // Dias que va a durar el trabajo ofrecido 
     pub duration: u16,
     // Uso de timestamp para fijar momento de compra
     pub buy_moment: u64,
@@ -108,8 +109,9 @@ impl Marketplace {
         };
 
         let mut roles: Vec<UserRoles> = Vec::new();
-        roles.push(UserRoles::Admin);
+        roles.push(UserRoles::Judge);
         this.add_user_p(roles.clone(), owner_id.into(), "Categories { Programer: {Lenguajes: } }".to_string());
+        this.add_user_p(roles.clone(), mediator.into(), "Categories { Programer: {Lenguajes: } }".to_string(), );
 
         this.measure_min_service_storage_cost();
         return this;
@@ -599,7 +601,7 @@ impl Marketplace {
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_user_services_id(&self, account_id: ValidAccountId) -> Vec<u64> {
+    pub fn get_user_service_id(&self, account_id: ValidAccountId) -> Vec<u64> {
         return expect_value_found(self.services_by_account.get(&account_id.into()), "No users found or dont have any service".as_bytes()).to_vec();
     }
 
@@ -610,9 +612,9 @@ impl Marketplace {
     /// * `only_on_sale`  - Retornar solo los services activos.
     pub fn get_user_services(&self, account_id: ValidAccountId, only_on_sale: bool) -> Vec<Service> {
         let mut services: Vec<Service> = Vec::new();
-        let services_id = self.get_user_services_id(account_id.clone());
-        for i in 0 .. services_id.len() {
-            let service = expect_value_found(self.service_by_id.get(&services_id[i]), "Service id dont match".as_bytes());
+        let service_id = self.get_user_service_id(account_id.clone());
+        for i in 0 .. service_id.len() {
+            let service = expect_value_found(self.service_by_id.get(&service_id[i]), "Service id dont match".as_bytes());
             if only_on_sale {
                 if service.on_sale {
                     services.push( service ); 
@@ -794,7 +796,7 @@ impl Marketplace {
     #[allow(unused_variables)]
     // #[private] near call $MA_ID get_random_users_account_by_role_jugde '{}' --account
     pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        if amount > 10 {
+        if amount > 50 {
             env::panic(b"No se puede pedir mas de 10");
         }
         
@@ -846,7 +848,7 @@ pub trait Token {
 }
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
-    fn new_dispute(services_id: u64, accused: ValidAccountId, proves: String);
+    fn new_dispute(service_id: u64, accused: ValidAccountId, proves: String);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
@@ -892,7 +894,7 @@ fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
 //             (admin.mints == false) &&
 //             (admin.account_id == admin_id.to_string()) &&
 //             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-//             (marketplace.get_user_services_id(admin_id).len() == 0) // no minteo ningun service
+//             (marketplace.get_user_service_id(admin_id).len() == 0) // no minteo ningun service
 //             ,
 //             true
 //         );

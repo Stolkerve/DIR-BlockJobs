@@ -1,27 +1,22 @@
-use near_sdk::{ env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, 
-                PanicOnDefault, Gas,  PromiseResult, Promise, serde_json::{json}};
-use near_sdk::collections::{UnorderedMap};
+use near_sdk::{ env, ext_contract, near_bindgen, setup_alloc, AccountId, Balance, Gas, PanicOnDefault,
+    PromiseResult,
+};
+// , Promise, serde_json::{json}};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::serde::{Serialize, Deserialize};
-use near_sdk::json_types::{ValidAccountId};
-use std::fmt::{Debug};
-use std::collections::{HashSet};
+use near_sdk::collections::UnorderedMap;
+use near_sdk::json_types::ValidAccountId;
+use near_sdk::serde::{Deserialize, Serialize};
+use std::collections::HashSet;
+use std::fmt::Debug;
 // use std::convert::TryFrom;
 
-#[allow(dead_code)]
-const YOCTO_NEAR: u128 = 1000000000000000000000000;
-#[allow(dead_code)]
-const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
-const MAX_JUDGES: u8 = 50;
-#[allow(dead_code)]
-const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days 
-#[allow(dead_code)]
+// const YOCTO_NEAR: u128 = 1000000000000000000000000;
+// const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
+// const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days
+// const NANO_SECONDS: u32 = 1_000_000_000;
 const NO_DEPOSIT: Balance = 0;
-#[allow(dead_code)]
-const BASE_GAS: Gas = 300_000_000_000_000;
-//const NANO_SECONDS: u32 = 1_000_000_000;
+const BASE_GAS: Gas = 100_000_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
-
 setup_alloc!();
 
 pub type DisputeId = u64;
@@ -38,10 +33,10 @@ pub struct Vote {
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub enum DisputeStatus {
-    Open,
-    Resolving,
-    Executable,
-    Finished
+    Open,       //Tiempo para subir pruebas -Duracion: 5 dias
+    Resolving,  //Tiempo para subir realizar las votaciones -Duracion: 5 dias
+    Executable, //Tiempo para subir ejecutarse los resultado -Duracion: 0.5 dias
+    Finished,   //Indica que la disputa finalizo exitosamente -Duracion: indefinida
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
@@ -76,7 +71,8 @@ pub struct Mediator {
     disputes_counter: u64,
     owner: AccountId,
     admins: Vec<AccountId>,
-    marketplace_account_id: AccountId
+    marketplace_account_id: AccountId,
+    max_jurors: u8,
 }
 
 #[near_bindgen]
@@ -91,7 +87,8 @@ impl Mediator {
             disputes_counter: 0,
             owner: env::signer_account_id(),
             admins: Vec::new(),
-            marketplace_account_id: marketplace_account_id
+            marketplace_account_id: marketplace_account_id,
+            max_jurors: 2,
         };
         return this;
     }
@@ -101,24 +98,33 @@ impl Mediator {
     //////////////////////////////////////
 
     #[payable]
-    pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u64 {
+    pub fn new_dispute(&mut self, service_id: u64, accused: ValidAccountId, proves: String) -> u64 {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
-
         let sender = env::predecessor_account_id();
 
         let _res = ext_marketplace::validate_dispute(
-            sender.clone(), accused.to_string(), services_id, MAX_JUDGES, vec!(),
-            &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
+            sender.clone(),
+            accused.to_string(),
+            service_id,
+            self.max_jurors,
+            vec![],
+            &self.marketplace_account_id,
+            NO_DEPOSIT,
+            BASE_GAS,
+        )
         .then(ext_self::on_validate_dispute(
-            sender, accused.to_string(), services_id, proves,
-            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        );
+            sender,
+            accused.to_string(),
+            service_id,
+            proves,
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
 
-        self.disputes_counter += 1;
-
-        return self.disputes_counter-1;
+        return self.disputes_counter;
     }
 
     #[allow(unused_must_use)]
@@ -170,7 +176,7 @@ impl Mediator {
         }
 
         // Si se completan los votos se pasa la siguiente etapa
-        if dispute.votes.len() == MAX_JUDGES as usize {
+        if dispute.votes.len() == self.max_jurors as usize {
             dispute.dispute_status = DisputeStatus::Executable
         }
 
@@ -239,6 +245,17 @@ impl Mediator {
         return dispute;
     }
 
+
+    /// Modificar la cantidad maxima de votantes para las disputas.
+    /// Solo ejecutable por owner
+    ///
+    pub fn update_max_jurors(&mut self, quantity: u8) -> u8 {
+        self.assert_owner(&env::signer_account_id());
+        self.max_jurors = quantity;
+        quantity
+    }
+
+
     //////////////////////////////////////
     ///         Metodos GET            ///
     //////////////////////////////////////
@@ -267,11 +284,11 @@ impl Mediator {
     ///      Funciones internas        ///
     //////////////////////////////////////
     
-    // fn assert_owner(&self, account: &AccountId) {
-    //     if *account != self.owner {
-    //         env::panic(b"Isn't the owner");
-    //     }
-    // }
+    fn assert_owner(&self, account: &AccountId) {
+        if *account != self.owner {
+            env::panic(b"Isn't the owner");
+        }
+    }
 
     // fn assert_admin(&self, account: &AccountId) {
     //     if !self.admins.contains(&account) {
@@ -302,7 +319,7 @@ impl Mediator {
                     let dispute = Dispute {
                         id: self.disputes_counter.clone(),
                         service_id: service_id,
-                        num_of_judges: MAX_JUDGES,
+                        num_of_judges: self.max_jurors,
                         judges: jugdes.unwrap().into_iter().collect(),
                         votes: HashSet::new(),
                         dispute_status: DisputeStatus::Open,
