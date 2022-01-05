@@ -1,5 +1,5 @@
 use near_sdk::{ env, ext_contract, near_bindgen, AccountId, setup_alloc, Balance, 
-                PanicOnDefault, Gas,  PromiseResult};
+                PanicOnDefault, Gas,  PromiseResult, Promise, serde_json::{json}};
 use near_sdk::collections::{UnorderedMap};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Serialize, Deserialize};
@@ -18,7 +18,7 @@ const MAX_EPOCHS_FOR_OPEN_DISPUTES: u64 = 6; // 1 epoch = 12h. 3 days
 #[allow(dead_code)]
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
-const BASE_GAS: Gas = 30_000_000_000_000;
+const BASE_GAS: Gas = 300_000_000_000_000;
 //const NANO_SECONDS: u32 = 1_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 
@@ -96,8 +96,8 @@ impl Mediator {
     ///        CORE FUNCTIONS          ///
     //////////////////////////////////////
 
-    // #[payable]
-    pub fn new_dispute(&mut self, service_id: u64, accused: ValidAccountId, proves: String) -> u64 {
+    #[payable]
+    pub fn new_dispute(&mut self, contract_ma: AccountId, method_name: String, service_id: u64, accused: ValidAccountId, proves: String) -> Promise {
         let sender = env::predecessor_account_id();
 
         let dispute = Dispute {
@@ -118,7 +118,13 @@ impl Mediator {
         self.disputes.insert(&dispute.id, &dispute);
 
         self.disputes_counter += 1;
-        return self.disputes_counter-1;
+        
+        Promise::new(contract_ma).function_call(
+            method_name.into_bytes(),
+            json!({ "service_id": service_id }).to_string().as_bytes().to_vec(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        )
     }
 
     #[allow(unused_must_use)]
