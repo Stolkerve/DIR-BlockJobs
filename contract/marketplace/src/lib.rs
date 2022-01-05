@@ -226,14 +226,14 @@ impl Marketplace {
 
         self.service_by_id.insert(&service_id, &service);
 
-        // Realizar el pago que quedara en el contrato mediador
-        let _res = ext_token::block_tokens(
-            service.metadata.price,
-            &self.contract_ft, NO_DEPOSIT, BASE_GAS)
-        .then(ext_self::on_block_tokens(
-            3,
-            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        );
+        // // Realizar el pago que quedara en el contrato mediador
+        // let _res = ext_token::block_tokens(
+        //     service.metadata.price,
+        //     &self.contract_ft, NO_DEPOSIT, BASE_GAS)
+        // .then(ext_self::on_block_tokens(
+        //     3,
+        //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+        // );
     }
 
 
@@ -265,13 +265,13 @@ impl Marketplace {
         let _res = ext_mediator::new_dispute(
             service_id, 
             string_to_valid_account_id(&service.creator_id), 
-            proves,
+            proves.clone(),
             &self.contract_me, 
-            NO_DEPOSIT, BASE_GAS);
-        // .then(ext_self::on_validate_dispute(
-        //     sender, accused.to_string(), services_id, proves,
-        //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        // );
+            NO_DEPOSIT, BASE_GAS)
+        .then(ext_self::on_new_dispute(
+            env::predecessor_account_id(), service.creator_id.to_string(), service_id, proves,
+            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+        );
 
         // Modificar los datos del servicio
         service.on_dispute = true;
@@ -493,7 +493,6 @@ impl Marketplace {
         return new_user
     }
 
-    #[payable]
     fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, categories: String) -> User {
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
@@ -727,6 +726,47 @@ impl Marketplace {
         user
     }
 
+    /// Callback para verificar creacion de una nueva disputa en mediador.
+    /// 
+    pub fn on_new_dispute(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"Only the contract can call its function")
+        }
+        assert_eq!(
+            env::promise_results_count(),
+            1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(data) => {
+                let balance = near_sdk::serde_json::from_slice::<Balance>(&data);
+                if balance.is_ok() {
+                    env::log(format!("Se bloqueo {:?} tokens de 1", balance).as_bytes());
+                    
+                    // Quitarle el servicio al owner
+                    self.delete_service(&service_id, &owner_id);
+
+                    // Anadirle el servicio al comprador
+                    self.add_service(&service_id, &buyer);
+
+                    let mut service = self.get_service_by_id(service_id.clone());
+                    // Modificar la metadata del service
+                    service.actual_owner = buyer.clone();
+                    service.employers_account_ids.insert(buyer.clone());
+                    self.service_by_id.insert(&service_id, &service);
+
+                    // if let Some(memo) = memo {
+                        //     env::log(format!("Memo: {}", memo).as_bytes());
+                    // }
+                } else {
+                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
+                }
+            },
+            PromiseResult::Failed => env::panic(b"on_block_tokens callback faild"),
+            PromiseResult::NotReady => env::panic(b"on_block_tokens callback faild"),
+        };
+    }
+
     /// Callback para verificar bloqueo de tokens en contrato ft
     /// 
     pub fn on_block_tokens(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
@@ -886,7 +926,7 @@ pub trait Mediator {
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn on_mint(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
+    fn on_new_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
     fn on_transfer_tokens(service_id: u64);
     fn on_block_tokens(service_id: u64);
 }

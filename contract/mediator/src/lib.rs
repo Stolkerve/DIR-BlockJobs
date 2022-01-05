@@ -24,7 +24,7 @@ const ONE_DAY: u64 = 86400000000000;
 
 setup_alloc!();
 
-pub type DisputeId = u32;
+pub type DisputeId = u64;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -49,11 +49,8 @@ pub enum DisputeStatus {
 pub struct Dispute {
     // Identificador para cada disputa
     id: DisputeId,
-    services_id: u64,
-    // Cantidad de  miembros de jurado para la disputa
-    num_of_judges: u8,
+    service_id: u64,
     // Lista de miembros del jurado y sus respectivos services a retirar
-    judges: HashSet<AccountId>,
     votes: HashSet<Vote>,
     dispute_status: DisputeStatus,
     // Tiempos
@@ -72,7 +69,7 @@ pub struct Dispute {
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Mediator {
     disputes: UnorderedMap<DisputeId, Dispute>,
-    disputes_counter: u32,
+    disputes_counter: u64,
     owner: AccountId,
     admins: Vec<AccountId>,
     marketplace_account_id: AccountId
@@ -99,19 +96,28 @@ impl Mediator {
     ///        CORE FUNCTIONS          ///
     //////////////////////////////////////
 
-    pub fn new_dispute(&mut self, services_id: u64, accused: ValidAccountId, proves: String) -> u32 {
+    // #[payable]
+    pub fn new_dispute(&mut self, service_id: u64, accused: ValidAccountId, proves: String) -> u64 {
         let sender = env::predecessor_account_id();
 
-        let _res = ext_marketplace::validate_dispute(
-            sender.clone(), accused.to_string(), services_id, MAX_JUDGES, vec!(),
-            &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
-        .then(ext_self::on_validate_dispute(
-            sender, accused.to_string(), services_id, proves,
-            &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        );
+        let dispute = Dispute {
+            id: self.disputes_counter.clone(),
+            service_id: service_id,
+            votes: HashSet::new(),
+            dispute_status: DisputeStatus::Open,
+            initial_time_stamp: env::block_timestamp(),
+            finish_time_stamp: None,
+            applicant: sender,
+            accused: accused.to_string(),
+            winner: None,
+            applicant_proves: proves,
+            accused_proves: None
+        };
+        env::log(format!("{:?}", dispute).as_bytes());
+        
+        self.disputes.insert(&dispute.id, &dispute);
 
         self.disputes_counter += 1;
-
         return self.disputes_counter-1;
     }
 
@@ -154,9 +160,6 @@ impl Mediator {
         }
 
         // Verificar que sea miembro del jurado
-        if !dispute.judges.contains(&sender) {
-            env::panic(b"You are not a Jury Member");
-        };
 
         // Verificar que no haya ya votado
         if !dispute.votes.insert(Vote {
@@ -167,7 +170,7 @@ impl Mediator {
         }
 
         // Si se completan los votos se pasa la siguiente etapa
-        if dispute.votes.len() == dispute.num_of_judges as usize {
+        if dispute.votes.len() == MAX_JUDGES as usize {
             dispute.dispute_status = DisputeStatus::Executable
         }
 
@@ -222,10 +225,10 @@ impl Mediator {
                 dispute.finish_time_stamp = Some(env::block_timestamp());
 
                 let _res = ext_marketplace::return_service(
-                    dispute.services_id,
+                    dispute.service_id,
                     &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
                 .then(ext_self::on_return_service(
-                    dispute.services_id,
+                    dispute.service_id,
                     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
                 );
             }
@@ -250,7 +253,7 @@ impl Mediator {
         dispute
     }
 
-    pub fn get_total_disputes(&self) -> u32 {
+    pub fn get_total_disputes(&self) -> u64 {
         self.disputes_counter
     }
 
@@ -298,9 +301,9 @@ impl Mediator {
                     // let j = jugdes.unwrap().into_iter().collect();
                     let dispute = Dispute {
                         id: self.disputes_counter.clone(),
-                        services_id: service_id,
-                        num_of_judges: MAX_JUDGES,
-                        judges: jugdes.unwrap().into_iter().collect(),
+                        service_id: service_id,
+                        // num_of_judges: MAX_JUDGES,
+                        // judges: jugdes.unwrap().into_iter().collect(),
                         votes: HashSet::new(),
                         dispute_status: DisputeStatus::Open,
                         initial_time_stamp: env::block_timestamp(),
