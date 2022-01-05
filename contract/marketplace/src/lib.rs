@@ -269,7 +269,7 @@ impl Marketplace {
             &self.contract_me, 
             NO_DEPOSIT, BASE_GAS)
         .then(ext_self::on_new_dispute(
-            env::predecessor_account_id(), service.creator_id.to_string(), service_id, proves,
+            //env::predecessor_account_id(), service.creator_id.to_string(), service_id, proves,
             &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
         );
 
@@ -726,11 +726,11 @@ impl Marketplace {
         user
     }
 
-    /// Callback para verificar creacion de una nueva disputa en mediador.
+    /// Verificar datos de la disputa desde el contrato del marketplace
     /// 
-    pub fn on_new_dispute(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
+    pub fn on_validate_dispute(&mut self) {
         if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"Only the contract can call its function")
+            env::panic(b"only the contract can call its function")
         }
         assert_eq!(
             env::promise_results_count(),
@@ -738,40 +738,19 @@ impl Marketplace {
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
-            PromiseResult::Successful(data) => {
-                let balance = near_sdk::serde_json::from_slice::<Balance>(&data);
-                if balance.is_ok() {
-                    env::log(format!("Se bloqueo {:?} tokens de 1", balance).as_bytes());
-                    
-                    // Quitarle el servicio al owner
-                    self.delete_service(&service_id, &owner_id);
-
-                    // Anadirle el servicio al comprador
-                    self.add_service(&service_id, &buyer);
-
-                    let mut service = self.get_service_by_id(service_id.clone());
-                    // Modificar la metadata del service
-                    service.actual_owner = buyer.clone();
-                    service.employers_account_ids.insert(buyer.clone());
-                    self.service_by_id.insert(&service_id, &service);
-
-                    // if let Some(memo) = memo {
-                        //     env::log(format!("Memo: {}", memo).as_bytes());
-                    // }
-                } else {
-                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
-                }
+            PromiseResult::Successful(_data) => {
+                env::log(b"Dispute created");
             },
-            PromiseResult::Failed => env::panic(b"on_block_tokens callback faild"),
-            PromiseResult::NotReady => env::panic(b"on_block_tokens callback faild"),
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
 
-    /// Callback para verificar bloqueo de tokens en contrato ft
+    /// Verificar datos de la disputa desde el contrato del marketplace
     /// 
-    pub fn on_block_tokens(&mut self, service_id: u64, owner_id: AccountId, buyer: AccountId) {
+    pub fn on_new_dispute(&mut self) {
         if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"Only the contract can call its function")
+            env::panic(b"only the contract can call its function")
         }
         assert_eq!(
             env::promise_results_count(),
@@ -779,32 +758,11 @@ impl Marketplace {
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
-            PromiseResult::Successful(data) => {
-                let balance = near_sdk::serde_json::from_slice::<Balance>(&data);
-                if balance.is_ok() {
-                    env::log(format!("Se bloqueo {:?} tokens de 1", balance).as_bytes());
-                    
-                    // Quitarle el servicio al owner
-                    self.delete_service(&service_id, &owner_id);
-
-                    // Anadirle el servicio al comprador
-                    self.add_service(&service_id, &buyer);
-
-                    let mut service = self.get_service_by_id(service_id.clone());
-                    // Modificar la metadata del service
-                    service.actual_owner = buyer.clone();
-                    service.employers_account_ids.insert(buyer.clone());
-                    self.service_by_id.insert(&service_id, &service);
-
-                    // if let Some(memo) = memo {
-                        //     env::log(format!("Memo: {}", memo).as_bytes());
-                    // }
-                } else {
-                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
-                }
+            PromiseResult::Successful(_data) => {
+                env::log(b"Dispute created");
             },
-            PromiseResult::Failed => env::panic(b"on_block_tokens callback faild"),
-            PromiseResult::NotReady => env::panic(b"on_block_tokens callback faild"),
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
 
@@ -926,7 +884,7 @@ pub trait Mediator {
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn on_new_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
+    fn on_new_dispute();
     fn on_transfer_tokens(service_id: u64);
     fn on_block_tokens(service_id: u64);
 }
