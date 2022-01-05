@@ -285,7 +285,7 @@ impl Mediator {
 
     /// Verificar datos de la disputa desde el contrato del marketplace
     /// 
-    pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
+    pub fn on_validate_dispute(&mut self) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -295,33 +295,8 @@ impl Mediator {
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
-            PromiseResult::Successful(data) => {
-                let jugdes = near_sdk::serde_json::from_slice::<Vec<AccountId>>(&data);
-                if jugdes.is_ok() {
-                    // let j = jugdes.unwrap().into_iter().collect();
-                    let dispute = Dispute {
-                        id: self.disputes_counter.clone(),
-                        service_id: service_id,
-                        // num_of_judges: MAX_JUDGES,
-                        // judges: jugdes.unwrap().into_iter().collect(),
-                        votes: HashSet::new(),
-                        dispute_status: DisputeStatus::Open,
-                        initial_time_stamp: env::block_timestamp(),
-                        finish_time_stamp: None,
-                        applicant: applicant,
-                        accused: accused.to_string(),
-                        winner: None,
-                        applicant_proves: proves,
-                        accused_proves: None
-                    };
-                    env::log(format!("{:?}", dispute).as_bytes());
-                    
-                    self.disputes.insert(&dispute.id, &dispute);
-
-                    self.disputes_counter += 1;
-                } else {
-                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
-                }
+            PromiseResult::Successful(_data) => {
+                env::log(b"Dispute created");
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
