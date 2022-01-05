@@ -8,6 +8,7 @@ near call $ME_ID add_accused_proves '{"dispute_id": 0, "accused_proves": "prueba
 
 near call $ME_ID vote '{"dispute_id": 0, "vote": true}' --accountId stolkerve.testnet
 near call $ME_ID vote '{"dispute_id": 0, "vote": true}' --accountId stolkerve2.testnet
+near call $ME_ID vote '{"dispute_id": 0, "vote": true}' --accountId $ID
 
 near call $ME_ID update_dispute_status '{"dispute_id": 0}' --accountId $ME_ID --gas 300000000000000
 
