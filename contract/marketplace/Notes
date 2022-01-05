@@ -36,6 +36,6 @@ near view $MA_ID get_service_by_ids '{"ids": [0, 1, 2]}' --accountId $MA_ID
 
 near view $MA_ID get_user_services '{"account_id": "'$ID'", "only_on_sale": false}' --accountId $MA_ID
 near view $MA_ID get_user_services '{"account_id": "'$MA_ID'", "only_on_sale": true}' --accountId $MA_ID
-near view $MA_ID get_user_services_id '{"account_id": "'$ID'"}' --accountId $MA_ID
+near view $MA_ID get_user_service_id '{"account_id": "'$ID'"}' --accountId $MA_ID
 
 near view $MA_ID get_total_services '{}' --accountId $MA_ID
