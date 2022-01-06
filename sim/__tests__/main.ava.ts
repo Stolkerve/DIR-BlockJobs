@@ -187,7 +187,7 @@ workspace.test('extra goodies', async (test, {admin1, admin2, marketplace, media
     boughtServices.sold,
     true,
   );
-  test.deepEqual(
+  test.is(
     boughtServices.metadata,
     userAdmin1Services.metadata,
   );
