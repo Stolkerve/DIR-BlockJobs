@@ -1,7 +1,7 @@
 source deploy.sh
 near call $ME_ID new '{"marketplace_account_id": "'$MA_ID'"}' --accountId $ME_ID
 
-near call $ME_ID new_dispute '{"service_id": 0, "accused": "'$ID'", "proves": "asdasd"}' --accountId $ID2 --amount 0.1 --gas 300000000000000
+# near call $ME_ID new_dispute '{"service_id": 0, "accused": "'$ID'", "proves": "asdasd"}' --accountId $ID2 --amount 0.1 --gas 300000000000000
 
 near call $ME_ID add_accused_proves '{"dispute_id": 0, "accused_proves": "pruebas en contra"}' --accountId $MA_ID
 
