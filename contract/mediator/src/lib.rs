@@ -4,7 +4,7 @@ use near_sdk::{ env, ext_contract, near_bindgen, setup_alloc, AccountId, Balance
 // , Promise, serde_json::{json}};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedMap;
-use near_sdk::json_types::ValidAccountId;
+// use near_sdk::json_types::ValidAccountId;
 use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -45,11 +45,7 @@ pub struct Dispute {
     // Identificador para cada disputa
     id: DisputeId,
     service_id: u64,
-    // Cantidad de  miembros de jurado para la disputa
-    num_of_judges: u8,
-    // Lista de miembros del jurado y sus respectivos services a retirar
-    judges: HashSet<AccountId>,
-    // Lista de miembros del jurado y sus respectivos services a retirar
+    // Lista de miembros del jurado y sus respectivos votos
     votes: HashSet<Vote>,
     dispute_status: DisputeStatus,
     // Tiempos
@@ -57,11 +53,11 @@ pub struct Dispute {
     finish_time_stamp: Option<u64>, //Time
     // Partes
     applicant: AccountId, // Empleador demandante
-    accused: AccountId, // Profesional acusado
+    accused: AccountId,   // Profesional acusado
     winner: Option<AccountId>,
     // Pruebas
-    applicant_proves: String, // Un markdown con las pruebas
-    accused_proves: Option<String> // Un markdown con las pruebas
+    applicant_proves: String,       // Un markdown con las pruebas
+    accused_proves: Option<String>, // Un markdown con las pruebas
 }
 
 #[near_bindgen]
@@ -97,34 +93,33 @@ impl Mediator {
     ///        CORE FUNCTIONS          ///
     //////////////////////////////////////
 
+    /// Ejecutable desde Marketplace
+    /// 
     #[payable]
-    pub fn new_dispute(&mut self, service_id: u64, accused: ValidAccountId, proves: String) -> u64 {
+    pub fn new_dispute(&mut self, service_id: u64, applicant: AccountId, accused: AccountId, proves: String) -> u64 {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
-        let sender = env::predecessor_account_id();
 
-        let _res = ext_marketplace::validate_dispute(
-            sender.clone(),
-            accused.to_string(),
-            service_id,
-            self.max_jurors,
-            vec![],
-            &self.marketplace_account_id,
-            NO_DEPOSIT,
-            BASE_GAS,
-        )
-        .then(ext_self::on_validate_dispute(
-            sender,
-            accused.to_string(),
-            service_id,
-            proves,
-            &env::current_account_id(),
-            NO_DEPOSIT,
-            BASE_GAS,
-        ));
+        let dispute = Dispute {
+            id: self.disputes_counter.clone(),
+            service_id: service_id,
+            votes: HashSet::new(),
+            dispute_status: DisputeStatus::Open,
+            initial_time_stamp: env::block_timestamp(),
+            finish_time_stamp: None,
+            applicant: applicant,
+            accused: accused.to_string(),
+            winner: None,
+            applicant_proves: proves,
+            accused_proves: None,
+        };
+        env::log(format!("{:?}", dispute).as_bytes());
 
-        return self.disputes_counter;
+        self.disputes.insert(&dispute.id, &dispute);
+        self.disputes_counter += 1;
+
+        return self.disputes_counter -1;
     }
 
     #[allow(unused_must_use)]
@@ -296,54 +291,6 @@ impl Mediator {
     //     }
     // }
     
-    //////////////////////////////////////
-    /// Llamados a los demás contratos ///
-    //////////////////////////////////////
-
-    /// Verificar datos de la disputa desde el contrato del marketplace
-    /// 
-    pub fn on_validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, proves: String) {
-        if env::predecessor_account_id() != env::current_account_id() {
-            env::panic(b"only the contract can call its function")
-        }
-        assert_eq!(
-            env::promise_results_count(),
-            1,
-            "Contract expected a result on the callback"
-        );
-        match env::promise_result(0) {
-            PromiseResult::Successful(data) => {
-                let jugdes = near_sdk::serde_json::from_slice::<Vec<AccountId>>(&data);
-                if jugdes.is_ok() {
-                    // let j = jugdes.unwrap().into_iter().collect();
-                    let dispute = Dispute {
-                        id: self.disputes_counter.clone(),
-                        service_id: service_id,
-                        num_of_judges: self.max_jurors,
-                        judges: jugdes.unwrap().into_iter().collect(),
-                        votes: HashSet::new(),
-                        dispute_status: DisputeStatus::Open,
-                        initial_time_stamp: env::block_timestamp(),
-                        finish_time_stamp: None,
-                        applicant: applicant,
-                        accused: accused.to_string(),
-                        winner: None,
-                        applicant_proves: proves,
-                        accused_proves: None
-                    };
-                    env::log(format!("{:?}", dispute).as_bytes());
-                    
-                    self.disputes.insert(&dispute.id, &dispute);
-
-                    self.disputes_counter += 1;
-                } else {
-                    env::panic(b"ERR_WRONG_VAL_RECEIVED")
-                }
-            },
-            PromiseResult::Failed => env::panic(b"Callback faild"),
-            PromiseResult::NotReady => env::panic(b"Callback faild"),
-        };
-    }
 
     /// Retornar el servicio al profesional
     /// 
@@ -369,12 +316,11 @@ impl Mediator {
 
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
-    fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>);
+    fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64);
     fn return_service(service_id: u64);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn on_validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64, proves: String);
     fn on_return_service(service_id: u64);
 }
 #[ext_contract(ext_ft)]

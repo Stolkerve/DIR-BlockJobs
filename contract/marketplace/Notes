@@ -1,5 +1,3 @@
-source deploy.sh
-
 npx tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch
 
 near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
@@ -17,7 +15,7 @@ near call $MA_ID set_user_role '{"account_id": "'$ID'", "role": "Admin", "remove
 near call $MA_ID mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
 near call $MA_ID buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 300000000000000
 
-near call $MA_ID reclaim_dispute '{"service_id": 0}' --accountId $ID2 
+near call $MA_ID reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 1 --gas 300000000000000
 
 near call $MA_ID update_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
 near call $MA_ID update_service_duration '{"service_id": 1, "new_duration": 20}' --accountId $ID

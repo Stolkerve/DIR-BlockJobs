@@ -3,8 +3,8 @@ use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage, 
-    ext_contract, Gas};
-    // , PromiseResult, serde_json::{json}};
+    ext_contract, Gas, PromiseResult};
+    // , serde_json::{json}};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
 // use rand::seq::SliceRandom;
@@ -19,8 +19,6 @@ near_sdk::setup_alloc!();
 
 // const ON_CALLBACK_GAS: u64 = 20_000_000_000_000;
 // const GAS_FOR_RESOLVE_TRANSFER: Gas = 10_000_000_000_000;
-// const GAS_FOR_NFT_TRANSFER_CALL: Gas = 25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER;
-// const SPONSOR_FEE: u128 = 100_000_000_000_000_000_000_000;
 #[allow(dead_code)]
 const NO_DEPOSIT: Balance = 0;
 #[allow(dead_code)]
@@ -28,16 +26,6 @@ const BASE_GAS: Gas = 100_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 
-// pub fn pseudo_random(seed: u8, num_of_digits: usize){
-//     let n = (seed * seed).()
-//      while(n.length < num_of_digits * 2 ){
-//       n = "0" + n
-//     }
-//     start = Math.floor(num_of_digits / 2)
-//     end = start + num_of_digits
-//     seed = parseInt(n.substring(start, end))
-//     return seed
-//   }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -237,31 +225,65 @@ impl Marketplace {
         // );
     }
 
-    /// Establecer servicio en disputa.
+
+    /// Crear disputa en el contrato mediador.
     /// Solo ejecutable por el empleador que compro el servicio.
-    /// 
-    pub fn reclaim_dispute(&mut self, service_id: u64) -> Service {
+    ///
+    #[payable]
+    pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) {
         // Verificar que no haya sido banneado quien solicita la disputa
         let user_id = string_to_valid_account_id(&env::predecessor_account_id());
-        let user = self.get_user(user_id);
-        if user.banned == true {env::panic(b"You are already banned for fraudulent disputes"); }
-
+        if self.get_user(user_id).banned == true {
+            env::panic(b"You are already banned for fraudulent disputes");
+        }
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
-        let mut service = self.get_service_by_id(service_id.clone());
+        let service = self.get_service_by_id(service_id.clone());
 
         // Verificar que efectivamente haya comprado el servicio
         if service.actual_owner != env::signer_account_id() || service.actual_owner == service.creator_id {
             env::panic(b"Only the employeer that buy the service can init a dispute");
         }
         // Verificar que no este ya solicitada la disputa
-        if service.on_dispute == true { env::panic(b"Actually the service is in dispute"); };
+        if service.on_dispute == true {
+            env::panic(b"Actually the service is in dispute");
+        };
 
-        service.on_dispute = true;
-        self.service_by_id.insert(&service_id, &service);
+        let _res = ext_mediator::new_dispute(
+            service_id,
+            env::signer_account_id(),
+            service.creator_id.clone(),
+            proves,
+            &self.contract_me,
+            env::attached_deposit(),
+            BASE_GAS,
+        ).then(ext_self::on_new_dispute(
+            service_id,
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
+    }
 
-        service
+    /// Callback desde contrato mediador
+    /// 
+    pub fn on_new_dispute(&mut self, service_id: u64) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"Only the contract can call its function")
+        }
+        assert_eq!(env::promise_results_count(), 1, "Contract expected a result on the callback");
+        
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                let mut service = self.get_service_by_id(service_id.clone());
+
+                service.on_dispute = true;
+                self.service_by_id.insert(&service_id, &service);
+            }
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
     }
 
 
@@ -663,31 +685,6 @@ impl Marketplace {
     /*******************************/
 
 
-    /// Verificacion de datos para una disputa
-    /// 
-    pub fn validate_dispute(&mut self, applicant: AccountId, accused: AccountId, service_id: u64, jugdes: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        if  (env::signer_account_id() != self.contract_me) ||
-            (env::predecessor_account_id() != self.contract_me)
-        {
-            env::panic(b"Only the mediator contract can call this func");
-        }
-
-        let mut service = self.get_service_by_id(service_id);
-        let employer = service.actual_owner.clone();
-
-        if service.actual_owner != applicant && employer != applicant {
-            env::panic(b"Applicant dont found");
-        }
-
-        if service.creator_id != accused && employer != accused {
-            env::panic(b"Accused dont found");
-        }
-
-        service.on_dispute = true;
-        self.service_by_id.insert(&service.id, &service);
-        return self.get_random_users_account_by_role_jugde(jugdes, exclude);
-    }
-
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.
     /// 
@@ -793,34 +790,6 @@ impl Marketplace {
     }
 
 
-    #[allow(unused_variables)]
-    // #[private] near call $MA_ID get_random_users_account_by_role_jugde '{}' --account
-    pub fn get_random_users_account_by_role_jugde(&self, amount: u8, exclude: Vec<ValidAccountId>) -> Vec<AccountId> {
-        if amount > 50 {
-            env::panic(b"No se puede pedir mas de 10");
-        }
-        
-        let users = self.get_users_by_role(UserRoles::Judge, 0, (amount as u64) + 1);
-        if amount as usize > users.len() {
-            env::panic(b"La cantidad pedida es mayor a la existente");
-        }
-        
-        let mut sample: Vec<AccountId> = Vec::new();
-        let seed = env::random_seed();
-        for i in 0..users.len() {
-            let m = users.len();
-            let rn = 1 + ((*seed.get(i).unwrap() as usize) % m) as usize;
-            sample.push(users[rn - 1].account_id.clone());
-            env::log(format!("{:?}", rn).as_bytes());
-        }
-
-        // return users.iter().map(|x| x.account_id.clone()).collect();
-
-
-        return sample;
-    }
-
-
     /*** ASSERTS  ***/
 
     /// Verificar que sea el admin
@@ -848,11 +817,11 @@ pub trait Token {
 }
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
-    fn new_dispute(service_id: u64, accused: ValidAccountId, proves: String);
+    fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn on_new_dispute();
+    fn on_new_dispute(service_id: u64);
     fn on_transfer_tokens(service_id: u64);
     fn on_block_tokens(service_id: u64);
 }
