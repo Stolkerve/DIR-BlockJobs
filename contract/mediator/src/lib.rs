@@ -70,13 +70,14 @@ pub struct Mediator {
     owner: AccountId,
     admins: Vec<AccountId>,
     marketplace_contract: AccountId,
+    token_contract: AccountId,
     max_jurors: u8,
 }
 
 #[near_bindgen]
 impl Mediator {
     #[init]
-    pub fn new(marketplace_contract: AccountId) -> Self{
+    pub fn new(marketplace_id: AccountId, token_id: AccountId) -> Self{
         if env::state_exists() {
             env::panic("Contract already inicialized".as_bytes());
         }
@@ -85,7 +86,8 @@ impl Mediator {
             disputes_counter: 0,
             owner: env::signer_account_id(),
             admins: Vec::new(),
-            marketplace_contract: marketplace_contract,
+            marketplace_contract: marketplace_id,
+            token_contract:  token_id,
             max_jurors: 2,
         };
         return this;
@@ -201,16 +203,16 @@ impl Mediator {
         let sender = env::predecessor_account_id();
         let mut dispute = self.update_dispute_status(dispute_id);
 
+        // Verificar que la disputa este en tiempo de votacion
         if dispute.dispute_status != DisputeStatus::Resolving {
             env::panic(b"You cannot vote when the status is different from resolving");
         }
-
         // Verificar que sea miembro del jurado
         if !dispute.jury_members.contains(&sender) {
             env::panic(b"You can't permission to vote in the indicate dispute");
         }
 
-        dispute.votes.insert(Vote {
+        dispute.votes.insert( Vote {
             account: sender, 
             vote: vote
         });
@@ -219,7 +221,6 @@ impl Mediator {
         if dispute.votes.len() == self.max_jurors as usize {
             dispute.dispute_status = DisputeStatus::Executable
         }
-
         self.disputes.insert(&dispute_id, &dispute);
 
         return dispute;
@@ -232,14 +233,11 @@ impl Mediator {
 
         let actual_time = env::block_timestamp();
 
-        // Open is 4 epochs, resolve 8 epochs and execute 1 epoch, finish 0 epoch
-        // el perido de open sera de 5 dias y resolving
-
         // Actualizar por tiempo
         if actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
             dispute.dispute_status = DisputeStatus::Resolving;
         }
-        if (actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 7))) && (dispute.dispute_status == DisputeStatus::Resolving) {
+        if (actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 10))) && (dispute.dispute_status == DisputeStatus::Resolving) {
             dispute.dispute_status = DisputeStatus::Executable;
         }
         if dispute.dispute_status == DisputeStatus::Executable {
@@ -260,14 +258,50 @@ impl Mediator {
                 dispute.dispute_status = DisputeStatus::Finished;
                 if pro_votes_counter > agains_votes_counter {
                     dispute.winner = Some(dispute.applicant.clone());
+                    for v in dispute.votes.iter() {
+                        if v.vote {
+                            let _res = ext_ft::increase_allowance(
+                                v.account.clone() ,
+                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
+                            .then(ext_self::on_increase_allowance(
+                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+                            );
+                        }
+                        else {
+                            let _res = ext_ft::decrease_allowance(
+                                v.account.clone() ,
+                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
+                            .then(ext_self::on_decrease_allowance(
+                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+                            );
+                        }
+                    }
                 }
                 else {
                     dispute.winner = Some(dispute.accused.clone());
+                    for v in dispute.votes.iter() {
+                        if !v.vote {
+                            let _res = ext_ft::decrease_allowance(
+                                v.account.clone() ,
+                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
+                            .then(ext_self::on_decrease_allowance(
+                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+                            );
+                        }
+                        else {
+                            let _res = ext_ft::increase_allowance(
+                                v.account.clone() ,
+                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
+                            .then(ext_self::on_increase_allowance(
+                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+                            );
+                        }
+                    }
                 }
 
                 dispute.finish_time_stamp = Some(env::block_timestamp());
 
-                let _res = ext_marketplace::return_service(
+                let _res = ext_marketplace::return_service_by_mediator(
                     dispute.service_id,
                     &self.marketplace_contract, NO_DEPOSIT, BASE_GAS)
                 .then(ext_self::on_return_service(
@@ -349,15 +383,51 @@ impl Mediator {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
-
         assert_eq!(
-            env::promise_results_count(),
-            1,
+            env::promise_results_count(), 1,
             "Contract expected a result on the callback"
         );
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
-                env::log(b"Token devuelto :)");
+                env::log(b"Service returned to creator");
+            },
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
+
+    /// Retornar el servicio al profesional
+    /// 
+    pub fn on_increase_allowance() {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
+        assert_eq!(
+            env::promise_results_count(), 1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                env::log(b"Allowance increase");
+            },
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
+
+    /// Retornar el servicio al profesional
+    /// 
+    pub fn on_decrease_allowance() {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"only the contract can call its function")
+        }
+        assert_eq!(
+            env::promise_results_count(), 1,
+            "Contract expected a result on the callback"
+        );
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                env::log(b"Allowance decreased");
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -368,12 +438,14 @@ impl Mediator {
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
     fn validate_user(account_id: AccountId);
-    fn return_service(service_id: u64);
+    fn return_service_by_mediator(service_id: u64);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_pre_vote(dispute_id: u64, user_id: AccountId);
     fn on_return_service(service_id: u64);
+    fn on_increase_allowance();
+    fn on_decrease_allowance();
 }
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
