@@ -48,7 +48,7 @@ echo "inicializando el contrato de Marketplace"
 near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
 
 echo "inicializando el contrato Mediator"
-near call $ME_ID new '{"marketplace_contract": "'$MA_ID'"}' --accountId $ME_ID
+near call $ME_ID new '{"marketplace_id": "'$MA_ID'", "token_id": "'$FT_ID'"}' --accountId $ME_ID
 
 echo "Creando usuarios y servicios"
 near call $MA_ID add_user '{"roles": ["Professional"], "categories": "hola"}' --accountId $ID --amount 0.03

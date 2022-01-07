@@ -111,6 +111,7 @@ impl Token {
     /// This tokens change depending the result of votations
     /// Free withdraw with fn withdraw_tokens (doesn't really blocked)
     /// 
+    #[payable]
     pub fn block_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
         let contract = self.owner.clone();
@@ -126,6 +127,7 @@ impl Token {
     /// Withdraw blocked tokens
     /// Only executable by who blocked it's
     /// 
+    #[payable]
     pub fn withdraw_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
         let contract = self.owner.clone().into();
@@ -134,8 +136,9 @@ impl Token {
             self.token.internal_transfer(&contract, &sender, amount, None);
         };
 
+        let new_allowace = self.allowance.get(&sender).unwrap_or(0) - amount;
         // Modificar allowance restando lo que se retira
-        self.allowance.insert(&sender, &(self.allowance.get(&sender).unwrap_or(0) - amount));
+        self.allowance.insert(&sender, &new_allowace);
         
         // Retornar la allowance actualizada
         self.allowance.get(&sender).unwrap_or(0)

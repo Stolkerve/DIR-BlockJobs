@@ -701,7 +701,7 @@ impl Marketplace {
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.
     /// 
-    pub fn return_service_by_me(&mut self, service_id: &u64) -> Service {
+    pub fn return_service_by_mediator(&mut self, service_id: &u64) -> Service {
         let mut service = self.get_service_by_id(service_id.clone());
 
         // Verificar que sea el contrator mediador quien ejecuta
