@@ -18,8 +18,8 @@ pub struct Token {
     pub owner: ValidAccountId,
     pub minter: AccountId,
     allowance: LookupMap<AccountId, Balance>,
-    pub pending_to_mint: u128,
-    pub min_blocked_amount: u128,
+    pub pending_to_mint: Balance,
+    pub min_blocked_amount: Balance,
 }
 
 const IMAGE_ICON: &str = "";
@@ -55,7 +55,7 @@ impl Token {
         assert!(!env::state_exists(), "Already initialized");
         metadata.assert_valid();
         let mut this = Self {
-            token: FungibleToken::new(b"a".to_vec()),
+            token: FungibleToken::new(b"b".to_vec()),
             metadata: LazyOption::new(b"m".to_vec(), Some(&metadata)),
             minter: env::predecessor_account_id(),
             owner: owner_id.clone(),
@@ -175,6 +175,18 @@ impl Token {
         self.allowance.get(&account).unwrap_or(0)
     }
 
+
+    /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
+    /// Solo ejecutable desde Mediator
+    /// 
+    pub fn validate_tokens(&self, account_id: AccountId) -> bool {
+        let balance = self.get_allowance_of(&account_id);
+        if balance < self.min_blocked_amount {
+            env::panic(b"Insufficient balance");
+        } else {
+            return true;
+        }
+    }
 
     /**********************/
     /*** GET FUNCTIONS  ***/
