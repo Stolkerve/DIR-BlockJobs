@@ -178,7 +178,7 @@ impl Marketplace {
     /// Adquisición de un servicio
     /// Solo ejecutable por el empleador
     #[payable]
-    pub fn buy_service(&mut self, service_id: u64) {
+    pub fn buy_service(&mut self, service_id: u64) -> bool {
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
@@ -223,6 +223,8 @@ impl Marketplace {
         //     3,
         //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
         // );
+
+        true
     }
 
 
@@ -468,7 +470,7 @@ impl Marketplace {
             account_id: account_id.clone(),
             mints: 0,
             roles: HashSet::new(),
-            rep: 0,
+            reputation: 0,
             categories: categories,
             links: None,
             education: None, 
@@ -505,7 +507,7 @@ impl Marketplace {
             account_id: account_id.clone(),
             mints: 0,
             roles: HashSet::new(),
-            rep: 0,
+            reputation: 3,
             categories: categories,
             links: None,
             education: None, 
@@ -642,13 +644,10 @@ impl Marketplace {
                     services.push( service ); 
                 }
             }
-            else {
-                services.push( service );
-            }
+            else { services.push( service ); }
         }
-        return services
+        services
     }
-
 
     /// #Arguments
     /// * `service_id`
@@ -674,7 +673,6 @@ impl Marketplace {
     }
 
     /// Obtener el total supply
-    /// 
     pub fn get_total_services(&self) -> u64 {
         self.total_services
     }
@@ -684,6 +682,21 @@ impl Marketplace {
     /****** CALLBACK FUNCTIONS *****/
     /*******************************/
 
+    /// Verificar datos de usuario desde mediator
+    /// 
+    pub fn validate_user(&self, account_id: AccountId) -> bool {
+        let user_id = string_to_valid_account_id(&account_id);
+        let user = self.get_user(user_id);
+
+        if !user.roles.get(&UserRoles::Judge).is_some() {
+            env::panic(b"Is required have a Judge status to can vote");
+        }
+        if user.reputation < 3 {
+            env::panic(b"Your reputation isn't sufficient");
+        }
+        
+        true
+    }
 
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.
@@ -728,8 +741,9 @@ impl Marketplace {
         user
     }
 
-
-    /*** INTERNAL FUNCTIONS  ***/
+    /******************************/
+    /***** INTERNAL FUNCTIONS  ****/
+    /******************************/
 
     #[private]
     fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
@@ -789,8 +803,9 @@ impl Marketplace {
         return user
     }
 
-
-    /*** ASSERTS  ***/
+    /**************************/
+    /******** ASSERTS  ********/
+    /**************************/
 
     /// Verificar que sea el admin
     #[private]
