@@ -18,7 +18,7 @@ pub struct User {
     pub account_id: AccountId,
     pub mints: u16,
     pub roles: HashSet<UserRoles>,
-    pub rep: i16,
+    pub reputation: i16,
     pub categories: String,
     pub links: Option<String>,
     pub education: Option<String>,

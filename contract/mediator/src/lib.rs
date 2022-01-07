@@ -33,9 +33,9 @@ pub struct Vote {
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub enum DisputeStatus {
-    Open,       //Tiempo para subir pruebas -Duracion: 5 dias
-    Resolving,  //Tiempo para subir realizar las votaciones -Duracion: 5 dias
-    Executable, //Tiempo para subir ejecutarse los resultado -Duracion: 0.5 dias
+    Open,       //Tiempo para subir pruebas y para registrarse los jurados -Duracion: 5 dias
+    Resolving,  //Tiempo para realizar las votaciones -Duracion: 5 dias
+    Executable, //Tiempo para ejecutarse los resultado -Duracion: 0.5 dias
     Finished,   //Indica que la disputa finalizo exitosamente -Duracion: indefinida
 }
 
@@ -46,7 +46,9 @@ pub struct Dispute {
     id: DisputeId,
     service_id: u64,
     // Lista de miembros del jurado y sus respectivos votos
+    jury_members: Vec<AccountId>,
     votes: HashSet<Vote>,
+    // Estado actual de la disputa
     dispute_status: DisputeStatus,
     // Tiempos
     initial_time_stamp: u64,
@@ -67,14 +69,14 @@ pub struct Mediator {
     disputes_counter: u64,
     owner: AccountId,
     admins: Vec<AccountId>,
-    marketplace_account_id: AccountId,
+    marketplace_contract: AccountId,
     max_jurors: u8,
 }
 
 #[near_bindgen]
 impl Mediator {
     #[init]
-    pub fn new(marketplace_account_id: AccountId) -> Self{
+    pub fn new(marketplace_contract: AccountId) -> Self{
         if env::state_exists() {
             env::panic("Contract already inicialized".as_bytes());
         }
@@ -83,7 +85,7 @@ impl Mediator {
             disputes_counter: 0,
             owner: env::signer_account_id(),
             admins: Vec::new(),
-            marketplace_account_id: marketplace_account_id,
+            marketplace_contract: marketplace_contract,
             max_jurors: 2,
         };
         return this;
@@ -93,17 +95,17 @@ impl Mediator {
     ///        CORE FUNCTIONS          ///
     //////////////////////////////////////
 
-    /// Ejecutable desde Marketplace
+    /// Ejecutable desde Marketplace por el empleador que haya comprado el servicio.
     /// 
     #[payable]
     pub fn new_dispute(&mut self, service_id: u64, applicant: AccountId, accused: AccountId, proves: String) -> u64 {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
-
         let dispute = Dispute {
             id: self.disputes_counter.clone(),
             service_id: service_id,
+            jury_members: Vec::new(),
             votes: HashSet::new(),
             dispute_status: DisputeStatus::Open,
             initial_time_stamp: env::block_timestamp(),
@@ -148,9 +150,52 @@ impl Mediator {
         return dispute;
     }
 
-    /// Emitir un voto
-    /// Solo para miembros del jurado de la misma categoria del servicio en disputa
-    /// Se requiere cumplir con un minimo de tokens bloqueados
+
+    /// Añadirse como miembro del jurado para una disputa especifica.
+    /// Solo ejecutable mientras la disputa esta en Open.
+    /// 
+    pub fn pre_vote(&mut self, dispute_id: u64) -> bool {
+        let dispute = self.get_dispute(dispute_id);
+        if dispute.dispute_status != DisputeStatus::Open {
+            env::panic(b"The time to join as a jury member is over");
+        }
+        let _res = ext_marketplace::validate_user(
+            env::signer_account_id(),
+            &self.marketplace_contract,
+            NO_DEPOSIT,
+            BASE_GAS,
+        ).then(ext_self::on_pre_vote(
+            dispute_id,
+            env::predecessor_account_id(),
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
+        true
+    }
+
+    pub fn on_pre_vote(&mut self, dispute_id: u64, user_id: AccountId) {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"Only the contract can call its function")
+        }
+        assert_eq!(env::promise_results_count(), 1, "Contract expected a result on the callback");
+        
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                let mut dispute = self.get_dispute(dispute_id.clone());
+
+                dispute.jury_members.push(user_id);
+
+                self.disputes.insert(&dispute_id, &dispute);
+            }
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
+
+    /// Emitir un voto.
+    /// Solo para miembros del jurado de la misma categoria del servicio en disputa.
+    /// Se requiere cumplir con un minimo de tokens bloqueados y de reputacion.
     /// 
     pub fn vote(&mut self, dispute_id: DisputeId, vote: bool) -> Dispute {
         let sender = env::predecessor_account_id();
@@ -161,14 +206,14 @@ impl Mediator {
         }
 
         // Verificar que sea miembro del jurado
-
-        // Verificar que no haya ya votado
-        if !dispute.votes.insert(Vote {
-            account: sender.clone(),
-            vote: vote
-        }) {
-            env::panic(b"You already vote");
+        if !dispute.jury_members.contains(&sender) {
+            env::panic(b"You can't permission to vote in the indicate dispute");
         }
+
+        dispute.votes.insert(Vote {
+            account: sender, 
+            vote: vote
+        });
 
         // Si se completan los votos se pasa la siguiente etapa
         if dispute.votes.len() == self.max_jurors as usize {
@@ -194,11 +239,9 @@ impl Mediator {
         if actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
             dispute.dispute_status = DisputeStatus::Resolving;
         }
-
         if (actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 7))) && (dispute.dispute_status == DisputeStatus::Resolving) {
             dispute.dispute_status = DisputeStatus::Executable;
         }
-
         if dispute.dispute_status == DisputeStatus::Executable {
             let mut agains_votes_counter = 0;
             let mut pro_votes_counter = 0;
@@ -210,7 +253,6 @@ impl Mediator {
                     agains_votes_counter += 1;
                 }
             }
-
             if pro_votes_counter == agains_votes_counter {
                 dispute.dispute_status = DisputeStatus::Open;
             }
@@ -227,16 +269,14 @@ impl Mediator {
 
                 let _res = ext_marketplace::return_service(
                     dispute.service_id,
-                    &self.marketplace_account_id, NO_DEPOSIT, BASE_GAS)
+                    &self.marketplace_contract, NO_DEPOSIT, BASE_GAS)
                 .then(ext_self::on_return_service(
                     dispute.service_id,
                     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
                 );
             }
         }
-
         self.disputes.insert(&dispute_id, &dispute);
-
         return dispute;
     }
 
@@ -260,13 +300,18 @@ impl Mediator {
     }
 
     pub fn get_dispute(&self, dispute_id: DisputeId) -> Dispute {
-        let dispute = expect_value_found(self.disputes.get(&dispute_id), 
-        "Dispute not found".as_bytes());
+        let dispute = expect_value_found(self.disputes.get(&dispute_id), b"Dispute not found");
         dispute
     }
 
     pub fn get_total_disputes(&self) -> u64 {
         self.disputes_counter
+    }
+
+    pub fn get_dispute_jury_members(&self, dispute_id: DisputeId) -> Vec<AccountId> {
+        self.assert_dispute_exist(dispute_id);
+        let dispute = self.get_dispute(dispute_id);
+        return dispute.jury_members;
     }
 
     // pub fn get_admins(&self) -> vec!() {
@@ -285,9 +330,15 @@ impl Mediator {
         }
     }
 
+    fn assert_dispute_exist(&self, dispute_id: DisputeId) {
+        if self.get_total_disputes() < dispute_id {
+            env::panic(b"The indicated dispute doesn't exist");
+        }
+    }
+
     // fn assert_admin(&self, account: &AccountId) {
     //     if !self.admins.contains(&account) {
-    //         env::panic(b"Isn't a Admin");
+    //         env::panic(b"Isn't an Admin");
     //     }
     // }
     
@@ -316,11 +367,12 @@ impl Mediator {
 
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
-    fn validate_dispute(applicant: AccountId, accused: AccountId, service_id: u64);
+    fn validate_user(account_id: AccountId);
     fn return_service(service_id: u64);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
+    fn on_pre_vote(dispute_id: u64, user_id: AccountId);
     fn on_return_service(service_id: u64);
 }
 #[ext_contract(ext_ft)]
