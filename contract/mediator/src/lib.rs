@@ -176,6 +176,8 @@ impl Mediator {
         true
     }
 
+    /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde marketplace.
+    /// 
     pub fn on_pre_vote(&mut self, dispute_id: u64, user_id: AccountId) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"Only the contract can call its function")
@@ -199,9 +201,9 @@ impl Mediator {
     /// Solo para miembros del jurado de la misma categoria del servicio en disputa.
     /// Se requiere cumplir con un minimo de tokens bloqueados y de reputacion.
     /// 
-    pub fn vote(&mut self, dispute_id: DisputeId, vote: bool) -> Dispute {
+    pub fn vote(&mut self, dispute_id: DisputeId, vote: bool) {
         let sender = env::predecessor_account_id();
-        let mut dispute = self.update_dispute_status(dispute_id);
+        let dispute = self.update_dispute_status(dispute_id);
 
         // Verificar que la disputa este en tiempo de votacion
         if dispute.dispute_status != DisputeStatus::Resolving {
@@ -211,19 +213,50 @@ impl Mediator {
         if !dispute.jury_members.contains(&sender) {
             env::panic(b"You can't permission to vote in the indicate dispute");
         }
+        let _res = ext_ft::validate_tokens(
+            sender.clone(),
+            &self.token_contract,
+            NO_DEPOSIT,
+            BASE_GAS,
+        ).then(ext_self::on_vote(
+            dispute_id,
+            sender,
+            vote,
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
+    }
 
-        dispute.votes.insert( Vote {
-            account: sender, 
-            vote: vote
-        });
 
-        // Si se completan los votos se pasa la siguiente etapa
-        if dispute.votes.len() == self.max_jurors as usize {
-            dispute.dispute_status = DisputeStatus::Executable
+    /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde marketplace.
+    /// 
+    pub fn on_vote(&mut self, dispute_id: u64, user_id: AccountId, vote: bool) -> Dispute {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"Only the contract can call its function")
         }
-        self.disputes.insert(&dispute_id, &dispute);
+        assert_eq!(env::promise_results_count(), 1, "Contract expected a result on the callback");
+        
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+                let mut dispute = self.update_dispute_status(dispute_id);
 
-        return dispute;
+                dispute.votes.insert( Vote {
+                    account: user_id, 
+                    vote: vote
+                });
+        
+                // Si se completan los votos se pasa la siguiente etapa
+                if dispute.votes.len() == self.max_jurors as usize {
+                    dispute.dispute_status = DisputeStatus::Executable
+                }
+                self.disputes.insert(&dispute_id, &dispute);
+        
+                return dispute;
+            }
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
     }
 
     /// Para verificar y actualizar el estado de la disputa
@@ -443,12 +476,14 @@ pub trait Marketplace {
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_pre_vote(dispute_id: u64, user_id: AccountId);
+    fn on_vote(dispute_id: u64, user_id: AccountId, vote: bool);
     fn on_return_service(service_id: u64);
     fn on_increase_allowance();
     fn on_decrease_allowance();
 }
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
+    fn validate_tokens(account_id: AccountId);
     fn increase_allowance(account: AccountId);
     fn decrease_allowance(account: AccountId);
 }
