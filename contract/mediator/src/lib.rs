@@ -206,14 +206,14 @@ impl Mediator {
         }
 
         // Verificar que sea miembro del jurado
-
-        // Verificar que no haya ya votado
-        if !dispute.votes.insert(Vote {
-            account: sender.clone(),
-            vote: vote
-        }) {
-            env::panic(b"You already vote");
+        if !dispute.jury_members.contains(&sender) {
+            env::panic(b"You can't permission to vote in the indicate dispute");
         }
+
+        dispute.votes.insert(Vote {
+            account: sender, 
+            vote: vote
+        });
 
         // Si se completan los votos se pasa la siguiente etapa
         if dispute.votes.len() == self.max_jurors as usize {
