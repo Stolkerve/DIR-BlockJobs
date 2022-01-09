@@ -26,7 +26,7 @@ export default function App() {
                                     Help
                                 </a>
                                 <a href="#" className="py-2 px-6 flex items-center">
-                                    <img src={require("/assets/logo-white.svg")}></img>
+                                    <img src={require("../assets/logo-white.svg")}></img>
                                     <div>Login</div>
                                 </a>
                             </nav>
@@ -38,7 +38,7 @@ export default function App() {
                         <h1 className="mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4">
                             Find your next job
                         </h1>
-                        {/* <img src={require("/assets/Smile.svg")} className="w-120 h-10 mt-6 mb-8"></img> */}
+                        {/* <img src={require("../assets/Smile.svg")} className="w-120 h-10 mt-6 mb-8"></img> */}
                         <p className="text-sm sm:text-base text-white">
                         BlockJob is a dapp to search for jobs and freelancers. In addition to being an arbitrator to ensure that both parties are compliant.
                         </p>
@@ -53,7 +53,7 @@ export default function App() {
                     </div>
                     <div className="flex lg:h-auto lg:w-1/2">
                         <div className="object-cover w-full max-w-full rounded-md lg:h-full">
-                            <img src={require("/assets/freelancer.svg")} className=""/>
+                            <img src={require("../assets/freelancer.svg")} className=""/>
                         </div>
                     </div>
                 </div>

@@ -705,10 +705,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   background: linear-gradient(216.04deg, #27C0EF 13.84%, #00A8DB 83.53%);
 }
 
-.landing-back-img {
-  /* background-image: url("freelancer.svg"); */
-}
-
 @media (min-width: 640px) {
   .sm\:w-2\/3 {
     width: 66.666667%;
