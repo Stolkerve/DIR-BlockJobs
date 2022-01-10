@@ -6,7 +6,6 @@
     "build:web": "parcel build src/index.html --public-url ./",
     "deploy:pages": "gh-pages -d dist/",
     "start": "echo The app is starting! It will automatically open in your browser when ready && env-cmd -f ../contract/marketplace/neardev/dev-account.env parcel src/index.html --open",
-    
     "watch:css": "tailwindcss -i ./assets/tailwind.css -o ./assets/main.css --watch",
     "build:css": "tailwindcss -i ./assets/tailwind.css -o ./assets/main.css",
     "test": "jest test --runInBand"
@@ -31,6 +30,7 @@
     "near-api-js": "~0.43.1",
     "react": "~17.0.1",
     "react-dom": "~17.0.1",
+    "react-router-dom": "^6.2.1",
     "regenerator-runtime": "~0.13.5"
   },
   "resolutions": {

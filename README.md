@@ -61,7 +61,7 @@ Para correr el servidor de desarrollo de react
 
 ``` bash
 $ cd frontend
-$ npm run dev
+$ npm run start
 ```
 Para compilar tailwind
 ``` bash
