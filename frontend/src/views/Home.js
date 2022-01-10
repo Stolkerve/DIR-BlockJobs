@@ -1,35 +1,12 @@
 import 'regenerator-runtime/runtime'
 import React from 'react'
+import NavBar from '../components/NavBar'
 
 export default function Home() {
     return (
         <>
             <div className="landing-background relative overflow-hidden h-screen">
-                <header className="h-24 flex items-center z-30 w-full">
-                    <div className="container mx-auto px-6 flex items-center justify-between">
-                        <div className="text-white font-bold text-4xl">
-                            <span className="font-normal">Block</span>
-                            Jobs
-                        </div>
-                        <div className="flex items-center">
-                            <nav className="font-sen text-white uppercase text-base lg:flex items-center hidden">
-                                <a href="#" className="py-2 px-6 flex">
-                                    Home
-                                </a>
-                                <a href="#" className="py-2 px-6 flex">
-                                    Docs
-                                </a>
-                                <a href="#" className="py-2 px-6 flex">
-                                    Help
-                                </a>
-                                <a href="#" className="py-2 px-6 flex items-center">
-                                    <img src={require("../../assets/logo-white.svg")}></img>
-                                    <div>Login</div>
-                                </a>
-                            </nav>
-                        </div>
-                    </div>
-                </header>
+                <NavBar/>
                 <div className="flex mx-10 mb-20 justify-between ">
                     <div className="sm:w-2/3 lg:w-2/5 flex flex-col relative z-20 justify-center">
                         <h1 className="mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4">
