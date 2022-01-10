@@ -49226,6 +49226,26 @@ module.exports = "/freelancer.4e87e70c.svg";
 module.exports = "/iphone-12.f609233e.svg";
 },{}],"../assets/logo-black.svg":[function(require,module,exports) {
 module.exports = "/logo-black.c288ea24.svg";
+},{}],"../assets/image 4.png":[function(require,module,exports) {
+module.exports = "/image 4.ad5247ed.png";
+},{}],"../assets/image 5.png":[function(require,module,exports) {
+module.exports = "/image 5.bba9fd95.png";
+},{}],"../assets/image 8.png":[function(require,module,exports) {
+module.exports = "/image 8.3eb379e2.png";
+},{}],"../assets/image 10.png":[function(require,module,exports) {
+module.exports = "/image 10.f579093d.png";
+},{}],"../assets/image 11.png":[function(require,module,exports) {
+module.exports = "/image 11.308d11fc.png";
+},{}],"../assets/image 6.png":[function(require,module,exports) {
+module.exports = "/image 6.b9f14fe4.png";
+},{}],"../assets/image 7.png":[function(require,module,exports) {
+module.exports = "/image 7.881fff23.png";
+},{}],"../assets/image 12.png":[function(require,module,exports) {
+module.exports = "/image 12.9274c4de.png";
+},{}],"../assets/image 13.png":[function(require,module,exports) {
+module.exports = "/image 13.c5eee338.png";
+},{}],"../assets/image 14.png":[function(require,module,exports) {
+module.exports = "/image 14.35a66f4a.png";
 },{}],"views/Home.js":[function(require,module,exports) {
 "use strict";
 
@@ -49244,6 +49264,7 @@ var _Footer = _interopRequireDefault(require("../components/Footer"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// https://oblador.github.io/react-native-vector-icons/ para los iconos
 function Home() {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", {
     className: "landing-background relative overflow-hidden h-screen"
@@ -49285,10 +49306,11 @@ function Home() {
   }, "No artificial costs or restrictions"), /*#__PURE__*/_react.default.createElement("div", {
     className: "text-xl text-gray-600"
   }, "BlockJob doesn\u2019t take a percentage of your earned Near. The amount of Near the employer pays is the amount the freelancer gets."), /*#__PURE__*/_react.default.createElement("div", {
-    className: "mt-10 flex"
+    className: "mt-10 flex items-center"
   }, /*#__PURE__*/_react.default.createElement("a", {
     className: "text-[#04AADD] font-bold"
   }, "Learn about this"), /*#__PURE__*/_react.default.createElement("svg", {
+    className: "stroke-2",
     xmlns: "http://www.w3.org/2000/svg",
     role: "img",
     width: "1em",
@@ -49309,14 +49331,14 @@ function Home() {
   }, "It\u2019s all on blockchain!"), /*#__PURE__*/_react.default.createElement("div", {
     className: "text-xl text-gray-600"
   }, "The BlockJob database is distributed on the Near public blockchain and the source files are on IPFS. BlockJob is accessible to everyone forever, without any central authority having control over it."), /*#__PURE__*/_react.default.createElement("div", {
-    className: "mt-10 flex"
+    className: "mt-10 flex items-center"
   }, /*#__PURE__*/_react.default.createElement("a", {
     className: "text-[#04AADD] font-bold"
   }, "Learn about this"), /*#__PURE__*/_react.default.createElement("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     role: "img",
-    width: "1em",
-    height: "1em",
+    width: "15",
+    height: "15",
     preserveAspectRatio: "xMidYMid meet",
     viewBox: "0 0 24 24"
   }, /*#__PURE__*/_react.default.createElement("path", {
@@ -49326,9 +49348,37 @@ function Home() {
     className: "flex justify-center"
   }, /*#__PURE__*/_react.default.createElement("img", {
     src: require("../../assets/logo-black.svg")
-  })))), /*#__PURE__*/_react.default.createElement(_Footer.default, null));
+  })))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "bg-[#d2f0fa] p-10"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "font-bebas-neue grid grid-cols-2 gap-4"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex justify-center"
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 4.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 5.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 8.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 10.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 11.png")
+  }))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex justify-center"
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 6.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 7.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 12.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 13.png")
+  }), /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/image 14.png")
+  }))))), /*#__PURE__*/_react.default.createElement(_Footer.default, null));
 }
-},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../components/NavBar":"components/NavBar.js","../components/Footer":"components/Footer.js","../../assets/freelancer.svg":"../assets/freelancer.svg","../../assets/iphone-12.svg":"../assets/iphone-12.svg","../../assets/logo-black.svg":"../assets/logo-black.svg"}],"App.js":[function(require,module,exports) {
+},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../components/NavBar":"components/NavBar.js","../components/Footer":"components/Footer.js","../../assets/freelancer.svg":"../assets/freelancer.svg","../../assets/iphone-12.svg":"../assets/iphone-12.svg","../../assets/logo-black.svg":"../assets/logo-black.svg","../../assets/image 4.png":"../assets/image 4.png","../../assets/image 5.png":"../assets/image 5.png","../../assets/image 8.png":"../assets/image 8.png","../../assets/image 10.png":"../assets/image 10.png","../../assets/image 11.png":"../assets/image 11.png","../../assets/image 6.png":"../assets/image 6.png","../../assets/image 7.png":"../assets/image 7.png","../../assets/image 12.png":"../assets/image 12.png","../../assets/image 13.png":"../assets/image 13.png","../../assets/image 14.png":"../assets/image 14.png"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

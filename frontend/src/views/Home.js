@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import React from 'react'
 import NavBar from '../components/NavBar'
 import Footer from '../components/Footer'
-
+// https://oblador.github.io/react-native-vector-icons/ para los iconos
 export default function Home() {
     return (
         <>
@@ -58,9 +58,10 @@ export default function Home() {
                             <div className="text-xl text-gray-600">
                                 BlockJob doesn’t take a percentage of your earned Near. The amount of Near the employer pays is the amount the freelancer gets.
                             </div>
-                            <div className="mt-10 flex">
+                            <div className="mt-10 flex items-center">
                                 <a className="text-[#04AADD] font-bold">Learn about this</a>
-                                <svg xmlns="http://www.w3.org/2000/svg" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                <svg className="stroke-2" 
+                                    xmlns="http://www.w3.org/2000/svg" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path d="M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z" fill="currentColor"/>
                                 </svg>
                             </div>
@@ -76,9 +77,9 @@ export default function Home() {
                         <div>
                             <div className="text-[#034D82] font-bold text-4xl pb-10">It’s all on blockchain!</div>
                             <div className="text-xl text-gray-600">The BlockJob database is distributed on the Near public blockchain and the source files are on IPFS. BlockJob is accessible to everyone forever, without any central authority having control over it.</div>
-                            <div className="mt-10 flex">
+                            <div className="mt-10 flex items-center">
                                 <a className="text-[#04AADD] font-bold">Learn about this</a>
-                                <svg xmlns="http://www.w3.org/2000/svg" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" width="15" height="15" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                                     <path d="M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z" fill="currentColor"/>
                                 </svg>
                             </div>
@@ -89,6 +90,31 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+
+            {/* Cuarta seccion */}
+            <div className="bg-[#d2f0fa] p-10">
+                <div className="font-bebas-neue grid grid-cols-2 gap-4">
+                    <div className="flex justify-center">
+                        <div>
+                            <img src={require("../../assets/image 4.png")}></img>
+                            <img src={require("../../assets/image 5.png")}></img>
+                            <img src={require("../../assets/image 8.png")}></img>
+                            <img src={require("../../assets/image 10.png")}></img>
+                            <img src={require("../../assets/image 11.png")}></img>
+                        </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <div>
+                            <img src={require("../../assets/image 6.png")}></img>
+                            <img src={require("../../assets/image 7.png")}></img>
+                            <img src={require("../../assets/image 12.png")}></img>
+                            <img src={require("../../assets/image 13.png")}></img>
+                            <img src={require("../../assets/image 14.png")}></img>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <Footer/>
         </>
