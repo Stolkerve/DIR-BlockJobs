@@ -60,21 +60,21 @@ pub struct ServiceMetadata {
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Marketplace {
     pub service_by_id: UnorderedMap<u64, Service>,
+    // Servicios de cada usuario.
     pub services_by_account: LookupMap<AccountId, UnorderedSet<u64>>,
     pub total_services: u64,
-    
+    // Usuarios del marketplace.
     pub users: UnorderedMap<AccountId, User>,
     pub contract_owner: AccountId,
     pub contract_me: AccountId,
     pub contract_ft: AccountId,
-
-    // The storage size in bytes for one account.
+    // Storage en bytes por cada cuenta.
     pub extra_storage_in_bytes_per_service: StorageUsage,
 }
 
 #[near_bindgen]
 impl Marketplace {
-    /// Inicializa el contrato y asigna el owner. El cual sera el primer admin
+    /// Inicializa el contrato y asigna el owner. El cual sera el primer admin.
     ///
     /// #Arguments
     /// * `owner_id`    - La cuenta de mainnet/testnet de quien sera el owner del contrato.
@@ -126,7 +126,6 @@ impl Marketplace {
         if !user.roles.get(&UserRoles::Professional).is_some() {
             env::panic("Only professionals can mint a service".as_bytes());
         }
-
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
@@ -176,7 +175,7 @@ impl Marketplace {
 
 
     /// Adquisición de un servicio
-    /// Solo ejecutable por el empleador
+    /// Solo ejecutable por empleadores
     #[payable]
     pub fn buy_service(&mut self, service_id: u64) -> bool {
         // Verificar que el servicio exista
@@ -290,7 +289,7 @@ impl Marketplace {
 
 
     /// Retornar un servicio al creador.
-    /// Solo ejecutable por el profesional creador del servicio una vez pasado el tiempo establecido
+    /// Solo ejecutable por el profesional creador del servicio una vez pasado el tiempo establecido.
     /// 
     pub fn reclaim_service(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
@@ -329,8 +328,8 @@ impl Marketplace {
     }
 
 
-    /// Retornar un servicio al creador
-    /// Ejecutable solo por el admin, previa aprobacion de ambas partes
+    /// Retornar un servicio al creador.
+    /// Ejecutable solo por el admin, previa aprobacion de ambas partes.
     /// 
     pub fn return_service_by_admin(&mut self, service_id: &u64) -> Service {
         // Verificar que el servicio exista
@@ -360,8 +359,8 @@ impl Marketplace {
     }
 
 
-    /// Modificar la metadata de un servicio
-    /// Solo ejecutable por el profesional si es que lo posee
+    /// Modificar la metadata de un servicio.
+    /// Solo ejecutable por el profesional si es que lo posee.
     /// 
     pub fn update_service_metadata(&mut self, service_id: u64, metadata: ServiceMetadata) -> Service {
         // Verificar que el servicio exista
@@ -391,8 +390,8 @@ impl Marketplace {
     }
 
 
-    /// Cambio de la duración del servicio
-    /// Solo ejecutable por el profesional si es que lo posee
+    /// Cambio de la duración del servicio.
+    /// Solo ejecutable por el profesional si es que lo posee.
     /// 
     pub fn update_service_duration(&mut self, service_id: u64, new_duration: u16) -> Service {
         // Verificar que exista el servicio
@@ -417,8 +416,8 @@ impl Marketplace {
     }
 
 
-    /// Cambiar el estado de un servicio segun este en venta o no
-    /// Solo para el profesional o administradores
+    /// Cambiar el estado de un servicio segun este en venta o no.
+    /// Solo para el profesional o administradores.
     /// 
     pub fn update_service_on_sale(&mut self, service_id: u64, on_sale: bool) -> Service {
         // Verificar que el servicio exista
@@ -451,7 +450,7 @@ impl Marketplace {
     /******** USERS FUNCTIONS ******/
     /*******************************/
 
-    /// Registra usuarios, asignando su rol y a que se dedican por categorias
+    /// Registra usuarios, asignando su rol y a que se dedican por categorias.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -533,8 +532,8 @@ impl Marketplace {
         return new_user
     }
 
-    /// Eliminar un usuario
-    /// Solo ejecutable por el admin
+    /// Eliminar un usuario.
+    /// Solo ejecutable por el admin.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -564,7 +563,7 @@ impl Marketplace {
         return user;
     }
 
-    /// Agregar o quitar un rol al usuario
+    /// Agregar o quitar un rol al usuario.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
@@ -621,7 +620,7 @@ impl Marketplace {
         users_by_role
     }
 
-    /// Obtener id de los services de un usuario
+    /// Obtener id de los servicios de un usuario.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
@@ -629,7 +628,7 @@ impl Marketplace {
         return expect_value_found(self.services_by_account.get(&account_id.into()), "No users found or dont have any service".as_bytes()).to_vec();
     }
 
-    /// Obtener los servicios de determinado usuario
+    /// Obtener los servicios de determinado usuario.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
@@ -726,14 +725,13 @@ impl Marketplace {
     /// Banear un usuario ante fraude en una disputa
     /// Solo ejecutable por Admins del contrato mediadot
     /// 
-    pub fn ban_user(&mut self, user: AccountId) -> User {
+    pub fn ban_user_by_mediator(&mut self, user_id: AccountId) -> User {
         // Verificar que sea el contrator mediador quien ejecuta
-        let sender_id = env::predecessor_account_id();
-        if sender_id != self.contract_me  {
+        if env::predecessor_account_id() != self.contract_me  {
             env::panic(b"Only mediator contract can execute this function");
         }
 
-        let user_id = string_to_valid_account_id(&user);
+        let user_id = string_to_valid_account_id(&user_id);
         let mut user = self.get_user(user_id);
 
         user.banned = true;
@@ -807,7 +805,7 @@ impl Marketplace {
     /******** ASSERTS  ********/
     /**************************/
 
-    /// Verificar que sea el admin
+    /// Verificar que sea el admin.
     #[private]
     fn assert_admin(&self, account_id: &AccountId) {
         if *account_id != self.contract_owner {
@@ -815,6 +813,7 @@ impl Marketplace {
         }
     }
 
+    /// Verificar que el servicio exista.
     #[private]
     fn assert_service_exists(&self, service_id: &u64) {
         if *service_id > self.total_services {
