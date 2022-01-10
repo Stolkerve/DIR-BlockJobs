@@ -49173,65 +49173,20 @@ function NavBar() {
     className: "flex items-center"
   }, /*#__PURE__*/_react.default.createElement(NavBarContent, null))));
 }
-},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../utils":"utils.js","../../assets/logo-white.svg":"../assets/logo-white.svg"}],"../assets/freelancer.svg":[function(require,module,exports) {
-module.exports = "/freelancer.4e87e70c.svg";
-},{}],"views/Home.js":[function(require,module,exports) {
+},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../utils":"utils.js","../../assets/logo-white.svg":"../assets/logo-white.svg"}],"components/Footer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = Home;
-
-require("regenerator-runtime/runtime");
+exports.default = Footer;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _NavBar = _interopRequireDefault(require("../components/NavBar"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Home() {
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", {
-    className: "landing-background relative overflow-hidden h-screen"
-  }, /*#__PURE__*/_react.default.createElement(_NavBar.default, null), /*#__PURE__*/_react.default.createElement("div", {
-    className: "flex mx-10 mb-20 justify-between "
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "sm:w-2/3 lg:w-2/5 flex flex-col relative z-20 justify-center"
-  }, /*#__PURE__*/_react.default.createElement("h1", {
-    className: "mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4"
-  }, "Find your next job"), /*#__PURE__*/_react.default.createElement("p", {
-    className: "text-sm sm:text-base text-white"
-  }, "BlockJob is a dapp to search for jobs and freelancers. In addition to being an arbitrator to ensure that both parties are compliant."), /*#__PURE__*/_react.default.createElement("div", {
-    className: "flex mt-8"
-  }, /*#__PURE__*/_react.default.createElement("a", {
-    href: "#",
-    className: "uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4"
-  }, "See how it works"), /*#__PURE__*/_react.default.createElement("a", {
-    href: "#",
-    className: "uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md"
-  }, "Start now"))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "flex lg:h-auto lg:w-1/2"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "object-cover w-full max-w-full rounded-md lg:h-full"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    src: require("../../assets/freelancer.svg"),
-    className: ""
-  }))))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "bg-[#d2f0fa] p-10 flex justify-center"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "font-sans font-bold text-center"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "text-[#034D82] text-4xl"
-  }, "The future of work is now"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "text-xl text-gray-600"
-  }, "hire or work for Near cryptocurrency")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "font-sans font-bold text-center"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "text-[#034D82] text-4xl"
-  }, "No artificial costs or restrictions"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "text-xl text-gray-600"
-  }, "BlockJob doesn\u2019t take a percentage of your earned Near. The amount of Near the employer pays is the amount the freelancer gets."), /*#__PURE__*/_react.default.createElement("a", null, "Learn about this"))), /*#__PURE__*/_react.default.createElement("div", {
+function Footer() {
+  return /*#__PURE__*/_react.default.createElement("div", {
     className: "bg-[#081315]"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between font-sans py-14 px-10"
@@ -49263,9 +49218,117 @@ function Home() {
     className: ""
   }, "Get Started"), /*#__PURE__*/_react.default.createElement("div", {
     className: ""
-  }, "Get Started"))))));
+  }, "Get Started")))));
 }
-},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../components/NavBar":"components/NavBar.js","../../assets/freelancer.svg":"../assets/freelancer.svg"}],"App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js"}],"../assets/freelancer.svg":[function(require,module,exports) {
+module.exports = "/freelancer.4e87e70c.svg";
+},{}],"../assets/iphone-12.svg":[function(require,module,exports) {
+module.exports = "/iphone-12.f609233e.svg";
+},{}],"../assets/logo-black.svg":[function(require,module,exports) {
+module.exports = "/logo-black.c288ea24.svg";
+},{}],"views/Home.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Home;
+
+require("regenerator-runtime/runtime");
+
+var _react = _interopRequireDefault(require("react"));
+
+var _NavBar = _interopRequireDefault(require("../components/NavBar"));
+
+var _Footer = _interopRequireDefault(require("../components/Footer"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Home() {
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", {
+    className: "landing-background relative overflow-hidden h-screen"
+  }, /*#__PURE__*/_react.default.createElement(_NavBar.default, null), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex mx-10 mb-20 justify-between "
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "sm:w-2/3 lg:w-2/5 flex flex-col relative z-20 justify-center"
+  }, /*#__PURE__*/_react.default.createElement("h1", {
+    className: "mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4"
+  }, "Find your next job"), /*#__PURE__*/_react.default.createElement("p", {
+    className: "text-sm sm:text-base text-white"
+  }, "BlockJob is a dapp to search for jobs and freelancers. In addition to being an arbitrator to ensure that both parties are compliant."), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex mt-8"
+  }, /*#__PURE__*/_react.default.createElement("a", {
+    href: "#",
+    className: "uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4"
+  }, "See how it works"), /*#__PURE__*/_react.default.createElement("a", {
+    href: "#",
+    className: "uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md"
+  }, "Start now"))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex lg:h-auto lg:w-1/2"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "object-cover w-full max-w-full rounded-md lg:h-full"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/freelancer.svg"),
+    className: ""
+  }))))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "bg-[#d2f0fa] p-10"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "font-bebas-neue grid grid-cols-2 gap-4"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex justify-center"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/iphone-12.svg")
+  })), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
+    className: "text-[#034D82] font-bold text-4xl pb-10"
+  }, "No artificial costs or restrictions"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "text-xl text-gray-600"
+  }, "BlockJob doesn\u2019t take a percentage of your earned Near. The amount of Near the employer pays is the amount the freelancer gets."), /*#__PURE__*/_react.default.createElement("div", {
+    className: "mt-10 flex"
+  }, /*#__PURE__*/_react.default.createElement("a", {
+    className: "text-[#04AADD] font-bold"
+  }, "Learn about this"), /*#__PURE__*/_react.default.createElement("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    role: "img",
+    width: "1em",
+    height: "1em",
+    preserveAspectRatio: "xMidYMid meet",
+    viewBox: "0 0 24 24"
+  }, /*#__PURE__*/_react.default.createElement("path", {
+    d: "M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z",
+    fill: "currentColor"
+  }))))))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "p-10"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "font-bebas-neue grid grid-cols-2 gap-4"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
+    className: "text-[#034D82] font-bold text-4xl pb-10"
+  }, "It\u2019s all on blockchain!"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "text-xl text-gray-600"
+  }, "The BlockJob database is distributed on the Near public blockchain and the source files are on IPFS. BlockJob is accessible to everyone forever, without any central authority having control over it."), /*#__PURE__*/_react.default.createElement("div", {
+    className: "mt-10 flex"
+  }, /*#__PURE__*/_react.default.createElement("a", {
+    className: "text-[#04AADD] font-bold"
+  }, "Learn about this"), /*#__PURE__*/_react.default.createElement("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    role: "img",
+    width: "1em",
+    height: "1em",
+    preserveAspectRatio: "xMidYMid meet",
+    viewBox: "0 0 24 24"
+  }, /*#__PURE__*/_react.default.createElement("path", {
+    d: "M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z",
+    fill: "currentColor"
+  }))))), /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex justify-center"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    src: require("../../assets/logo-black.svg")
+  })))), /*#__PURE__*/_react.default.createElement(_Footer.default, null));
+}
+},{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","react":"../node_modules/react/index.js","../components/NavBar":"components/NavBar.js","../components/Footer":"components/Footer.js","../../assets/freelancer.svg":"../assets/freelancer.svg","../../assets/iphone-12.svg":"../assets/iphone-12.svg","../../assets/logo-black.svg":"../assets/logo-black.svg"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
