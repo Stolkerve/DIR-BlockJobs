@@ -1,5 +1,5 @@
-use near_sdk::{ env, ext_contract, near_bindgen, setup_alloc, AccountId, Balance, Gas, PanicOnDefault,
-    PromiseResult,
+use near_sdk::{ env, ext_contract, near_bindgen, setup_alloc, AccountId, Balance, 
+    Gas, PanicOnDefault, Promise, PromiseResult,
 };
 // , Promise, serde_json::{json}};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
@@ -233,7 +233,7 @@ impl Mediator {
     }
 
 
-    /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde marketplace.
+    /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde Marketplace.
     /// 
     pub fn on_vote(&mut self, dispute_id: u64, user_id: AccountId, vote: bool) -> Dispute {
         if env::predecessor_account_id() != env::current_account_id() {
@@ -262,6 +262,35 @@ impl Mediator {
             PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
+
+
+    /// Pagar al profesional o empleador según corresponda.
+    /// Solo ejecutable desde Marketplace.
+    /// 
+    pub fn pay_service(&self, beneficiary: AccountId, amount: Balance) -> Balance {
+        let sender = env::predecessor_account_id();
+        if sender != self.marketplace_contract && sender != self.owner {
+            env::panic(b"You don't have permissions to generate a payment");
+        }
+
+        // Realizar el pago en NEARs.
+        Promise::new(beneficiary).transfer(amount);
+
+        env::account_balance()
+    }
+
+    /// Pagar al profesional o empleador según corresponda.
+    /// Solo ejecutable internamente por Mediator.
+    /// 
+    pub fn internal_pay_service(&self, beneficiary: AccountId, amount: Balance) -> Balance {
+        self.assert_owner(&env::signer_account_id());
+
+        // Realizar el pago en NEARs.
+        Promise::new(beneficiary).transfer(amount);
+
+        env::account_balance()
+    }
+
 
     /// Para verificar y actualizar el estado de la disputa.
     /// 
@@ -396,21 +425,18 @@ impl Mediator {
         self.disputes_counter
     }
 
-    /// Retornar un vector con los jurados actuales de una disputa indicada. 
-    /// 
+    // Retorna un vector con los jurados actuales de una disputa indicada. 
     pub fn get_dispute_jury_members(&self, dispute_id: DisputeId) -> Vec<AccountId> {
         self.assert_dispute_exist(dispute_id);
         let dispute = self.get_dispute(dispute_id);
         return dispute.jury_members;
     }
 
-    /// Retorna un vector con los administradores.
-    /// 
+    // Retorna un vector con los administradores.
     pub fn get_admins(&self) -> Vec<AccountId> {
         self.admins.clone()
     }
 
-    
 
     //////////////////////////////////////
     ///      Funciones internas        ///
