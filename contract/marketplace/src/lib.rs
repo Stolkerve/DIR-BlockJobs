@@ -504,7 +504,7 @@ impl Marketplace {
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
-    pub fn add_user(&mut self, roles: Vec<UserRoles>, categories: String) -> User {
+    pub fn add_user(&mut self, roles: Vec<UserRoles>, categories: String, links: Option<String>, education: Option<String>) -> User {
         let account_id: AccountId = env::predecessor_account_id();
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
@@ -518,8 +518,8 @@ impl Marketplace {
             roles: HashSet::new(),
             reputation: 0,
             categories: categories,
-            links: None,
-            education: None, 
+            links: links,
+            education: education, 
             banned: false,
         };
 
