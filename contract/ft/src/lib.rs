@@ -104,10 +104,11 @@ impl Token {
     }
 
     pub fn transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
-        let sender = env::signer_account_id();
+        let sender = env::predecessor_account_id();
 
         self.token.internal_register_account(&to);
         self.token.internal_transfer(&sender, &to, amount, None);
+
         amount
     }
 
@@ -225,9 +226,9 @@ impl Token {
         else { return false; }
     }
 
-    /*** 
-     * PRIVATE FUNCTIONS 
-    ***/
+    /***********************
+     *  PRIVATE FUNCTIONS  *
+     ***********************/
 
     fn mint_into(&mut self, account_id: &AccountId, amount: Balance) {
         let balance = self.get_balance_of(account_id);
@@ -239,7 +240,7 @@ impl Token {
         self.token.accounts.insert(account_id, &balance); 
     }
 
-    // Verificar que sea el owner
+    // Verificar que sea el Owner.
     fn assert_owner(&self) {
         assert!(
             env::predecessor_account_id() == self.owner.to_string(),
@@ -247,12 +248,12 @@ impl Token {
         );
     }
 
-    // Verificar que tenga permisos para mintear tokens
+    // Verificar que tenga permisos para mintear tokens.
     fn assert_minter(&self, account_id: String) {
         assert_eq!(self.minter == account_id, true, "Not is the minter");
     }
 
-    // Verificar deposito
+    // Verificar deposito.
     pub fn assert_one_yocto(&self) {
         assert_eq!(env::attached_deposit(), 1, "Requires attached deposit of exactly 1 yoctoNEAR")
     }
