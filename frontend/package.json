@@ -7,49 +7,33 @@
     "deploy:pages": "gh-pages -d dist/",
     "start": "echo The app is starting! It will automatically open in your browser when ready && env-cmd -f ../contract/marketplace/neardev/dev-account.env parcel src/index.html --open",
     "watch:css": "tailwindcss -i ./assets/tailwind.css -o ./assets/main.css --watch",
-    "build:css": "tailwindcss -i ./assets/tailwind.css -o ./assets/main.css",
-    "test": "jest test --runInBand"
+    "build:css": "tailwindcss -i ./assets/tailwind.css -o ./assets/main.css"
   },
   "devDependencies": {
     "@babel/core": "~7.14.0",
     "@babel/preset-env": "~7.14.0",
-    "@babel/preset-react": "~7.13.13",
+    "@babel/preset-react": "^7.13.13",
     "babel-jest": "~26.6.2",
     "env-cmd": "~10.1.0",
     "gh-pages": "~3.1.0",
-    "jest": "~26.6.2",
-    "jest-environment-node": "~26.6.2",
     "near-cli": "~2.1.1",
     "parcel-bundler": "~1.12.4",
     "postcss": "^8.4.5",
     "react-test-renderer": "~17.0.1",
     "shelljs": "~0.8.4",
-    "tailwindcss": "^3.0.11"
+    "tailwindcss": "^3.0.12"
   },
   "dependencies": {
     "near-api-js": "~0.43.1",
     "react": "~17.0.1",
     "react-dom": "~17.0.1",
+    "react-icons": "^4.3.1",
     "react-native-vector-icons": "^9.0.0",
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "~0.13.5"
   },
   "resolutions": {
     "@babel/preset-env": "7.13.8"
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/src/__mocks__/fileMock.js"
-    },
-    "setupFiles": [
-      "<rootDir>/src/jest.init.js"
-    ],
-    "testEnvironment": "near-cli/test_environment",
-    "testPathIgnorePatterns": [
-      "<rootDir>/contract/",
-      "<rootDir>/node_modules/"
-    ]
   },
   "browserslist": {
     "production": [

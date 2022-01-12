@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import React from 'react'
 import NavBar from '../components/NavBar'
 import Footer from '../components/Footer'
-// https://oblador.github.io/react-native-vector-icons/ para los iconos
+import { VscArrowRight, VscArrowDown } from 'react-icons/vsc';
 export default function Home() {
     return (
         <>
@@ -59,11 +59,8 @@ export default function Home() {
                                 BlockJob doesn’t take a percentage of your earned Near. The amount of Near the employer pays is the amount the freelancer gets.
                             </div>
                             <div className="mt-10 flex items-center">
-                                <a className="text-[#04AADD] font-bold">Learn about this</a>
-                                <svg className="stroke-2" 
-                                    xmlns="http://www.w3.org/2000/svg" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-                                    <path d="M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z" fill="currentColor"/>
-                                </svg>
+                                <a className="text-[#04AADD] font-bold mr-3">Learn about this</a>
+                                <VscArrowRight size={24} color='#04AADD'/>
                             </div>
                         </div>
                     </div>
@@ -78,10 +75,8 @@ export default function Home() {
                             <div className="text-[#034D82] font-bold text-4xl pb-10">It’s all on blockchain!</div>
                             <div className="text-xl text-gray-600">The BlockJob database is distributed on the Near public blockchain and the source files are on IPFS. BlockJob is accessible to everyone forever, without any central authority having control over it.</div>
                             <div className="mt-10 flex items-center">
-                                <a className="text-[#04AADD] font-bold">Learn about this</a>
-                                <svg xmlns="http://www.w3.org/2000/svg" role="img" width="15" height="15" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-                                    <path d="M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z" fill="currentColor"/>
-                                </svg>
+                                <a className="text-[#04AADD] font-bold mr-3">Learn about this</a>
+                                <VscArrowRight size={24} color='#04AADD'/>
                             </div>
                         </div>
                     </div>
@@ -94,23 +89,39 @@ export default function Home() {
             {/* Cuarta seccion */}
             <div className="bg-[#d2f0fa] p-10">
                 <div className="font-bebas-neue grid grid-cols-2 gap-4">
-                    <div className="flex justify-center">
-                        <div>
-                            <img src={require("../../assets/image 4.png")}></img>
-                            <img src={require("../../assets/image 5.png")}></img>
-                            <img src={require("../../assets/image 8.png")}></img>
-                            <img src={require("../../assets/image 10.png")}></img>
-                            <img src={require("../../assets/image 11.png")}></img>
-                        </div>
+                    <div className="flex flex-col justify-center items-center">
+                        <div className="text-center text-[#034D82] text-2xl italic font-bold ">Become a Freelancer</div>
+                        <img className="max-w-[100px] mt-4 mb-1" src={require("../../assets/image 4.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Find Job</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 5.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Apply for a Job</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 8.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Get Hired</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 10.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Create Invoices</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 11.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Receive Near</div>
                     </div>
-                    <div className="flex justify-center">
-                        <div>
-                            <img src={require("../../assets/image 6.png")}></img>
-                            <img src={require("../../assets/image 7.png")}></img>
-                            <img src={require("../../assets/image 12.png")}></img>
-                            <img src={require("../../assets/image 13.png")}></img>
-                            <img src={require("../../assets/image 14.png")}></img>
-                        </div>
+                    <div className="flex flex-col justify-center items-center">
+                        <div className="text-center text-[#034D82] text-2xl italic font-bold ">Become an Employer</div>
+                        <img className="max-w-[100px]" src={require("../../assets/image 6.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Create Job</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 7.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Invite Freelancers</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 12.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Accept Job Proposals</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 13.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Get Tasks Done</div>
+                        <VscArrowDown size={40} color="#034D82" className="w-full my-4"/>
+                        <img className="max-w-[100px] mb-1" src={require("../../assets/image 14.png")}></img>
+                        <div className="text-center text-[#034D82] text-xl font-bold ">Pay Invoices in Near</div>
                     </div>
                 </div>
             </div>

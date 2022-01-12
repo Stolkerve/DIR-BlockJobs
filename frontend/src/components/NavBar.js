@@ -2,6 +2,8 @@ import 'regenerator-runtime/runtime'
 import React from 'react'
 import { login, logout } from '../utils'
 
+import {BsPersonFill} from "react-icons/bs"
+
 function NavBarContent() {
     if (!window.walletConnection.isSignedIn()) {
         return (
@@ -24,7 +26,11 @@ function NavBarContent() {
     }
     
     return (
-        <button onClick={logout}>Sign out</button>
+        <nav className="font-sen text-white uppercase text-base lg:flex items-center hidden">
+            <div className="p-2 rounded-full bg-[#ffffff] cursor-pointer" onClick={logout}>
+                <BsPersonFill color="#27C0EF" size={24}/>
+            </div>
+        </nav>
     )
 }
 
