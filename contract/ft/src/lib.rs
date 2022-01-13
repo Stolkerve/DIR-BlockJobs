@@ -3,12 +3,21 @@ use near_contract_standards::fungible_token::metadata::{
 };
 use near_contract_standards::fungible_token::FungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::collections::{LazyOption, LookupMap};
+use std::collections::HashSet;
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
 //use std::convert::TryFrom;
 
 near_sdk::setup_alloc!();
+
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Vote {
+    account: AccountId,
+    vote: bool,
+}
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -148,36 +157,85 @@ impl Token {
         self.allowance.get(&sender).unwrap_or(0)
     }
 
-    /// Incrementa en 3% el balance de un miembro de los jurados.
-    /// Solo ejecutable por y desde Mediator.
+
+    /// Incrementa o decrementa en 3% el balance de un miembro de los jurados
+    /// segun sus votos.
+    /// Solo ejecutable por y desde Mediator, cuando gana el empleador.
     /// 
-    pub fn increase_allowance(&mut self, account: AccountId) -> Balance {
-        self.assert_minter(env::signer_account_id());
+    pub fn applicant_winner(&mut self, votes: HashSet<Vote>) {
+        self.assert_minter(env::predecessor_account_id());
 
-        self.pending_to_mint += self.allowance.get(&account).unwrap_or(0) * 103 / 100 - self.allowance.get(&account).unwrap_or(0);
-        let new_allowance = self.allowance.get(&account).unwrap_or(0) * 103 / 100 ;
+        for i in votes.iter() {
+            if i.vote {
+                self.pending_to_mint += self.allowance.get(&i.account)
+                .unwrap_or(0) * 103 / 100 - self.allowance.get(&i.account).unwrap_or(0);
 
-        // Modificar allowance aumentando en 3%
-        self.allowance.insert(&account, &new_allowance);
-
-        // Retornar la allowance actualizada
-        self.allowance.get(&account).unwrap_or(0)
+                // Modificar allowance aumentando en 3%
+                let new_allowance = self.allowance.get(&i.account).unwrap_or(0) * 103 / 100 ;
+                self.allowance.insert(&i.account, &new_allowance);
+            }
+            else {
+            // Modificar allowance disminuyendo en 3%
+            let new_allowance = self.allowance.get(&i.account).unwrap_or(0) * 100 / 103;
+            self.allowance.insert(&i.account, &new_allowance);
+            }
+        }
     }
 
-    /// Decrementa en 3% el balance de un miembro de los jurados.
-    /// Solo ejecutable por y desde Mediator.
+    /// Incrementa o decrementa en 3% el balance de un miembro de los jurados
+    /// segun sus votos.
+    /// Solo ejecutable por y desde Mediator, cuando gana el profesional.
     /// 
-    pub fn decrease_allowance(&mut self, account: AccountId) -> Balance {
-        self.assert_minter(env::signer_account_id());
+    pub fn accused_winner(&mut self, votes: HashSet<Vote>) {
+        self.assert_minter(env::predecessor_account_id());
 
-        let new_allowance = self.allowance.get(&account).unwrap_or(0) * 100 / 103;
+        for i in votes.iter() {
+            if !i.vote {
+                self.pending_to_mint += self.allowance.get(&i.account)
+                .unwrap_or(0) * 103 / 100 - self.allowance.get(&i.account).unwrap_or(0);
 
-        // Modificar allowance disminuyendo en 3%
-        self.allowance.insert(&account, &new_allowance);
-
-        // Retornar la allowance actualizada
-        self.allowance.get(&account).unwrap_or(0)
+                // Modificar allowance aumentando en 3%
+                let new_allowance = self.allowance.get(&i.account).unwrap_or(0) * 103 / 100 ;
+                self.allowance.insert(&i.account, &new_allowance);
+            }
+            else {
+            // Modificar allowance disminuyendo en 3%
+            let new_allowance = self.allowance.get(&i.account).unwrap_or(0) * 100 / 103;
+            self.allowance.insert(&i.account, &new_allowance);
+            }
+        }
     }
+
+    // /// Incrementa en 3% el balance de un miembro de los jurados.
+    // /// Solo ejecutable por y desde Mediator.
+    // /// 
+    // fn increase_allowance(&mut self, account: AccountId) -> Balance {
+    //     self.assert_minter(env::signer_account_id());
+
+    //     self.pending_to_mint += self.allowance.get(&account).unwrap_or(0) * 103 / 100 - self.allowance.get(&account).unwrap_or(0);
+    //     let new_allowance = self.allowance.get(&account).unwrap_or(0) * 103 / 100 ;
+
+    //     // Modificar allowance aumentando en 3%
+    //     self.allowance.insert(&account, &new_allowance);
+
+    //     // Retornar la allowance actualizada
+    //     self.allowance.get(&account).unwrap_or(0)
+    // }
+
+    // /// Decrementa en 3% el balance de un miembro de los jurados.
+    // /// Solo ejecutable por y desde Mediator.
+    // /// 
+    // fn decrease_allowance(&mut self, account: AccountId) {
+    //     self.assert_minter(env::signer_account_id());
+
+    //     let new_allowance = self.allowance.get(&account).unwrap_or(0) * 100 / 103;
+
+    //     // Modificar allowance disminuyendo en 3%
+    //     self.allowance.insert(&account, &new_allowance);
+
+    //     // Retornar la allowance actualizada
+    //     //self.allowance.get(&account).unwrap_or(0)
+    // }
 
 
     /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.

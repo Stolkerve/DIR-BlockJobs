@@ -14,21 +14,13 @@ use std::fmt::Debug;
 // const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
 // const NANO_SECONDS: u32 = 1_000_000_000;
 const NO_DEPOSIT: Balance = 0;
-const BASE_GAS: Gas = 100_000_000_000_000;
+const BASE_GAS: Gas = 30_000_000_000_000;
+const MAX_GAS: Gas = 250_000_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 
 setup_alloc!();
 
 pub type DisputeId = u64;
-
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
-#[serde(crate = "near_sdk::serde")]
-pub struct Vote {
-    // Miembro del jurado que emite el voto
-    account: AccountId,
-    // Decision tomada 
-    vote: bool,
-}
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, PartialEq, Debug, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -37,6 +29,15 @@ pub enum DisputeStatus {
     Resolving,  //Tiempo para realizar las votaciones -Duracion: 5 dias
     Executable, //Tiempo para ejecutarse los resultado -Duracion: 0.5 dias
     Finished,   //Indica que la disputa finalizo exitosamente -Duracion: indefinida
+}
+
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Vote {
+    // Miembro del jurado que emite el voto
+    account: AccountId,
+    // Decision tomada 
+    vote: bool,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
@@ -60,6 +61,8 @@ pub struct Dispute {
     // Pruebas
     applicant_proves: String,       // Un markdown con las pruebas
     accused_proves: Option<String>, // Un markdown con las pruebas
+    // Precio pagado por el servicio
+    price: u128,
 }
 
 #[near_bindgen]
@@ -101,7 +104,7 @@ impl Mediator {
     /// Ejecutable desde Marketplace por el empleador que haya comprado el servicio.
     /// 
     #[payable]
-    pub fn new_dispute(&mut self, service_id: u64, applicant: AccountId, accused: AccountId, proves: String) -> u64 {
+    pub fn new_dispute(&mut self, service_id: u64, applicant: AccountId, accused: AccountId, proves: String, price: u128) -> u64 {
         if env::attached_deposit() < 1 {
             env::panic(b"To create a new dispute, deposit 0.1 near");
         }
@@ -118,6 +121,7 @@ impl Mediator {
             winner: None,
             applicant_proves: proves,
             accused_proves: None,
+            price: price,
         };
         env::log(format!("{:?}", dispute).as_bytes());
 
@@ -158,7 +162,7 @@ impl Mediator {
 
     /// Añadirse como miembro del jurado para una disputa especifica.
     /// Solo ejecutable mientras la disputa esta en Open.
-    /// Se verifica en MArketplace que cumpla con el rol de Judge y reputacion de 3 o mas.
+    /// Se verifica en Marketplace que cumpla con el rol de Judge y reputacion de 3 o mas.
     /// 
     pub fn pre_vote(&mut self, dispute_id: u64) -> bool {
         let dispute = self.get_dispute(dispute_id);
@@ -324,45 +328,27 @@ impl Mediator {
                 dispute.dispute_status = DisputeStatus::Finished;
                 if pro_votes_counter > agains_votes_counter {
                     dispute.winner = Some(dispute.applicant.clone());
-                    for v in dispute.votes.iter() {
-                        if v.vote {
-                            let _res = ext_ft::increase_allowance(
-                                v.account.clone() ,
-                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
-                            .then(ext_self::on_increase_allowance(
-                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-                            );
-                        }
-                        else {
-                            let _res = ext_ft::decrease_allowance(
-                                v.account.clone() ,
-                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
-                            .then(ext_self::on_decrease_allowance(
-                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-                            );
-                        }
-                    }
+
+                    // Pagar al empleador
+                    Promise::new(dispute.applicant.clone()).transfer(dispute.price.clone());
+
+                    let _res = ext_ft::applicant_winner(
+                        dispute.votes.clone(),
+                        &self.token_contract,
+                        NO_DEPOSIT, MAX_GAS
+                    );
                 }
                 else {
                     dispute.winner = Some(dispute.accused.clone());
-                    for v in dispute.votes.iter() {
-                        if !v.vote {
-                            let _res = ext_ft::decrease_allowance(
-                                v.account.clone() ,
-                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
-                            .then(ext_self::on_decrease_allowance(
-                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-                            );
-                        }
-                        else {
-                            let _res = ext_ft::increase_allowance(
-                                v.account.clone() ,
-                                &self.token_contract, NO_DEPOSIT, BASE_GAS)
-                            .then(ext_self::on_increase_allowance(
-                                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-                            );
-                        }
-                    }
+
+                    // Pagar al profesional
+                    Promise::new(dispute.accused.clone()).transfer(dispute.price.clone());
+
+                    let _res = ext_ft::accused_winner(
+                        dispute.votes.clone(),
+                        &self.token_contract,
+                        NO_DEPOSIT, MAX_GAS
+                    );
                 }
 
                 dispute.finish_time_stamp = Some(env::block_timestamp());
@@ -380,6 +366,26 @@ impl Mediator {
         return dispute;
     }
 
+
+    // pub fn increase(&mut self, dispute_id: u64) -> Dispute {
+    //     let dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
+
+    //     let _res = ext_ft::increase_allowance(
+    //         env::current_account_id(),
+    //         &self.token_contract, NO_DEPOSIT, BASE_GAS);
+
+    //     dispute
+    // }
+
+    // pub fn decrease(&mut self, dispute_id: u64) -> Dispute {
+    //     let dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
+
+    //     let _res = ext_ft::decrease_allowance(
+    //         env::current_account_id(),
+    //         &self.token_contract, NO_DEPOSIT, BASE_GAS);
+            
+    //     dispute
+    // }
 
     /// Bannear un usuario para casos de fraudes en disputas.
     /// 
@@ -520,6 +526,15 @@ impl Mediator {
             PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
+
+
+    /// Solo para pruebas
+    pub fn change_dispute_status(&mut self, dispute_id: u64) -> DisputeStatus {
+        let mut dispute = self.get_dispute(dispute_id);
+        dispute.dispute_status = DisputeStatus::Executable;
+        self.disputes.insert(&dispute_id, &dispute);
+        dispute.dispute_status
+    }
 }
 
 #[ext_contract(ext_marketplace)]
@@ -531,16 +546,18 @@ pub trait Marketplace {
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
     fn validate_tokens(account_id: AccountId);
-    fn increase_allowance(account: AccountId);
-    fn decrease_allowance(account: AccountId);
+    // fn increase_allowance(account: AccountId);
+    // fn decrease_allowance(account: AccountId);
+    fn applicant_winner(votes: HashSet<Vote>);
+    fn accused_winner(votes: HashSet<Vote>);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_pre_vote(dispute_id: u64, user_id: AccountId);
     fn on_vote(dispute_id: u64, user_id: AccountId, vote: bool);
     fn on_return_service(service_id: u64);
-    fn on_increase_allowance();
-    fn on_decrease_allowance();
+    // fn on_increase_allowance();
+    // fn on_decrease_allowance();
     fn on_ban_user();
 }
 
