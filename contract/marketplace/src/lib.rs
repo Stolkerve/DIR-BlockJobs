@@ -96,7 +96,7 @@ impl Marketplace {
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Judge);
         this.add_user_p(roles.clone(), owner_id.into(), "Categories { Programer: {Lenguajes: } }".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "Categories { Programer: {Lenguajes: } }".to_string(), );
+        this.add_user_p(roles.clone(), mediator.into(), "Categories { Programer: {Lenguajes: } }".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -178,7 +178,7 @@ impl Marketplace {
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
-        let service = self.get_service_by_id(service_id.clone());
+        let mut service = self.get_service_by_id(service_id.clone());
         
         // Verificar que este en venta
         if !service.on_sale {
@@ -199,6 +199,20 @@ impl Marketplace {
         // Realizar el pago en NEARs.
         if env::attached_deposit() >= service.metadata.price {
             Promise::new(self.contract_me.clone()).transfer(service.metadata.price);
+
+            // Establecer como servicio vendido y no en venta.
+            service.sold = true;
+            service.on_sale = false;
+
+            // Cambiar propiedad del servicio.
+            service.actual_owner = sender.clone();
+            self.delete_service(&service_id, &service.actual_owner);
+            self.add_service(&service_id, &buyer.account_id);
+
+            // Establecer tiempo de la compra.
+            service.buy_moment = env::block_timestamp();
+
+            self.service_by_id.insert(&service_id, &service);
         }
         else {
             // Realizar el pago en BJT tokens.
@@ -210,11 +224,12 @@ impl Marketplace {
                 service_id,
                 &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
             );
-        }
+        };
     }
 
-
-    pub fn on_buy_service(&mut self, service_id: u64) {
+    /// Callback luego de realizarse el pago que queda inicialmente bloqueado.
+    /// 
+    pub fn on_buy_service(&mut self, service_id: u64) -> Service {
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
                 let mut service = self.get_service_by_id(service_id.clone());
@@ -234,7 +249,8 @@ impl Marketplace {
                 service.buy_moment = env::block_timestamp();
 
                 self.service_by_id.insert(&service_id, &service);
-                
+
+                return service;
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -247,7 +263,7 @@ impl Marketplace {
     ///
     #[payable]
     pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) {
-        // Verificar que no haya sido banneado quien solicita la disputa
+        // Verificar que no haya sido banneado quien solicita la disputa.
         let user_id = string_to_valid_account_id(&env::predecessor_account_id());
         if self.get_user(user_id).banned == true {
             env::panic(b"You are already banned for fraudulent disputes");
@@ -271,6 +287,7 @@ impl Marketplace {
             env::signer_account_id(),
             service.creator_id.clone(),
             proves,
+            service.metadata.price.clone(),
             &self.contract_me,
             env::attached_deposit(),
             BASE_GAS,
@@ -284,7 +301,7 @@ impl Marketplace {
 
     /// Callback desde contrato mediador
     /// 
-    pub fn on_new_dispute(&mut self, service_id: u64) {
+    pub fn on_new_dispute(&mut self, service_id: u64) -> Service {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"Only the contract can call its function")
         }
@@ -296,6 +313,8 @@ impl Marketplace {
 
                 service.on_dispute = true;
                 self.service_by_id.insert(&service_id, &service);
+
+                return service;
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -651,7 +670,7 @@ impl Marketplace {
         expect_value_found(self.users.get(&account_id.into()), "No users found. Register the user first".as_bytes())
     }
 
-    /// TODO(Sebas): Optimizar con paginacion
+    /// TODO(Sebas): Optimizar con paginacion.
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_users_by_role(&self, role: UserRoles, from_index: u64, limit: u64) -> Vec<User> {
@@ -877,7 +896,7 @@ pub trait Token {
 }
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
-    fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String);
+    fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String, price: u128);
     fn pay_service(beneficiary: AccountId, amount: Balance) -> Balance;
 }
 #[ext_contract(ext_self)]

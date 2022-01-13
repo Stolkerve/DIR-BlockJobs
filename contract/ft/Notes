@@ -23,6 +23,7 @@ near view $FT_ID get_minter '{}' --accountId $FT_ID
 near view $FT_ID get_balance_of '{"account": "'$FT_ID'"}' --accountId $FT_ID
 near view $FT_ID get_balance_of '{"account": "'$ID'"}' --accountId $FT_ID
 near view $FT_ID get_allowance_of '{"account": "'$ID'"}' --accountId $FT_ID
+near view $FT_ID get_allowance_of '{"account": "'$MA_ID'"}' --accountId $FT_ID
 
 near view $FT_ID get_pending_to_mint '{}' --accountId $FT_ID
 near view $FT_ID verify_blocked_amount '{"account": "'$ID'"}' --accountId $FT_ID
