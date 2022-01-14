@@ -2,8 +2,8 @@ npx tailwindcss -i ./src/assets/tailwind.css -o ./src/assets/main.css --watch
 
 near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
 
-near call $MA_ID add_user '{"roles": ["Professional"], "personal_data": {"education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol" "picture": "foto.jpg"}}' --accountId $ID --amount 0.03
-near call $MA_ID add_user '{"roles": ["Employeer"], "personal_data": {"education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol" "picture": "foto.jpg"}}' --accountId $ID2 --amount 0.03
+near call $MA_ID add_user '{"roles": ["Professional"], "personal_data": {"legal_name": "Pepe Ramos", "education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol" "picture": "foto.jpg"}}' --accountId $ID --amount 0.03
+near call $MA_ID add_user '{"roles": ["Employeer"], "personal_data": {"legal_name": "Pepe Ramos2", "education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol" "picture": "foto.jpg"}}' --accountId $ID2 --amount 0.03
 
 near call $MA_ID update_user_data '{"account_id": "'$ID'", "data": "{"education": "I am not a smart contract, I need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol", "picture": "foto.jpg"}"}' --accountId $MA_ID
 

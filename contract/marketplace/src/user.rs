@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{AccountId};
@@ -12,10 +12,17 @@ pub enum UserRoles {
     Judge = 3,
 }
 
-// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
-// #[serde(crate = "near_sdk::serde")]
-// pub struct PersonalData
-
+// No deberia dar problemas
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct PersonalData {
+    pub legal_name: String,
+    pub education: String,
+    pub links: Vec<String>,
+    pub picture: String,
+    pub bio: String
+}
+ 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct User {
@@ -26,6 +33,7 @@ pub struct User {
     pub personal_data: Option<String>,
     /*
         personal_data:  {
+            legal_name: "",
             education: "",
             links: "",
             picture: "",

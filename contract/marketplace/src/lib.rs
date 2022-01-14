@@ -4,10 +4,9 @@ use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage, 
     ext_contract, Gas, PromiseResult};
-    // , serde_json::{json}};
+use near_sdk::serde_json;
 use std::collections::{HashSet};
 use std::convert::TryFrom;
-// use rand::seq::SliceRandom;
 // use near_env::PanicMessage;
 
 use crate::internal::*;
@@ -96,9 +95,9 @@ impl Marketplace {
 
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Judge);
-        this.add_user_p(roles.clone(), owner_id.into(), "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
-        this.add_user_p(roles.clone(), ft.into(),       "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
+        this.add_user_p(roles.clone(), owner_id.into(), "{\"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
+        this.add_user_p(roles.clone(), mediator.into(), "{\"legal_name\": \"Mediator Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
+        this.add_user_p(roles.clone(), ft.into(),       "{\"legal_name\": \"FT Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -524,7 +523,15 @@ impl Marketplace {
     #[payable]
     pub fn add_user(&mut self, roles: Vec<UserRoles>, personal_data: Option<String>) -> User {
         let account_id: AccountId = env::predecessor_account_id();
+
+        if personal_data.is_some()
+        {
+            // solo vereficar los nombre del json
+            let _p: PersonalData = serde_json::from_str(personal_data.as_ref().unwrap()).unwrap();
+        }
+        
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
+
         self.services_by_account.insert(&account_id, &services_set);
 
         let initial_storage_usage = env::storage_usage();
@@ -559,6 +566,10 @@ impl Marketplace {
     }
 
     fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, data: String) -> User {
+        // solo vereficar los nombre del json
+        let _p: PersonalData = serde_json::from_str(&data).unwrap();
+
+
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
 
@@ -881,7 +892,6 @@ impl Marketplace {
             env::panic(b"The indicated service doesn't exist")
         }
     }
-
 }
 
 #[ext_contract(ext_token)]
@@ -906,133 +916,3 @@ pub trait ExtSelf {
 fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
     option.unwrap_or_else(|| env::panic(message))
 }
-
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use near_sdk::MockedBlockchain;
-//     use near_sdk::test_utils::{VMContextBuilder, accounts};
-//     use near_sdk::{testing_env, VMContext};
-
-//     fn get_context(is_view: bool) -> VMContext {
-//         VMContextBuilder::new()
-//             .signer_account_id(accounts(1))
-//             .predecessor_account_id(accounts(2))
-//             .attached_deposit(100000000000000000)
-//             .is_view(is_view)
-//             .build()
-//     }
-
-//     #[test]
-//     fn test_basic() {
-//         let admin_id = string_to_valid_account_id(&accounts(1).to_string());
-//         let mut context = get_context(false);
-//         context.attached_deposit = 58700000000000000000000;
-//         testing_env!(context.clone());
-//         let marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
-
-//         let admin: User = marketplace.get_user(admin_id.clone());
-
-//         // Verificar que el admin sea creado correctamente
-//         assert_eq!(
-//             (admin.mints == false) &&
-//             (admin.account_id == admin_id.to_string()) &&
-//             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-//             (marketplace.get_user_service_id(admin_id).len() == 0) // no minteo ningun service
-//             ,
-//             true
-//         );
-//     }
-//     #[test]
-
-//     fn test_mint() {
-//         let mut context = get_context(false);
-//         let admin_id = string_to_valid_account_id(&accounts(1).to_string());
-//         context.attached_deposit = 58700000000000000000000;
-//         context.predecessor_account_id = accounts(1).to_string();
-//         testing_env!(context);
-//         let mut marketplace = Marketplace::new(admin_id.clone(), string_to_valid_account_id(&"pepe.near".to_string()));
-
-//         let jose_service = marketplace.mint_service(ServiceMetadata {
-//             fullname: "Jose Antoio".to_string(),
-//             profile_photo_url: "Jose_Antoio.png".to_string(),
-//             price: 10,
-//             on_sale: false,
-//         });
-
-//         let admin: User = marketplace.get_user(admin_id.clone());
-//         let on_sales_services = marketplace.get_user_services(admin_id, true);
-
-//         assert_eq!(
-//             (admin.roles.get(&UserRoles::Admin).is_some()) &&
-//             on_sales_services.len() == 3 &&
-//             admin.mints == true
-//             ,
-//             true
-//         );  
-
-//         // let user2 = marketplace.add_user(
-//         //     "maria.testnet".to_string(),
-//         //     UserRoles::Professional, vec!(category2, category3)
-//         // );
-//         // context.attached_deposit = 58700000000000000000000;
-//         // testing_env!(context);
-//         // marketplace.mint_service(ServiceMetadata {
-//         //     fullname: "Maria Jose".to_string(),
-//         //     profile_photo_url: "Maria_Jose.png".to_string(),
-//         //     price: 10,
-//         //     on_sale: true,
-//         // }, 3);
-
-//         // let user3 = marketplace.add_user(
-//         //     "ed.testnet".to_string(),
-//         //     UserRoles::Professional, vec!(category4)
-//         // );
-//         // context.attached_deposit = 58700000000000000000000;
-//         // testing_env!(context);
-//         // marketplace.mint_service(ServiceMetadata {
-//         //     fullname: "Ed Robet".to_string(),
-//         //     profile_photo_url: "Ed_Robet.png".to_string(),
-//         //     price: 10,
-//         //     on_sale: true,
-//         // }, 1);
-//     }
-
-//     // #[test]
-//     // fn test_user() {
-//     //     let mut context = get_context(false);
-//     //     let admin_id = accounts(1).to_string();
-//     //     context.attached_deposit = 58700000000000000000000;
-//     //     context.predecessor_account_id = admin_id.clone();
-//     //     testing_env!(context);
-//     //     let mut marketplace = Marketplace::new(admin_id.clone());
-
-//     //     // let mut context = get_context(false);
-//     //     // context.attached_deposit = 58700000000000000000000;
-//     //     // context.predecessor_account_id = accounts(2).to_string();
-//     //     // testing_env!(context);
-
-//     //     let user_id = "andres.testnet";
-//     //     marketplace.add_user(
-//     //         user_id.to_string(),
-//     //         UserRoles::Professional,
-//     //         vec!(generate_category1())
-//     //     );
-
-//     //     assert_eq!(
-//     //         true,
-//     //         true
-//     //     );
-//     // }
-
-//     #[test]
-//     fn test_roles() {
-
-//     }
-
-//     #[test]
-//     fn test_categories() {
-
-//     }
-// }

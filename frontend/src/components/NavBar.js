@@ -5,7 +5,7 @@ import { Menu, Transition, Dialog } from '@headlessui/react'
 import { useNavigate, Link } from "react-router-dom";
 import { utils } from "near-api-js";
 import { login, logout } from '../utils'
-
+import { toast } from 'react-toastify';
 export default function NavBar() {
     return (
         <div className="bg-[#27C0EF] h-24 flex items-center z-30 w-full relative">
@@ -28,8 +28,10 @@ function NavBarContent() {
     let [beEmployeer, setbeEmployeer] = useState(false)
 
     let [educacionInput, setEducacionInput] = useState("")
-    let [socialMediasInput, setSocialMediasInput] = useState(["", "", "", ""])
+    let [legalNameInput, setLegalNameInput] = useState("")
+    let [linksInputs, setLinksInputs] = useState(["", "", "", ""])
     let [pictureInput, setPictureInput] = useState("")
+    let [bioInput, setBioInput] = useState("")
 
     const navegation = useNavigate();
 
@@ -38,10 +40,11 @@ function NavBarContent() {
         if (window.walletConnection.isSignedIn()) {
             try {
                 console.log(await window.contract.get_user({account_id: window.accountId}));
-                setIsUserCreated(false);
+                setIsUserCreated(true);
             }
             catch(e) {
                 setIsUserCreated(false);
+                toast.error(String(e.message.match("\".*\"")))
                 console.log(e)
             }
         }
@@ -174,37 +177,69 @@ function NavBarContent() {
                                     </div>
                                     <div className="mt-2">
                                         <label class="text-gray-900 mb-1 pr-4">
+                                            Nombre legal
+                                        </label>
+                                        <input
+                                            value={legalNameInput}
+                                            onChange={(e)=>{setLegalNameInput(e.target.value)}}
+                                            className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                        ></input>
+
+                                        <label class="text-gray-900 mb-1 pr-4">
                                             Educacion
                                         </label>
-                                        <input onChange={(e)=>{setEducacionInput(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
-                                        
+                                        <input
+                                            value={educacionInput}
+                                            onChange={(e)=>{setEducacionInput(e.target.value)}}
+                                            className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                        ></input>
+
+                                        <label class="text-gray-900 pr-4">Links</label>
+                                        <div className="grid grid-cols-2 gap-2 mb-2">
                                         {
-                                            [0, 1, 2, 3].map((i) => {
+                                            linksInputs.map((v, index) => {
                                                 return (
-                                                    <>
-                                                        <input onChange={(e)=>{
-                                                            let newArr = [... socialMediasInput]
-                                                            newArr[i] = e.target.value
-                                                            setSocialMediasInput(newArr)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
-                                                    </>
+                                                    <div key={index}>
+                                                        <input
+                                                            value={v}
+                                                            onChange={ (e)=>{
+                                                                let newArr = [... linksInputs]
+                                                                newArr[index] = e.target.value
+                                                                setLinksInputs(newArr)}
+                                                            }
+                                                            className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                                        ></input>
+                                                    </div>
                                                 )
                                             })
                                         }
-                                        <div>
                                         </div>
-                                        {/* <label class="text-gray-900 mb-1 pr-4"> */}
-                                            {/* Social Media Link 2 */}
-                                        {/* </label> */}
-                                        {/* <input onChange={(e)=>{setSocialMediaInput2(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input> */}
 
                                         <label class="text-gray-900 mb-1 pr-4">
                                             Picture Link
                                         </label>
-                                        <input onChange={(e)=>{setPictureInput(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
-                                        <input checked={beEmployeer} onChange={(e)=>{setbeEmployeer(!beEmployeer)}} type="checkbox" className="checked:bg-[#27C0EF]"></input>
-                                        <label class="form-check-label inline-block text-gray-800 pl-2" for="flexCheckDefault">
-                                            Ser empleador
+                                        <input
+                                            value={pictureInput}
+                                            onChange={(e)=>{setPictureInput(e.target.value)}}
+                                            className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                        ></input>
+
+                                        <label class="text-gray-900 mb-1 pr-4">
+                                            Bio
                                         </label>
+                                        {/* bioInput, setBioInput */}
+                                        <textarea
+                                            value={bioInput}
+                                            onChange={(e)=>{setBioInput(e.target.value)}}
+                                            className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                        ></textarea>
+
+                                        <div>
+                                            <input checked={beEmployeer} onChange={(e)=>{setbeEmployeer(!beEmployeer)}} type="checkbox" className="checked:bg-[#27C0EF]"></input>
+                                            <label class="form-check-label inline-block text-gray-800 pl-2" for="flexCheckDefault">
+                                                Ser empleador
+                                            </label>
+                                        </div>
                                     </div>
                                     <div className="mt-4">
                                         <button
@@ -212,11 +247,12 @@ function NavBarContent() {
                                             className="inline-flex justify-center px-4 py-2 mr-4 text-white bg-[#27C0EF] border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold"
                                             onClick={async () => {
                                                 let amt = utils.format.parseNearAmount("0.05");
-                                                let links = JSON.stringify({
-                                                    links: {
-                                                        socialMedia: [socialMediaInput1, socialMediaInput2],
-                                                        pictue: pictureInput
-                                                    }
+                                                let personalData = JSON.stringify({
+                                                    legal_name: legalNameInput,
+                                                    education: educacionInput,
+                                                    links: linksInputs,
+                                                    picture: pictureInput,
+                                                    bio: bioInput
                                                 })
                                                 try {
                                                     
@@ -224,10 +260,16 @@ function NavBarContent() {
                                                     if (beEmployeer) {
                                                         roles.push("Employeer");
                                                     }
-                                                    let user = await window.contract.add_user({roles: roles, categories: "hola", links: links, education: educacionInput}, "300000000000000", amt);
-                                                    console.log(beEmployeer)
+                                                    let user = await window.contract.add_user({roles: roles, personal_data: personalData}, "300000000000000", amt);
+                                                    console.log(personalData)
+
+                                                    setLegalNameInput("")
+                                                    setEducacionInput("")
+                                                    setPictureInput("")
+                                                    setBioInput("")
+                                                    setLinksInputs(linksInputs.map((v)=>{return ""}))
                                                 } catch(e) {
-                                                    console.log(e)
+                                                    console.log(e.error)
                                                 }
                                             }}
                                         >

@@ -4,6 +4,7 @@
 echo "Compilando el contrato y desplegandolo a la testnet"
 
 cd contract
+./build.sh
 
 cd marketplace
 
