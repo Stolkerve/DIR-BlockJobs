@@ -3,6 +3,8 @@ import React from 'react'
 import { VscArrowRight, VscArrowDown } from 'react-icons/vsc';
 import Fade from 'react-reveal/Fade';
 import { Link } from "react-router-dom";
+import {login} from "../utils"
+
 export default function Home() {
     return (
         <>
@@ -19,12 +21,12 @@ export default function Home() {
                                 BlockJob is a dapp to search for jobs and freelancers. In addition to being an arbitrator to ensure that both parties are compliant.
                             </p>
                             <div className="flex mt-8">
-                                <Link to="/" className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4">
+                                <Link to="/help" className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4">
                                     See how it works
                                 </Link>
-                                <Link to="/" className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md">
-                                    Start now
-                                </Link>
+                                <button className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md" 
+                                    onClick={login}>
+                                    Start now</button>
                             </div>
                         </div>
                     </Fade>

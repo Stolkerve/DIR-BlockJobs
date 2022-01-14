@@ -12,6 +12,10 @@ pub enum UserRoles {
     Judge = 3,
 }
 
+// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
+// #[serde(crate = "near_sdk::serde")]
+// pub struct PersonalData
+
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct User {
@@ -19,9 +23,15 @@ pub struct User {
     pub mints: u16,
     pub roles: HashSet<UserRoles>,
     pub reputation: i16,
-    pub categories: String,
-    pub links: Option<String>,
-    pub education: Option<String>,
+    pub personal_data: Option<String>,
+    /*
+        personal_data:  {
+            education: "",
+            links: "",
+            picture: "",
+            bio: ""
+        }
+    */
     pub banned: bool,
 }
 

@@ -51,6 +51,7 @@ pub struct ServiceMetadata {
     pub description: String,
     pub icon: String,
     pub price: u128,
+    pub categories: String
 }
 
 #[near_bindgen]
@@ -95,8 +96,9 @@ impl Marketplace {
 
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Judge);
-        this.add_user_p(roles.clone(), owner_id.into(), "Categories { Programer: {Lenguajes: } }".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "Categories { Programer: {Lenguajes: } }".to_string(), );
+        this.add_user_p(roles.clone(), owner_id.into(), "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
+        this.add_user_p(roles.clone(), mediator.into(), "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
+        this.add_user_p(roles.clone(), ft.into(),       "{\"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\"}".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -504,7 +506,7 @@ impl Marketplace {
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
-    pub fn add_user(&mut self, roles: Vec<UserRoles>, categories: String, links: Option<String>, education: Option<String>) -> User {
+    pub fn add_user(&mut self, roles: Vec<UserRoles>, personal_data: Option<String>) -> User {
         let account_id: AccountId = env::predecessor_account_id();
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
@@ -517,9 +519,7 @@ impl Marketplace {
             mints: 0,
             roles: HashSet::new(),
             reputation: 0,
-            categories: categories,
-            links: links,
-            education: education, 
+            personal_data: personal_data, 
             banned: false,
         };
 
@@ -542,7 +542,7 @@ impl Marketplace {
         return new_user
     }
 
-    fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, categories: String) -> User {
+    fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, data: String) -> User {
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
         self.services_by_account.insert(&account_id, &services_set);
 
@@ -554,9 +554,7 @@ impl Marketplace {
             mints: 0,
             roles: HashSet::new(),
             reputation: 3,
-            categories: categories,
-            links: None,
-            education: None, 
+            personal_data: Some(data),
             banned: false,
         };
 
@@ -598,13 +596,13 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
-    pub fn update_user_categories(&mut self, account_id: ValidAccountId, categories: String) -> User {
+    pub fn update_user_data(&mut self, account_id: ValidAccountId, data: String) -> User {
         if env::predecessor_account_id() == account_id.to_string() {
             env::panic(b"Only the user cant modify it self");
         }
 
         let mut user = self.get_user(account_id.clone());
-        user.categories = categories;
+        user.personal_data = Some(data);
         self.users.insert(&account_id.into(), &user);
 
         return user;

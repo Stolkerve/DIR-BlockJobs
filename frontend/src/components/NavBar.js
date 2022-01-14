@@ -6,6 +6,21 @@ import { useNavigate, Link } from "react-router-dom";
 import { utils } from "near-api-js";
 import { login, logout } from '../utils'
 
+export default function NavBar() {
+    return (
+        <div className="bg-[#27C0EF] h-24 flex items-center z-30 w-full relative">
+            <div className="container mx-auto px-6 flex items-center justify-between">
+                <Link to="/" className="text-white font-bold text-4xl">
+                    <span className="font-normal">Block</span>
+                    Jobs
+                </Link>
+                <div className="flex items-center">
+                    <NavBarContent />
+                </div>
+            </div>
+        </div>
+    )
+}
 
 function NavBarContent() {
     let [isOpen, setIsOpen] = useState(false)
@@ -13,8 +28,7 @@ function NavBarContent() {
     let [beEmployeer, setbeEmployeer] = useState(false)
 
     let [educacionInput, setEducacionInput] = useState("")
-    let [socialMediaInput1, setSocialMediaInput1] = useState("")
-    let [socialMediaInput2, setSocialMediaInput2] = useState("")
+    let [socialMediasInput, setSocialMediasInput] = useState(["", "", "", ""])
     let [pictureInput, setPictureInput] = useState("")
 
     const navegation = useNavigate();
@@ -24,7 +38,7 @@ function NavBarContent() {
         if (window.walletConnection.isSignedIn()) {
             try {
                 console.log(await window.contract.get_user({account_id: window.accountId}));
-                setIsUserCreated(true);
+                setIsUserCreated(false);
             }
             catch(e) {
                 setIsUserCreated(false);
@@ -33,10 +47,6 @@ function NavBarContent() {
         }
     }, [])
 
-
-    const handleLogin = () => {
-        login()
-    }
 
     function closeModal() {
         setIsOpen(false)
@@ -49,18 +59,11 @@ function NavBarContent() {
     if (!window.walletConnection.isSignedIn()) {
         return (
             <nav className="font-sen text-white uppercase text-base lg:flex items-center hidden">
-                <a href="#" className="py-2 px-6 flex">
-                    Home
-                </a>
-                <a href="#" className="py-2 px-6 flex">
-                    Docs
-                </a>
-                <a href="#" className="py-2 px-6 flex">
-                    Help
-                </a>
                 <div className="py-2 pl-3 pr-4 flex items-center">
-                    <img src={require("../../assets/logo-white.svg")}></img>
-                    <button className="uppercase" onClick={handleLogin}>Login</button>
+                    <button className="uppercase font-medium text-lg border-2 rounded-lg px-4 py-2" onClick={login}>
+                        Login
+                    </button>
+                    {/* <img src={require("../../assets/logo-white.svg")}></img> */}
                 </div>
             </nav>
         )
@@ -174,14 +177,26 @@ function NavBarContent() {
                                             Educacion
                                         </label>
                                         <input onChange={(e)=>{setEducacionInput(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
-                                        <label class="text-gray-900 mb-1 pr-4">
-                                            Social Media Link 1
-                                        </label>
-                                        <input onChange={(e)=>{setSocialMediaInput1(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
-                                        <label class="text-gray-900 mb-1 pr-4">
-                                            Social Media Link 2
-                                        </label>
-                                        <input onChange={(e)=>{setSocialMediaInput2(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
+                                        
+                                        {
+                                            [0, 1, 2, 3].map((i) => {
+                                                return (
+                                                    <>
+                                                        <input onChange={(e)=>{
+                                                            let newArr = [... socialMediasInput]
+                                                            newArr[i] = e.target.value
+                                                            setSocialMediasInput(newArr)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                        <div>
+                                        </div>
+                                        {/* <label class="text-gray-900 mb-1 pr-4"> */}
+                                            {/* Social Media Link 2 */}
+                                        {/* </label> */}
+                                        {/* <input onChange={(e)=>{setSocialMediaInput2(e.target.value)}} className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"></input> */}
+
                                         <label class="text-gray-900 mb-1 pr-4">
                                             Picture Link
                                         </label>
@@ -234,21 +249,5 @@ function NavBarContent() {
                 (<></>)
             }
         </nav>
-    )
-}
-
-export default function NavBar() {
-    return (
-        <div className="bg-[#27C0EF] h-24 flex items-center z-30 w-full relative">
-            <div className="container mx-auto px-6 flex items-center justify-between">
-                <Link to="/" className="text-white font-bold text-4xl">
-                    <span className="font-normal">Block</span>
-                    Jobs
-                </Link>
-                <div className="flex items-center">
-                    <NavBarContent />
-                </div>
-            </div>
-        </div>
     )
 }
