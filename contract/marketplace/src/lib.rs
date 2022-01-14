@@ -180,7 +180,7 @@ impl Marketplace {
         // Verificar que el servicio exista
         self.assert_service_exists(&service_id);
 
-        let service = self.get_service_by_id(service_id.clone());
+        let mut service = self.get_service_by_id(service_id.clone());
         
         // Verificar que este en venta
         if !service.on_sale {
@@ -201,6 +201,20 @@ impl Marketplace {
         // Realizar el pago en NEARs.
         if env::attached_deposit() >= service.metadata.price {
             Promise::new(self.contract_me.clone()).transfer(service.metadata.price);
+
+            // Establecer como servicio vendido y no en venta.
+            service.sold = true;
+            service.on_sale = false;
+
+            // Cambiar propiedad del servicio.
+            service.actual_owner = sender.clone();
+            self.delete_service(&service_id, &service.actual_owner);
+            self.add_service(&service_id, &buyer.account_id);
+
+            // Establecer tiempo de la compra.
+            service.buy_moment = env::block_timestamp();
+
+            self.service_by_id.insert(&service_id, &service);
         }
         else {
             // Realizar el pago en BJT tokens.
@@ -212,11 +226,12 @@ impl Marketplace {
                 service_id,
                 &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
             );
-        }
+        };
     }
 
-
-    pub fn on_buy_service(&mut self, service_id: u64) {
+    /// Callback luego de realizarse el pago que queda inicialmente bloqueado.
+    /// 
+    pub fn on_buy_service(&mut self, service_id: u64) -> Service {
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
                 let mut service = self.get_service_by_id(service_id.clone());
@@ -236,7 +251,8 @@ impl Marketplace {
                 service.buy_moment = env::block_timestamp();
 
                 self.service_by_id.insert(&service_id, &service);
-                
+
+                return service;
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
