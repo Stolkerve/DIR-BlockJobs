@@ -12,6 +12,9 @@ import UserProfile from './views/UserProfile';
 
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
+import { fbConfig } from './Firebase';
+
+fbConfig();
 
 export default function App() {
 
