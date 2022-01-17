@@ -95,9 +95,9 @@ impl Marketplace {
 
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Judge);
-        this.add_user_p(roles.clone(), owner_id.into(), "{\"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "{\"legal_name\": \"Mediator Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
-        this.add_user_p(roles.clone(), ft.into(),       "{\"legal_name\": \"FT Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\"}".to_string());
+        this.add_user_p(roles.clone(), owner_id.into(), "{\"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
+        this.add_user_p(roles.clone(), mediator.into(), "{\"legal_name\": \"Mediator Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
+        this.add_user_p(roles.clone(), ft.into(),       "{\"legal_name\": \"FT Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
 
         this.measure_min_service_storage_cost();
         return this;

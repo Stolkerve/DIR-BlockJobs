@@ -6,7 +6,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { utils } from "near-api-js";
 import { login, logout } from '../utils'
 import { toast } from 'react-toastify';
-export default function NavBar() {
+import Select from 'react-select'
+import countryList from 'react-select-country-list'
+
+export default function NavBar(props) {
     return (
         <div className="bg-[#27C0EF] h-24 flex items-center z-30 w-full relative">
             <div className="container mx-auto px-6 flex items-center justify-between">
@@ -15,14 +18,14 @@ export default function NavBar() {
                     Jobs
                 </Link>
                 <div className="flex items-center">
-                    <NavBarContent />
+                    <NavBarContent countries={props.countriesData}/>
                 </div>
             </div>
         </div>
     )
 }
 
-function NavBarContent() {
+function NavBarContent(props) {
     let [isOpen, setIsOpen] = useState(false)
     let [isUserCreated, setIsUserCreated] = useState(true)
     let [beEmployeer, setbeEmployeer] = useState(false)
@@ -32,6 +35,7 @@ function NavBarContent() {
     let [linksInputs, setLinksInputs] = useState(["", "", "", ""])
     let [pictureInput, setPictureInput] = useState("")
     let [bioInput, setBioInput] = useState("")
+    const [countryInput, setCountryInput] = useState('')
 
     const navegation = useNavigate();
 
@@ -39,8 +43,8 @@ function NavBarContent() {
         // let timeout
         if (window.walletConnection.isSignedIn()) {
             try {
-                console.log(await window.contract.get_user({account_id: window.accountId}));
-                setIsUserCreated(true);
+                await window.contract.get_user({account_id: window.accountId})
+                setIsUserCreated(true)
             }
             catch(e) {
                 setIsUserCreated(false);
@@ -172,7 +176,7 @@ function NavBarContent() {
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500 border-b-2 pb-2">
                                             Por favor, rellene este formulario para poder crear tu usuario. Al finalizar se va a cobrar un peaje de 0.05 NEARS para cubrir el storage,
-                                            el sobrante se rotornara. <br/><span className="font-bold">Estos datos son opcionales</span>
+                                            el sobrante se rotornara. <br/><span className="font-bold">Estos datos son opcionales!!!</span>
                                         </p>
                                     </div>
                                     <div className="mt-2">
@@ -224,7 +228,7 @@ function NavBarContent() {
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></input>
 
-                                        <label class="text-gray-900 mb-1 pr-4">
+                                        <label className="text-gray-900 mb-1 pr-4">
                                             Bio
                                         </label>
                                         {/* bioInput, setBioInput */}
@@ -234,13 +238,19 @@ function NavBarContent() {
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></textarea>
 
+
+					<div className="mb-2">
+					    <label className="text-gray-900 mb-1 mt-2 pr-4">Pais</label>
+					    <Select className="bg-gray-200" options={props.countries} value={countryInput} onChange={(value) => {setCountryInput(value)}} />
+					</div>
+                                    </div>
+		
                                         <div>
                                             <input checked={beEmployeer} onChange={(e)=>{setbeEmployeer(!beEmployeer)}} type="checkbox" className="checked:bg-[#27C0EF]"></input>
-                                            <label class="form-check-label inline-block text-gray-800 pl-2" for="flexCheckDefault">
+                                            <label className="form-check-label inline-block text-gray-900 pl-2" for="flexCheckDefault">
                                                 Ser empleador
                                             </label>
                                         </div>
-                                    </div>
                                     <div className="mt-4">
                                         <button
                                             type="button"
@@ -252,7 +262,8 @@ function NavBarContent() {
                                                     education: educacionInput,
                                                     links: linksInputs,
                                                     picture: pictureInput,
-                                                    bio: bioInput
+                                                    bio: bioInput,
+						    country: countryInput.label
                                                 })
                                                 try {
                                                     

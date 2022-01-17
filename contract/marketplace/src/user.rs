@@ -20,7 +20,8 @@ pub struct PersonalData {
     pub education: String,
     pub links: Vec<String>,
     pub picture: String,
-    pub bio: String
+    pub bio: String,
+    pub country: String
 }
  
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
@@ -37,7 +38,8 @@ pub struct User {
             education: "",
             links: "",
             picture: "",
-            bio: ""
+            bio: "",
+            country: ""
         }
     */
     pub banned: bool,
