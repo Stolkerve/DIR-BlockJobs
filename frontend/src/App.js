@@ -13,7 +13,12 @@ import DashBoard from './views/DashBoard';
 
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
+
 import countryList from 'react-select-country-list'
+
+import { fbConfig } from './Firebase';
+
+fbConfig();
 
 export default function App() {
     const options = useMemo(() => countryList().getData(), [])
