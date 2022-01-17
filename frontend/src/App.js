@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Routes, Route } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Home from './views/Home'
@@ -27,15 +27,11 @@ export default function App() {
             <NavBar countriesData={options}/>
             <Routes>
                 <Route path="/" element={ <Home />} />
-                <Route path="/about_us" element={<AboutUs />} />
-                <Route path="/docs" element={<Docs />}/>
-                <Route path="/help" element={<Help />}/>
-                <Route path="/profile/:id" element={<UserProfile />}/>
-		<Route path="/dashboard/:id" element={<DashBoard />}>
-		    {/* <Route 	path="/profile" 	element={}/>*/}
-		    {/* <Route 	path="/services" 	element={}/>*/}
-		    {/* <Route 	path="/disputes" 	element={}/>*/}
-		</Route>
+                <Route path="about_us" element={<AboutUs />} />
+                <Route path="docs" element={<Docs />}/>
+                <Route path="help" element={<Help />}/>
+                <Route path="profile/:id" element={<UserProfile />}/>
+                <Route path="dashboard/*" element={<DashBoard />} />
             </Routes>
             <Footer/>
             <ToastContainer 

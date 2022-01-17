@@ -112,7 +112,7 @@ function NavBarContent(props) {
                             </Menu.Item>
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`/profile/${window.accountId}`} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
+                                    <Link to={"/dashboard/profile/"} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
                                         } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}>
                                         My profile
                                     </Link>

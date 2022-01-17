@@ -11,9 +11,9 @@ set shortmess=aoO
 argglobal
 %argdel
 $argadd ~/Dev/DIR-BlockJobs/
-edit frontend/src/views/UserProfile.js
 argglobal
-balt frontend/assets/tailwind.css
+enew
+file NERD_tree_3
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -21,26 +21,14 @@ setlocal fdi=#
 setlocal fdl=0
 setlocal fml=1
 setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 22 - ((16 * winheight(0) + 20) / 40)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 22
-normal! 062|
+setlocal nofen
 tabnext 1
-badd +22 frontend/src/views/UserProfile.js
-badd +2 frontend/src/App.js
-badd +6 frontend/src/views/Home.js
-badd +274 frontend/src/components/NavBar.js
-badd +28 frontend/assets/tailwind.css
-badd +24 contract/marketplace/src/user.rs
-badd +42 onlydeploy.sh
-badd +100 contract/marketplace/src/lib.rs
-badd +6 contract/marketplace/Notes
-badd +37 frontend/package.json
+badd +79 frontend/src/views/UserProfile.js
+badd +69 frontend/src/views/Home.js
+badd +6 frontend/assets/tailwind.css
+badd +44 frontend/src/App.js
+badd +1 frontend/src/components/NavBar.js
+badd +6 frontend/src/views/DashBoard.js
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
@@ -52,6 +40,7 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
+nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
