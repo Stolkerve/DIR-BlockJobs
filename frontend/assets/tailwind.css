@@ -88,3 +88,8 @@
     stroke-dashoffset: -124;
   }
 }
+
+.react-select .react-select__menu-list {
+  overflow-y: visible;
+  z-index: 100000;
+}

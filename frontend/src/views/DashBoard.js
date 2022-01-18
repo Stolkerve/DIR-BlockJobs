@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useMatch, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 import UserProfile from '../views/UserProfile';
 import Services from '../views/Services';
@@ -15,21 +15,18 @@ export default function DashBoard() {
 	
 	let [selectedLeftSize, setSelectedLeftSize] = useState(0)
 	
-	const leftSize = ["Profile", "Services", "Disputes"]
+	const leftSize = ["profile", "services", "disputes"]
 	const leftSizeIcons = [<ImProfile/>, <RiSuitcaseFill/>, <MdHowToVote/>]
 
 	useEffect(() => {
 		for (let index = 0; index < leftSize.length; index++) {
-			console.log(location.pathname)
-			console.log(`/dashboard/${leftSize[index]}`)
 			let match = location.pathname == `/dashboard/${leftSize[index]}`
-			console.log(match)
 			if(match) {
 				setSelectedLeftSize(index)
 				break
 			} 
 		}
-	}, [])
+	}, [location])
 
     return (
 	<div className="flex">
@@ -55,7 +52,7 @@ export default function DashBoard() {
 			}
 		</div>
 		<Routes>
-            <Route 	path="/profile" 		element={<UserProfile />}/>
+            <Route 	path="/profile" 	element={<UserProfile />}/>
             <Route 	path="/services" 	element={<Services />}/>
             <Route 	path="/disputes" 	element={<Disputes />}/>
         </Routes>

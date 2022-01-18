@@ -50,9 +50,9 @@ export default function UserProfile() {
 	    {
 		loading ? (
 		    <div className="h-screen">
-			<svg className="spinner" viewBox="0 0 50 50">
-			    <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
-			</svg>
+				<svg className="spinner" viewBox="0 0 50 50">
+					<circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+				</svg>
 		    </div>
 		) : (
 		    <div className="text-[#352E5B] font-bebas-neue mx-8">
@@ -86,7 +86,7 @@ export default function UserProfile() {
 							<div className="mr-8 font-semibold text-lg">
 							{
 								user.personal_data.links.map((v, i) => {return (
-									<div><a href={v}>{v}</a></div>
+									<div key={i}><a href={v}>{v}</a></div>
 								)})
 							}
 							</div>

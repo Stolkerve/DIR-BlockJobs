@@ -8,20 +8,20 @@ import { login, logout } from '../utils'
 import { toast } from 'react-toastify';
 import Select from 'react-select'
 
-import {ImProfile} from "react-icons/im"
-import {RiSuitcaseFill} from "react-icons/ri"
-import {MdHowToVote, MdLogout} from "react-icons/md"
+import { ImProfile } from "react-icons/im"
+import { RiSuitcaseFill } from "react-icons/ri"
+import { MdHowToVote, MdLogout } from "react-icons/md"
 
 export default function NavBar(props) {
     return (
-        <div className="bg-[#27C0EF] h-24 flex items-center z-30 w-full relative">
+        <div className="bg-[#27C0EF] h-20 flex items-center z-30 w-full relative">
             <div className="container mx-auto px-6 flex items-center justify-between">
                 <Link to="/" className="text-white font-bold text-4xl">
                     <span className="font-normal">Block</span>
                     Jobs
                 </Link>
                 <div className="flex items-center">
-                    <NavBarContent countries={props.countriesData}/>
+                    <NavBarContent countries={props.countriesData} />
                 </div>
             </div>
         </div>
@@ -32,53 +32,53 @@ function NavBarContent(props) {
     let [isOpen, setIsOpen] = useState(false)
     let [isUserCreated, setIsUserCreated] = useState(true)
     let [beEmployeer, setbeEmployeer] = useState(false)
-    
+
     let [educacionInput, setEducacionInput] = useState("")
     let [legalNameInput, setLegalNameInput] = useState("")
     let [linksInputs, setLinksInputs] = useState(["", "", "", ""])
     let [pictureInput, setPictureInput] = useState("")
     let [bioInput, setBioInput] = useState("")
     const [countryInput, setCountryInput] = useState('')
-    
+
     const navegation = useNavigate();
-    
+
     const AvatarMenuItems = [
         {
             title: "My Profile",
-            icon: <ImProfile/>,
+            icon: <ImProfile />,
             action: () => {
-                navegation("/dashboard/profile/")
+                navegation("/dashboard/profile", { replace: true })
             }
         },
         {
             title: "My Services",
-            icon: <RiSuitcaseFill/>,
+            icon: <RiSuitcaseFill />,
             action: () => {
-                navegation("/dashboard/services/")
+                navegation("/dashboard/services")
             }
         },
         {
             title: "My Disputes",
-            icon: <MdHowToVote/>,
+            icon: <MdHowToVote />,
             action: () => {
-                navegation("/dashboard/disputes/")
+                navegation("/dashboard/disputes")
             }
         },
         {
             title: "Logout",
-            icon: <MdLogout/>,
-            action: () => {logout}
+            icon: <MdLogout />,
+            action: () => { logout }
         },
     ]
 
-    useEffect( async () => {
+    useEffect(async () => {
         // let timeout
         if (window.walletConnection.isSignedIn()) {
             try {
-                await window.contract.get_user({account_id: window.accountId})
+                await window.contract.get_user({ account_id: window.accountId })
                 setIsUserCreated(true)
             }
-            catch(e) {
+            catch (e) {
                 setIsUserCreated(false);
                 toast.error(String(e.message.match("\".*\"")))
                 console.log(e)
@@ -110,14 +110,14 @@ function NavBarContent(props) {
 
     return (
         <nav className="lg:flex items-center hidden">
-            { !isUserCreated ? (
+            {!isUserCreated ? (
                 <div className="mx-6">
                     <button className="rounded-lg bg-transparent border-2 py-2 px-2 font-sen text-white uppercase text-base"
                         onClick={openModal}
                     >
                         Crear usuario
                     </button>
-                </div> ) :
+                </div>) :
                 (<></>)
             }
             <Menu as="div" className="relative inline-block text-left z-30">
@@ -143,25 +143,27 @@ function NavBarContent(props) {
                                 </div>
                             </Menu.Item>
                             {
-                                AvatarMenuItems.map((v, i) => { return (
-                                    <Menu.Item key={i}>
-                                        {({ active }) => (
-                                            <button onClick={v.action} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
-                                                } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}
-                                            >
-                                                <div className="flex items-center">
-								                    <span className="mr-2">{v.icon}</span>{v.title}
-							                    </div>
-                                            </button>
-                                        )}
-                                    </Menu.Item>
-                                )})
+                                AvatarMenuItems.map((v, i) => {
+                                    return (
+                                        <Menu.Item key={i}>
+                                            {({ active }) => (
+                                                <button onClick={v.action} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
+                                                    } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}
+                                                >
+                                                    <div className="flex items-center">
+                                                        <span className="mr-2">{v.icon}</span>{v.title}
+                                                    </div>
+                                                </button>
+                                            )}
+                                        </Menu.Item>
+                                    )
+                                })
                             }
                         </div>
                     </Menu.Items>
                 </Transition>
             </Menu>
-            { !isUserCreated ? (
+            {!isUserCreated ? (
                 <Transition appear show={isOpen} as={Fragment}>
                     <Dialog
                         as="div"
@@ -178,7 +180,7 @@ function NavBarContent(props) {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                             >
-                                <Dialog.Overlay className="fixed inset-0" />
+                                <Dialog.Overlay className="fixed inset-0 bg-[#F8F7FF] " />
                             </Transition.Child>
 
                             {/* This element is to trick the browser into centering the modal contents. */}
@@ -207,81 +209,82 @@ function NavBarContent(props) {
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500 border-b-2 pb-2">
                                             Por favor, rellene este formulario para poder crear tu usuario. Al finalizar se va a cobrar un peaje de 0.05 NEARS para cubrir el storage,
-                                            el sobrante se rotornara. <br/><span className="font-bold">Estos datos son opcionales!!!</span>
+                                            el sobrante se rotornara. <br /><span className="font-bold">Estos datos son opcionales!!!</span>
                                         </p>
                                     </div>
                                     <div className="mt-2">
-                                        <label class="text-gray-900 mb-1 pr-4">
+                                        <label className="text-gray-700 text-sm font-semibold">
                                             Nombre legal
                                         </label>
                                         <input
                                             value={legalNameInput}
-                                            onChange={(e)=>{setLegalNameInput(e.target.value)}}
+                                            onChange={(e) => { setLegalNameInput(e.target.value) }}
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></input>
 
-                                        <label class="text-gray-900 mb-1 pr-4">
+                                        <label className="text-gray-700 text-sm font-semibold">
                                             Educacion
                                         </label>
                                         <input
                                             value={educacionInput}
-                                            onChange={(e)=>{setEducacionInput(e.target.value)}}
+                                            onChange={(e) => { setEducacionInput(e.target.value) }}
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></input>
 
-                                        <label class="text-gray-900 pr-4">Links</label>
+                                        <label className="text-gray-700 text-sm font-semibold">Links</label>
                                         <div className="grid grid-cols-2 gap-2 mb-2">
-                                        {
-                                            linksInputs.map((v, index) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <input
-                                                            value={v}
-                                                            onChange={ (e)=>{
-                                                                let newArr = [... linksInputs]
-                                                                newArr[index] = e.target.value
-                                                                setLinksInputs(newArr)}
-                                                            }
-                                                            className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
-                                                        ></input>
-                                                    </div>
-                                                )
-                                            })
-                                        }
+                                            {
+                                                linksInputs.map((v, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <input
+                                                                value={v}
+                                                                onChange={(e) => {
+                                                                    let newArr = [...linksInputs]
+                                                                    newArr[index] = e.target.value
+                                                                    setLinksInputs(newArr)
+                                                                }
+                                                                }
+                                                                className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                                            ></input>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
                                         </div>
 
-                                        <label class="text-gray-900 mb-1 pr-4">
+                                        <label className="text-gray-700 text-sm font-semibold">
                                             Picture Link
                                         </label>
                                         <input
                                             value={pictureInput}
-                                            onChange={(e)=>{setPictureInput(e.target.value)}}
+                                            onChange={(e) => { setPictureInput(e.target.value) }}
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></input>
 
-                                        <label className="text-gray-900 mb-1 pr-4">
+                                        <label className="text-gray-700 text-sm font-semibold">
                                             Bio
                                         </label>
                                         {/* bioInput, setBioInput */}
                                         <textarea
                                             value={bioInput}
-                                            onChange={(e)=>{setBioInput(e.target.value)}}
+                                            onChange={(e) => { setBioInput(e.target.value) }}
                                             className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                         ></textarea>
 
 
-					<div className="mb-2">
-					    <label className="text-gray-900 mb-1 mt-2 pr-4">Pais</label>
-					    <Select className="bg-gray-200" options={props.countries} value={countryInput} onChange={(value) => {setCountryInput(value)}} />
-					</div>
-                                    </div>
-		
-                                        <div>
-                                            <input checked={beEmployeer} onChange={(e)=>{setbeEmployeer(!beEmployeer)}} type="checkbox" className="checked:bg-[#27C0EF]"></input>
-                                            <label className="form-check-label inline-block text-gray-900 pl-2" for="flexCheckDefault">
-                                                Ser empleador
-                                            </label>
+                                        <div className="mb-2">
+                                            <label className="text-gray-700 text-sm font-semibold">Pais</label>
+                                            <Select className="bg-gray-200" options={props.countries} value={countryInput} onChange={(value) => { setCountryInput(value) }} />
                                         </div>
+                                    </div>
+
+                                    <div>
+                                        <input checked={beEmployeer} onChange={(e) => { setbeEmployeer(!beEmployeer) }} type="checkbox" className="checked:bg-[#27C0EF]"></input>
+                                        <label className="form-check-label inline-block text-gray-900 pl-2" for="flexCheckDefault">
+                                            Ser empleador
+                                        </label>
+                                    </div>
                                     <div className="mt-4">
                                         <button
                                             type="button"
@@ -294,23 +297,23 @@ function NavBarContent(props) {
                                                     links: linksInputs,
                                                     picture: pictureInput,
                                                     bio: bioInput,
-						    country: countryInput.label
+                                                    country: countryInput.label
                                                 })
                                                 try {
-                                                    
+
                                                     let roles = ["Professional"];
                                                     if (beEmployeer) {
                                                         roles.push("Employeer");
                                                     }
-                                                    let user = await window.contract.add_user({roles: roles, personal_data: personalData}, "300000000000000", amt);
+                                                    let user = await window.contract.add_user({ roles: roles, personal_data: personalData }, "300000000000000", amt);
                                                     console.log(personalData)
 
                                                     setLegalNameInput("")
                                                     setEducacionInput("")
                                                     setPictureInput("")
                                                     setBioInput("")
-                                                    setLinksInputs(linksInputs.map((v)=>{return ""}))
-                                                } catch(e) {
+                                                    setLinksInputs(linksInputs.map((v) => { return "" }))
+                                                } catch (e) {
                                                     console.log(e.error)
                                                 }
                                             }}
@@ -329,7 +332,7 @@ function NavBarContent(props) {
                             </Transition.Child>
                         </div>
                     </Dialog>
-                </Transition> ) :
+                </Transition>) :
                 (<></>)
             }
         </nav>

@@ -39,7 +39,11 @@ pub struct User {
             links: "",
             picture: "",
             bio: "",
-            country: ""
+            country: "",
+            languages: [{
+                language: "Ingles",
+                level: "Intermedio"
+            }]
         }
     */
     pub banned: bool,
