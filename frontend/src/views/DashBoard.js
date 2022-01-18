@@ -5,13 +5,18 @@ import UserProfile from '../views/UserProfile';
 import Services from '../views/Services';
 import Disputes from '../views/Disputes';
 
+import {ImProfile} from "react-icons/im"
+import {RiSuitcaseFill} from "react-icons/ri"
+import {MdHowToVote} from "react-icons/md"
+
 export default function DashBoard() {
-	const leftSize = ["Profile", "Services", "Disputes"]
 	const navigate = useNavigate()
 	const location = useLocation()
-
+	
 	let [selectedLeftSize, setSelectedLeftSize] = useState(0)
 	
+	const leftSize = ["Profile", "Services", "Disputes"]
+	const leftSizeIcons = [<ImProfile/>, <RiSuitcaseFill/>, <MdHowToVote/>]
 
 	useEffect(() => {
 		for (let index = 0; index < leftSize.length; index++) {
@@ -32,31 +37,27 @@ export default function DashBoard() {
 			{
 				["Profile", "Services", "Disputes"].map((v, i) => {return (
 					<div className="flex justify-between" key={i}>
-						{
-							selectedLeftSize == i ? (
-								<button onClick={() => {
-										setSelectedLeftSize(i)
-										navigate(`/dashboard/${leftSize[i]}`)
-									}}
-									className="text-[#352E5B] border-violet-600 border-r-2 text-left py-4 pl-6 w-full pr-14"
-								>{v}</button>
-							) : (
-								<button onClick={() => {
-									setSelectedLeftSize(i)
-									navigate(`/dashboard/${leftSize[i]}`)
-								}}
-								className="text-[#A5A2B8] text-left py-4 pl-6 w-full pr-14"
-								>{v}</button>
-							)
-						}
+						<button onClick={() => {
+								setSelectedLeftSize(i)
+								navigate(`/dashboard/${leftSize[i]}`)
+							}}
+							className={selectedLeftSize == i
+								? "text-[#352E5B] border-violet-600 border-r-2 text-left py-4 pl-6 w-full pr-14" :
+								"text-[#A5A2B8] text-left py-4 pl-6 w-full pr-14"
+							}
+						>
+							<div className="flex items-center">
+								<span className="mr-2">{leftSizeIcons[i]}</span>{v}
+							</div>
+						</button>
 					</div>
 				)})
 			}
 		</div>
 		<Routes>
-            <Route 	path="profile" 		element={<UserProfile />}/>
-            <Route 	path="services" 	element={<Services />}/>
-            <Route 	path="disputes" 	element={<Disputes />}/>
+            <Route 	path="/profile" 		element={<UserProfile />}/>
+            <Route 	path="/services" 	element={<Services />}/>
+            <Route 	path="/disputes" 	element={<Disputes />}/>
         </Routes>
 	</div>
     )

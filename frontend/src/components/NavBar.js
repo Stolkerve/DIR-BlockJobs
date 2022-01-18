@@ -7,7 +7,10 @@ import { utils } from "near-api-js";
 import { login, logout } from '../utils'
 import { toast } from 'react-toastify';
 import Select from 'react-select'
-import countryList from 'react-select-country-list'
+
+import {ImProfile} from "react-icons/im"
+import {RiSuitcaseFill} from "react-icons/ri"
+import {MdHowToVote, MdLogout} from "react-icons/md"
 
 export default function NavBar(props) {
     return (
@@ -29,15 +32,44 @@ function NavBarContent(props) {
     let [isOpen, setIsOpen] = useState(false)
     let [isUserCreated, setIsUserCreated] = useState(true)
     let [beEmployeer, setbeEmployeer] = useState(false)
-
+    
     let [educacionInput, setEducacionInput] = useState("")
     let [legalNameInput, setLegalNameInput] = useState("")
     let [linksInputs, setLinksInputs] = useState(["", "", "", ""])
     let [pictureInput, setPictureInput] = useState("")
     let [bioInput, setBioInput] = useState("")
     const [countryInput, setCountryInput] = useState('')
-
+    
     const navegation = useNavigate();
+    
+    const AvatarMenuItems = [
+        {
+            title: "My Profile",
+            icon: <ImProfile/>,
+            action: () => {
+                navegation("/dashboard/profile/")
+            }
+        },
+        {
+            title: "My Services",
+            icon: <RiSuitcaseFill/>,
+            action: () => {
+                navegation("/dashboard/services/")
+            }
+        },
+        {
+            title: "My Disputes",
+            icon: <MdHowToVote/>,
+            action: () => {
+                navegation("/dashboard/disputes/")
+            }
+        },
+        {
+            title: "Logout",
+            icon: <MdLogout/>,
+            action: () => {logout}
+        },
+    ]
 
     useEffect( async () => {
         // let timeout
@@ -110,38 +142,21 @@ function NavBarContent(props) {
                                     {window.accountId}
                                 </div>
                             </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link to={"/dashboard/profile/"} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
-                                        } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}>
-                                        My Profile
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link to={"/dashboard/services/"} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
-                                        } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}>
-                                        My Services
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <Link to={"/dashboard/disputes/"} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
-                                        } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}>
-                                        My Disputes
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <button onClick={logout} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
-                                        } group flex rounded-md items-center w-full px-2 py-2 text-sm`}>
-                                        Logout
-                                    </button>
-                                )}
-                            </Menu.Item>
+                            {
+                                AvatarMenuItems.map((v, i) => { return (
+                                    <Menu.Item key={i}>
+                                        {({ active }) => (
+                                            <button onClick={v.action} className={`${active ? 'bg-[#00A8DB] text-white' : 'text-[#00A8DB]'
+                                                } group flex rounded-md items-center w-full px-2 py-2 mt-1 text-sm`}
+                                            >
+                                                <div className="flex items-center">
+								                    <span className="mr-2">{v.icon}</span>{v.title}
+							                    </div>
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                )})
+                            }
                         </div>
                     </Menu.Items>
                 </Transition>

@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom';
 import {toast} from 'react-toastify'
 
+import {ImLink} from "react-icons/im"
+
 export default function UserProfile() {
     let [loading, setLoading] = useState(true)
     let [user, setUser] = useState()
@@ -55,7 +57,7 @@ export default function UserProfile() {
 		) : (
 		    <div className="text-[#352E5B] font-bebas-neue mx-8">
 		        <div className="flex items-center">
-			    <img src={user.personal_data.picture} className="w-24 h-24 md:w-48 md:h-auto rounded-full"/>
+			    <img src={user.personal_data.picture} className="w-32 h-32 rounded-full"/>
 			    <div> 
 				<div className="text-3xl font-semibold uppercase">Perfil de <span className="text-[#04AADD]">{user.account_id}</span></div>
 				<div> reputacion <span className={user.reputation === 0 ? "text-gray-900" : user.reputation > 0 ? "text-green-400" : "text-red"}>{user.reputation}</span></div>
@@ -78,7 +80,9 @@ export default function UserProfile() {
 						</div>
 					</div>
 					<div className="ml-8">
-						<div className="text-[#04AADD] text-2xl font-semibold mb-4">Links</div>
+						<div className="text-[#04AADD] text-2xl font-semibold mb-4 flex items-center">
+							{/* <ImLink className='text-[#352E5B] mr-2'/> */} Links
+						</div>
 							<div className="mr-8 font-semibold text-lg">
 							{
 								user.personal_data.links.map((v, i) => {return (
