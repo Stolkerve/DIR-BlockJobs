@@ -45,6 +45,7 @@ export async function initContract() {
     ],
     sender: nearConfig.contractName
   })
+
 }
 
 export function logout() {

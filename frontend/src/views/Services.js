@@ -6,6 +6,7 @@ import makeAnimated from 'react-select/animated';
 import ServicesCard from "../components/ServicesCard";
 
 import { utils } from "near-api-js";
+import { toast } from "react-toastify";
 
 const animatedComponents = makeAnimated();
 
@@ -154,12 +155,12 @@ function CreateService({ isOpen, closeModal, openModal }) {
                             >
                                 Crear un nuevo servicio
                             </Dialog.Title>
-                            {/* <div className="mt-2">
+                            <div className="mt-2">
                                 <p className="text-sm text-gray-500 border-b-2 pb-2">
-                                    Por favor, rellene este formulario para poder crear tu usuario. Al finalizar se va a cobrar un peaje de 0.05 NEARS para cubrir el storage,
-                                    el sobrante se rotornara. <br /><span className="font-bold">Estos datos son opcionales!!!</span>
+                                    Por favor, rellene este formulario para poder crear un nuevo servicio. Al finalizar se va a cobrar un peaje de 0.05 NEARS para cubrir el storage,
+                                    el sobrante se rotornara.
                                 </p>
-                            </div> */}
+                            </div>
                             <div className="mt-2">
                                 <label className="text-gray-700 text-sm font-semibold">
                                     Titulo
@@ -167,7 +168,8 @@ function CreateService({ isOpen, closeModal, openModal }) {
                                 <input
                                     value={titleService}
                                     onChange={(e) => { setTitleService(e.target.value) }}
-                                    className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
+                                    className={
+                                        "mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]" }
                                 ></input>
 
                                 <label className="text-gray-700 text-sm font-semibold">
@@ -235,13 +237,33 @@ function CreateService({ isOpen, closeModal, openModal }) {
                                         className="inline-flex justify-center px-4 py-2 mr-4 text-white bg-[#27C0EF] border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold"
                                         onClick={async () => {
                                             // metadata: ServiceMetadata, quantity: u16, duration: u16
-
-                                            const isOkTitle = titleService.length > 0;
-                                            const isOkDescription = descriptionService.length > 0;
-                                            const isOkIcon = iconService.length > 0;
-                                            const isOkPrice = priceService > 0;
-                                            const isOkDuration = durationService > 0;
-                                            const isOkAmount = amountOfServices > 0;
+                                            
+                                            const validateInputs = [
+                                                {
+                                                    ok: titleService.length > 0,
+                                                    msg: "Falta el titulo"
+                                                },
+                                                {
+                                                    ok: descriptionService.length > 0,
+                                                    msg: "Falta la descripcion"
+                                                },
+                                                {
+                                                    ok: iconService.length > 0,
+                                                    msg: "Falta el icono"
+                                                },
+                                                {
+                                                    ok: priceService > 0,
+                                                    msg: "Falta el precio"
+                                                },
+                                                {
+                                                    ok: durationService > 0,
+                                                    msg: "Falta la duracion"
+                                                },
+                                                {
+                                                    ok: amountOfServices > 0,
+                                                    msg: "Falta la cantidad"
+                                                },
+                                            ]
 
                                             let amt = utils.format.parseNearAmount("0.05");
                                             let serviceMetadata = {
@@ -252,16 +274,28 @@ function CreateService({ isOpen, closeModal, openModal }) {
                                                 categories: categoriesService,
                                             }
                                             try {
-                                                await window.contract.mint_service({ metadata: serviceMetadata, quantity: amountOfServices, duration: durationService }, "300000000000000", amt);
+                                                let finalValidatorMsg = ""
+                                                let finalOk = true
+                                                validateInputs.forEach((v) => {
+                                                    finalOk &= v.ok
+                                                    finalValidatorMsg += (v.msg + '. ')
+                                                })
+                                                
+                                                toast.error(finalValidatorMsg)
+                                                if (finalOk) {
+                                                    await window.contract.mint_service({ metadata: serviceMetadata, quantity: amountOfServices, duration: durationService }, "300000000000000", amt);
+                                                    
+                                                    setTitleService("")
+                                                    setDescriptionService("")
+                                                    setCategoriesService("")
+                                                    setIconService("")
+                                                    setPriceService(0)
+                                                    setDurationService(0)
+                                                    setAmountOfServicesService(0)
+                                                }
                                                 console.log(serviceMetadata)
+                                                
 
-                                                setTitleService("")
-                                                setDescriptionService("")
-                                                setCategoriesService("")
-                                                setIconService("")
-                                                setPriceService(0)
-                                                setDurationService(0)
-                                                setAmountOfServicesService(0)
                                             } catch (e) {
                                                 console.log(e.error)
                                             }

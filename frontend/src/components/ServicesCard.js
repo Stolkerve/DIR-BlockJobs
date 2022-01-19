@@ -4,7 +4,15 @@ export default function ServicesCard(props) {
     return (
         <div className="rounded-md border-2 border-[#27C0EF] p-4 my-4 mx-4">
             <div className="flex items-center">
-                <img className="w-28 h-28 rounded-full mr-8" src={props.service.metadata.icon}/>
+                {
+                    props.service.metadata.icon ? (
+                        <img className="w-28 h-28 rounded-full mr-8" src={props.service.metadata.icon}/>
+                    ) :
+                    (
+                        <></>
+                    )
+
+                }
                 <div>
                     <div>{props.service.metadata.title}</div>
                     <div>{props.service.metadata.description}</div>
