@@ -67,7 +67,7 @@ function NavBarContent(props) {
         {
             title: "Logout",
             icon: <MdLogout />,
-            action: () => { logout }
+            action: logout 
         },
     ]
 
