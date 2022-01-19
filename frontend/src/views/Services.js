@@ -278,10 +278,11 @@ function CreateService({ isOpen, closeModal, openModal }) {
                                                 let finalOk = true
                                                 validateInputs.forEach((v) => {
                                                     finalOk &= v.ok
-                                                    finalValidatorMsg += (v.msg + '. ')
+                                                    if (!v.ok) {
+                                                        finalValidatorMsg += (v.msg + '. ')
+                                                    }
                                                 })
                                                 
-                                                toast.error(finalValidatorMsg)
                                                 if (finalOk) {
                                                     await window.contract.mint_service({ metadata: serviceMetadata, quantity: amountOfServices, duration: durationService }, "300000000000000", amt);
                                                     
@@ -292,6 +293,8 @@ function CreateService({ isOpen, closeModal, openModal }) {
                                                     setPriceService(0)
                                                     setDurationService(0)
                                                     setAmountOfServicesService(0)
+                                                } else {
+                                                    toast.error(finalValidatorMsg)
                                                 }
                                                 console.log(serviceMetadata)
                                                 
