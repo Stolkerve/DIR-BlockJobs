@@ -266,7 +266,7 @@ impl Marketplace {
     ///
     #[payable]
     pub fn reclaim_dispute(&mut self, service_id: u64, proves: String) {
-        // Verificar que no haya sido banneado quien solicita la disputa
+        // Verificar que no haya sido banneado quien solicita la disputa.
         let user_id = string_to_valid_account_id(&env::predecessor_account_id());
         if self.get_user(user_id).banned == true {
             env::panic(b"You are already banned for fraudulent disputes");
@@ -290,6 +290,7 @@ impl Marketplace {
             env::signer_account_id(),
             service.creator_id.clone(),
             proves,
+            service.metadata.price.clone(),
             &self.contract_me,
             env::attached_deposit(),
             BASE_GAS,
@@ -301,7 +302,7 @@ impl Marketplace {
         ));
     }
 
-    /// Callback desde contrato mediador
+    /// Callback desde contrato mediador.
     /// 
     pub fn on_new_dispute(&mut self, service_id: u64) {
         if env::predecessor_account_id() != env::current_account_id() {
@@ -326,7 +327,7 @@ impl Marketplace {
     /// Solo ejecutable por el profesional creador del servicio una vez pasado el tiempo establecido.
     /// 
     pub fn reclaim_service(&mut self, service_id: u64) {
-        // Verificar que el servicio exista
+        // Verificar que el servicio exista.
         self.assert_service_exists(&service_id);
 
         let service = self.get_service_by_id(service_id.clone());
@@ -909,7 +910,7 @@ pub trait Token {
 }
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
-    fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String);
+    fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String, price: u128);
     fn pay_service(beneficiary: AccountId, amount: Balance) -> Balance;
 }
 #[ext_contract(ext_self)]
