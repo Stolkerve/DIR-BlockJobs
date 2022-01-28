@@ -215,7 +215,11 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                 <div className="mt-4">
                                     <button
                                         type="button"
-                                        className="inline-flex justify-center items-center px-4 py-2 mr-4 text-white bg-[#27C0EF] border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold"
+                                        className={loadingPicture ?
+                                            "inline-flex justify-center items-center px-4 py-2 mr-4 text-white bg-slate-400 cursor-not-allowed border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold" :
+                                            "inline-flex justify-center items-center px-4 py-2 mr-4 text-white bg-[#27C0EF] border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold"
+                                        }
+                                        disabled={loadingPicture}
                                         onClick={async () => {
                                             const validateInputs = !service ? [
                                                 {

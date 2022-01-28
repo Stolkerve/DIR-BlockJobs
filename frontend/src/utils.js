@@ -173,8 +173,9 @@ export async function addUser(roles, personalData) {
 }
 
 export async function updateUserData(roles, data) {
+  let amt = utils.format.parseNearAmount("0.1");
   try {
-    return await window.contract.update_user_data({roles: roles, data: data})
+    return await window.contract.update_user_data({roles: roles, data: data}, "300000000000000", amt)
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)

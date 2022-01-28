@@ -93,7 +93,7 @@ impl Marketplace {
             contract_owner: owner_id.clone().into(),
             contract_me: mediator.clone().into(),
             contract_ft: ft.clone().into(),
-            extra_storage_in_bytes_per_service: 0,
+            extra_storage_in_bytes_per_service: 8,
         };
 
         let mut roles: Vec<UserRoles> = Vec::new();
@@ -484,6 +484,9 @@ impl Marketplace {
     ///
     #[payable]
     pub fn update_service(&mut self, service_id: u64, metadata: ServiceMetadata, duration: u16) -> Service {
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
+
         // Verificar que el servicio exista.
         self.assert_service_exists(&service_id);
 
@@ -493,9 +496,6 @@ impl Marketplace {
         if service.sold == true {
             env::panic(b"You can't modify while the service is in hands of the employer")
         }
-
-        let initial_storage_usage = env::storage_usage();
-        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         // Verificar que sea el creador quien ejecuta la funcion.
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
@@ -512,13 +512,14 @@ impl Marketplace {
 
         self.service_by_id.insert(&service_id, &service);
 
-        // Manejo de storage
-        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
-        
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
-        deposit_refund(required_storage_in_bytes);
+        if initial_storage_usage <  env::storage_usage() {
+            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+            
+            let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
+            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+            deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
+        }
         
         service
     }
@@ -690,12 +691,15 @@ impl Marketplace {
 
         self.users.insert(&account_id.clone(), &user);
 
-        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+        env::log(format!("secun store usage: {}", env::storage_usage()).as_bytes());
+        if initial_storage_usage <  env::storage_usage() {
+            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
 
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
-        deposit_refund_to(required_storage_in_bytes, account_id);
+            let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
+            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+            deposit_refund_to(required_storage_in_bytes, account_id);
+        }
 
         return user;
     }
