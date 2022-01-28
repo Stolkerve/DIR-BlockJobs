@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
-
-import ServicesCard from "../components/ServicesCard";
-
+import { useParams } from "react-router-dom";
 import { utils } from "near-api-js";
 import { toast } from "react-toastify";
+
 import { buyService, getServiceById, getUser } from "../utils";
-import { useParams } from "react-router-dom";
+import CreateServiceDialog from "../components/CreateServiceDialog";
+import ServicesCard from "../components/ServicesCard";
 import UserProfile from "../components/UserProfile";
-import { async } from "regenerator-runtime";
+
 
 export default function Service() {
     let [service, setService] = useState();
     let [user, setUser] = useState();
     let [loading, setLoading] = useState(true)
+    let [isOpen, setIsOpen] = useState(false)
 
     const params = useParams();
+    // const [] = useAsync(async () => {
 
+    // })
+    
     useEffect(async ()=>{
         let loadingService = true
         let loadingUser = true
@@ -36,7 +40,6 @@ export default function Service() {
         if (!loadingService && !loadingUser) {
             setLoading(false)
         }
-
     }, [])
     
     const handleBuyService = async () => {
@@ -52,8 +55,18 @@ export default function Service() {
         toast.error("No tienes suficientes fondos para adquirir este servicio")
     }
 
+    function closeModal() {
+        setIsOpen(false)
+    }
+    
+    function openModal() {
+        setIsOpen(true)
+    }
+    
+    
     return (
         <div className="">
+            { service && <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} service={service}/>}
             <div className="m-8">
                 {
                     loading ? (
@@ -70,9 +83,21 @@ export default function Service() {
                                 ) : (((service.actual_owner != window.accountId) || (service.creator_id != window.accountId)) && (!service.sold)) ? (
                                     <button onClick={handleBuyService} className="uppercase py-2 px-4 rounded-lg bg-green-500 border-transparent text-white text-md mr-4">Comprar servicio</button>
                                 ) : ((service.actual_owner == window.accountId) || (service.creator_id == window.accountId)) ? (
-                                    <span className="uppercase py-2 px-4 rounded-lg bg-green-500 border-transparent text-white text-md mr-4">Usted es el dueño de este servicio!</span>
-                                ): (
+                                    <div className="flex flex-row justify-between">
+                                        <div className="flex">
+                                            <button onClick={openModal} className="uppercase py-2 px-4 rounded-lg bg-[#04AADD] border-transparent text-white text-md mr-4">Editar servicio</button>
+                                            <button className="uppercase py-2 px-4 rounded-lg bg-red-400 border-transparent text-white text-md mr-4">Eliminar servicio</button>
+                                        </div>
+                                        <div>
+                                            <button className="uppercase py-2 px-4 rounded-lg bg-green-600 border-transparent text-white text-md mr-4">
+                                                Reclamar Pago!
+                                            </button>
+                                        </div>
+                                    </div>
+                                ): ((service.actual_owner == window.accountId) || (service.creator_id != window.accountId)) ? (
                                     <span className="uppercase py-2 px-4 rounded-lg bg-green-500 border-transparent text-white text-md mr-4">Usted ya adquirio este servicio!</span>
+                                ) : (
+                                    <></>
                                 )
                             }
                             <div className="border-2 rounded-lg px-6 py-4 mt-4">

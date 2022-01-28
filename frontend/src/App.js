@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,19 +14,14 @@ import DashBoard from './views/DashBoard';
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 
-import countryList from 'react-select-country-list'
 import Services from './views/Services';
 import Service from './views/Service';
 
-// import { fbConfig } from './Firebase';
-
-// fbConfig();
 
 export default function App() {
-    const options = useMemo(() => countryList().getData(), [])
     return (
         <>
-            <NavBar countriesData={options}/>
+            <NavBar/>
             <Routes>
                 <Route path="/" element={ <Home />} />
                 <Route path="about_us" element={<AboutUs />} />

@@ -95,9 +95,50 @@ impl Marketplace {
 
         let mut roles: Vec<UserRoles> = Vec::new();
         roles.push(UserRoles::Judge);
-        this.add_user_p(roles.clone(), owner_id.into(), "{\"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "{\"legal_name\": \"Mediator Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
-        this.add_user_p(roles.clone(), ft.into(),       "{\"legal_name\": \"FT Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\"}".to_string());
+        this.add_user_p(roles.clone(), owner_id.into(), 
+            "{
+                \"legal_name\": \"Marketplace Contract\",
+                \"education\": \"I'am a smart contract, I dont need school\",
+                \"links\": [],
+                \"bio\": \"I live inside of a smart contract in the NEAR protocol\",
+                \"picture\": \"https://photo.png\",
+                \"country\": \"NEARland\",
+                \"email\": \"marketplace@nearmail.com\",
+                \"idioms\": [{
+                    \"idiom\": \"binary\",
+                    \"level\": \"Native\"
+                }]
+            }".to_string());
+        
+        this.add_user_p(roles.clone(), mediator.into(), 
+            "{
+                \"legal_name\": \"Mediator Contract\",
+                \"education\": \"I'am a smart contract, I dont need school\",
+                \"links\": [],
+                \"bio\": \"I live inside of a smart contract in the NEAR protocol\",
+                \"picture\": \"https://photo.png\",
+                \"country\": \"NEARland\",
+                \"email\": \"mediator@nearmail.com\",
+                \"idioms\": [{
+                    \"idiom\": \"binary\",
+                    \"level\": \"Native\"
+                }]
+            }".to_string());
+
+        this.add_user_p(roles.clone(), ft.into(), 
+            "{
+                \"legal_name\": \"FT Contract\",
+                \"education\": \"I'am a smart contract, I dont need school\",
+                \"links\": [],
+                \"bio\": \"I live inside of a smart contract in the NEAR protocol\",
+                \"picture\": \"https://photo.png\",
+                \"country\": \"NEARland\",
+                \"email\": \"ft@nearmail.com\",
+                \"idioms\": [{
+                    \"idiom\": \"binary\",
+                    \"level\": \"Native\"
+                }]
+            }".to_string());
 
         this.measure_min_service_storage_cost();
         return this;
@@ -427,8 +468,9 @@ impl Marketplace {
 
     /// Modificar la metadata de un servicio.
     /// Solo ejecutable por el profesional si es que lo posee.
-    /// 
-    pub fn update_service_metadata(&mut self, service_id: u64, metadata: ServiceMetadata) -> Service {
+    ///
+    #[payable]
+    pub fn update_service(&mut self, service_id: u64, metadata: ServiceMetadata, duration: u16) -> Service {
         // Verificar que el servicio exista.
         self.assert_service_exists(&service_id);
 
@@ -438,6 +480,9 @@ impl Marketplace {
         if service.sold == true {
             env::panic(b"You can't modify while the service is in hands of the employer")
         }
+
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         // Verificar que sea el creador quien ejecuta la funcion.
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
@@ -450,37 +495,20 @@ impl Marketplace {
 
         // Insertar nueva metadata.
         service.metadata = metadata;
+        service.duration = duration;
+
         self.service_by_id.insert(&service_id, &service);
 
+        // Manejo de storage
+        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
+        
+        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
+        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+        deposit_refund(required_storage_in_bytes);
+        
         service
     }
-
-
-    /// Cambio de la duración del servicio.
-    /// Solo ejecutable por el profesional si es que lo posee.
-    /// 
-    pub fn update_service_duration(&mut self, service_id: u64, new_duration: u16) -> Service {
-        // Verificar que exista el servicio.
-        self.assert_service_exists(&service_id);
-
-        let sender = env::signer_account_id();
-        let mut service = self.get_service_by_id(service_id);
-
-        // Verificar que sea el creador del servicio.
-        if sender != service.creator_id {
-            env::panic(b"Cannot modify because isn't the owner")
-        }
-        // Verificar que no este ya comprado.
-        if service.sold == true {
-            env::panic(b"You can't modify while the service is in hands of the employer")
-        }
-
-        service.duration = new_duration;
-        self.service_by_id.insert(&service_id, &service);
-
-        service
-    }
-
 
     /// Cambiar el estado de un servicio segun este en venta o no.
     /// Solo para el profesional o administradores.
@@ -524,8 +552,11 @@ impl Marketplace {
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
     #[payable]
     pub fn add_user(&mut self, roles: Vec<UserRoles>, personal_data: Option<String>) -> User {
-        let account_id: AccountId = env::predecessor_account_id();
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("Initial store usage: {}", initial_storage_usage).as_bytes());
 
+        let account_id: AccountId = env::predecessor_account_id();
+        
         if personal_data.is_some()
         {
             // solo vereficar los nombre del json
@@ -536,8 +567,6 @@ impl Marketplace {
 
         self.services_by_account.insert(&account_id, &services_set);
 
-        let initial_storage_usage = env::storage_usage();
-        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut new_user = User{
             account_id: account_id.clone(),
@@ -557,7 +586,7 @@ impl Marketplace {
         }
 
         let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
+        env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
 
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
         env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
@@ -625,14 +654,35 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `category`    - La categoria en la cual el usuario puede decir a que se dedica.
-    pub fn update_user_data(&mut self, account_id: ValidAccountId, data: String) -> User {
-        if env::predecessor_account_id() == account_id.to_string() {
+    #[payable]
+    pub fn update_user_data(&mut self, roles: Vec<UserRoles>, data: String) -> User {
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("Initial store usage: {}", initial_storage_usage).as_bytes());
+        
+        // solo vereficar los nombre del json
+        let _p: PersonalData = serde_json::from_str(&data).unwrap();
+        
+        let account_id: AccountId = env::predecessor_account_id();
+        let mut user = self.get_user(string_to_valid_account_id(&account_id));
+        
+        if account_id.to_string() != user.account_id {
             env::panic(b"Only the user cant modify it self");
         }
-
-        let mut user = self.get_user(account_id.clone());
+        
         user.personal_data = Some(data);
-        self.users.insert(&account_id.into(), &user);
+
+        for r in roles.iter() {
+            user.roles.insert(*r);
+        }
+
+        self.users.insert(&account_id.clone(), &user);
+
+        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+
+        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
+        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+        deposit_refund_to(required_storage_in_bytes, account_id);
 
         return user;
     }
@@ -642,6 +692,7 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
+    #[payable]
     pub fn set_user_role(&mut self, account_id: ValidAccountId, role: UserRoles, remove: bool) -> User {
         let is_user_sender = env::predecessor_account_id() != account_id.to_string();
         let is_owner_sender = env::predecessor_account_id() != self.contract_owner;

@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom';
 
+import {FaEdit} from "react-icons/fa"
+
 import { getUser } from '../utils';
 import UserProfile from '../components/UserProfile';
+import DialogUserCreator from "../components/DialogUserCreator"
+
+// import userTestData from "../../assets/userTestData.json"
 
 export default function Profile() {
     let [loading, setLoading] = useState(true)
+	let [isOpen, setIsOpen] = useState(false)
+	let [enableEdit, setEnableEdit] = useState(false)
     let [user, setUser] = useState()
+
     const params = useParams();
 	
     useEffect(async ()=>{
@@ -28,20 +36,19 @@ export default function Profile() {
 			console.log(user)
 		}
 		else {
-			setLoading(false)
+			// setUser(userTestData)
+			// setLoading(false)
 		}
-    }, [])
+	}, [])
 
-    const colorRep = (val) => {
-	if (val == 0) {
-	    return "text-black"
-	}
-	else if (val > 0) {
-	    return "text-green-400"
-	}
-	else {
-	    return "red"
-	}
+    function closeModal() {
+		setIsOpen(false)
+		setEnableEdit(false)
+    }
+
+    function openModal() {
+		setEnableEdit(true)
+        setIsOpen(true)
     }
 
     return (
@@ -54,14 +61,19 @@ export default function Profile() {
 						</svg>
 					</div>
 				) : (
-					<div>
+					<div className="relative">
+						<div className="absolute right-0 hover:cursor-pointer">
+							<FaEdit size={24} color='#881337' onClick={openModal}/>
+						</div>
 						<UserProfile user={user}/>
 					</div>
 				)	    
+  			}
+			{
+				enableEdit ? (
+					<DialogUserCreator isOpen={isOpen} closeModal={closeModal} user={user}/>
+				) : (<></>)
 			}
-			{/* <div className="border-2 rounded-lg px-6 py-4 w-full mt-4">
-				Estadisticas
-			</div> */}
 	</div>
     )
 }
