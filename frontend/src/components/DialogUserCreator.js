@@ -318,7 +318,7 @@ export default function DialogUserCreator({ isOpen, closeModal, user }) {
 
                                 <div className="mb-2">
                                     <label className="text-gray-700 text-sm font-semibold">Pais</label>
-                                    <Select className="bg-gray-200" options={countriesList} placeholder="Pais" defaultInputValue={countryInput} defaultValue={countryInput} value={countryInput} onChange={(value) => { setCountryInput(value) }} />
+                                    <Select className="bg-gray-200" options={countriesList} placeholder="Pais" defaultInputValue={countryInput} defaultValue={countryInput} value={{value: countryInput, label: countryInput}} onChange={(value) => { setCountryInput(value.label) }} />
                                 </div>
 
                                 <label className="text-gray-700 text-sm font-semibold">

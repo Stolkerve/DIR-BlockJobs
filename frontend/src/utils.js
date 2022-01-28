@@ -44,6 +44,7 @@ export async function initContract() {
       "buy_service",
       "reclaim_dispute",
       "reclaim_service",
+      "reclaim_service_test",
       "update_user_data",
       "update_service",
       "update_service_on_sale",
@@ -112,9 +113,21 @@ export async function updateService(serviceId, serviceMetadata, durationService,
 }
 
 export async function reclaimService() {
-  let fee = utils.format.parseNearAmount("0.1");
+  // let fee = utils.format.parseNearAmount("0.1");
   try {
-    await window.contract.reclaim_service({service_id: serviceId}, "300000000000000", fee)
+    await window.contract.reclaim_service({service_id: serviceId}, "300000000000000")
+    return true
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return false
+  }
+}
+export async function reclaimServiceTest(serviceId) {
+  // let fee = utils.format.parseNearAmount("0.1");
+  try {
+    await window.contract.reclaim_service_test({service_id: serviceId}, "300000000000000")
     return true
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
@@ -124,7 +137,7 @@ export async function reclaimService() {
   }
 }
 
-export async function getUserServices() {
+export async function getUserServices(serviceId) {
   try {
     return await window.contract.get_user_services({account_id: window.accountId, only_on_sale: false})
   } catch(e) {

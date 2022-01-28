@@ -378,7 +378,7 @@ impl Marketplace {
 
     /// Retornar un servicio al creador.
     /// Solo ejecutable por el profesional creador del servicio una vez pasado el tiempo establecido.
-    /// 
+    #[payable]
     pub fn reclaim_service(&mut self, service_id: u64) {
         // Verificar que el servicio exista.
         self.assert_service_exists(&service_id);
@@ -389,6 +389,46 @@ impl Marketplace {
         if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64 + 2) {
             env::panic("Insuficient time to reclame the service".as_bytes());
         }
+
+        // Verificar que el empleador no haya solicitado una disputa.
+        if service.on_dispute == true {
+            env::panic(b"Actually the service is in dispute");
+        }
+
+        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+        env::log(sender_id.to_string().as_bytes());
+
+        if service.creator_id != env::signer_account_id() {
+            env::panic(b"Only the corresponding professional can reclaim the service");
+        }
+
+        let _res = ext_mediator::pay_service(
+            env::signer_account_id(),
+            service.metadata.price,
+            &self.contract_me,
+            NO_DEPOSIT,
+            BASE_GAS,
+        ).then(ext_self::on_return_service(
+            service_id,
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
+    }
+
+    /// Retornar un servicio al creador.
+    /// Solo ejecutable por el profesional creador del servicio una vez pasado el tiempo establecido.
+    #[payable]
+    pub fn reclaim_service_test(&mut self, service_id: u64) {
+        // Verificar que el servicio exista.
+        self.assert_service_exists(&service_id);
+
+        let service = self.get_service_by_id(service_id.clone());
+
+        // Verificar que haya pasado el tiempo establecido para poder hacer el reclamo.
+        // if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64 + 2) {
+        //     env::panic("Insuficient time to reclame the service".as_bytes());
+        // }
 
         // Verificar que el empleador no haya solicitado una disputa.
         if service.on_dispute == true {
