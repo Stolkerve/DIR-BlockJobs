@@ -55,7 +55,7 @@ export default function MyServices() {
                             </button>
                         </div>
                         
-                        {/* <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} /> */}
+                        <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} service={null} />
                         <div className="border-2 rounded-lg px-6 py-4 w-full mt-4">
                             <div className="text-xl font-bold text-gray-800">Mis servicios</div>
                             {

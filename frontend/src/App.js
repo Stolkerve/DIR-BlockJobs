@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,50 +17,74 @@ import Footer from './components/Footer'
 import Services from './views/Services';
 import Service from './views/Service';
 
+import { useGlobalState, setIsUserCreated } from "./state"
+import { getUser } from './utils';
 
 export default function App() {
+    const [isUserCreated] = useGlobalState('isUserCreated');
+    const [loading, setLoading] = useState(false)
+
+    useEffect(async () => {
+        if (window.walletConnection.isSignedIn()) {
+            if (await getUser(window.accountId)) {
+                setIsUserCreated(true)
+            }
+            else {
+                setIsUserCreated(false);
+            }
+        }
+        console.log("Is user created", isUserCreated)
+        setLoading(true)
+    }, [])
+
     return (
         <>
-            <NavBar/>
-            <Routes>
-                <Route path="/" element={ <Home />} />
-                <Route path="about_us" element={<AboutUs />} />
-                <Route path="docs" element={<Docs />}/>
-                <Route path="help" element={<Help />}/>
-                <Route path="profile/:id" element={<Profile />}/>
-                
-                <Route path="dashboard/*" element={
-                        <RequireAuth>
-                            <DashBoard />
-                        </RequireAuth>
-                    }
-                />
-                
-                <Route path="services" element={<Services />}/>
-                <Route path="service/:id" element={<Service />}/>
-            </Routes>
-            <Footer/>
-            <ToastContainer 
-                position="bottom-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
+            {
+                loading &&
+                <>
+                    <NavBar />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="about_us" element={<AboutUs />} />
+                        <Route path="docs" element={<Docs />} />
+                        <Route path="help" element={<Help />} />
+                        <Route path="profile/:id" element={<Profile />} />
+
+                        <Route path="dashboard/*" element={
+                            <RequireAuth>
+                                <DashBoard />
+                            </RequireAuth>
+                        }
+                        />
+
+                        <Route path="services" element={<Services />} />
+                        <Route path="service/:id" element={<Service />} />
+                    </Routes>
+                    <Footer />
+                    <ToastContainer
+                        position="bottom-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                    />
+                </>
+            }
         </>
     )
 }
 
 function RequireAuth({ children }) {
+    const [isUserCreated] = useGlobalState('isUserCreated');
     let location = useLocation();
-  
-    if (!window.accountId) {
-      return <Navigate to="/" state={{ from: location }} replace />;
+
+    if (!isUserCreated) {
+        return <Navigate to="/" state={{ from: location }} replace />;
     }
-  
+
     return children;
-  }
+}

@@ -13,20 +13,20 @@ pub enum UserRoles {
 }
 
 
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
-#[serde(crate = "near_sdk::serde")]
-pub enum IdiomLevel {
-    Beginner,
-    Intermedian,
-    Expert,
-    Native
-}
+// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
+// #[serde(crate = "near_sdk::serde")]
+// pub enum IdiomLevel {
+//     Beginner,
+//     Intermedian,
+//     Expert,
+//     Native
+// }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Idiom {
     idiom: String,
-    level: IdiomLevel
+    level: String
 }
 
 // No deberia dar problemas

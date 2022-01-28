@@ -1,12 +1,15 @@
 import 'regenerator-runtime/runtime'
 import React, { Fragment, useState, useEffect } from 'react'
 import { BsPersonFill } from "react-icons/bs"
-import { Menu, Transition } from '@headlessui/react'
 import { useNavigate, Link } from "react-router-dom";
+
+import { Menu, Transition } from '@headlessui/react'
 
 import { ImProfile } from "react-icons/im"
 import { RiSuitcaseFill } from "react-icons/ri"
 import { MdHowToVote, MdLogout } from "react-icons/md"
+
+import { useGlobalState } from "../state"
 
 import { getUser, login, logout } from '../utils'
 
@@ -35,7 +38,8 @@ export default function NavBar() {
 
 function NavBarContent() {
     let [isOpen, setIsOpen] = useState(false)
-    let [isUserCreated, setIsUserCreated] = useState(true)
+
+    const [isUserCreated] = useGlobalState('isUserCreated');
 
     const navegation = useNavigate();
 
@@ -67,19 +71,6 @@ function NavBarContent() {
             action: logout
         },
     ]
-
-    useEffect(async () => {
-        // let timeout
-        if (window.walletConnection.isSignedIn()) {
-            if (await getUser(window.accountId)) {
-                setIsUserCreated(true)
-            }
-            else {
-                setIsUserCreated(false);
-            }
-        }
-    }, [])
-
 
     function closeModal() {
         setIsOpen(false)
