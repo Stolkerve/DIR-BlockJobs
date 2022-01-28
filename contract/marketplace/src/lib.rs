@@ -2,9 +2,9 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
+use near_sdk::serde_json;
 use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage, 
     ext_contract, Gas, PromiseResult};
-use near_sdk::serde_json;
 use std::collections::{HashSet};
 use std::convert::TryFrom;
 // use near_env::PanicMessage;
@@ -13,6 +13,9 @@ use crate::internal::*;
 use crate::user::*;
 mod internal;
 mod user;
+
+mod event;
+pub use event::NearEvent;
 
 near_sdk::setup_alloc!();
 
@@ -122,10 +125,10 @@ impl Marketplace {
 
         //Verificar que sea un profesional
         if !user.roles.get(&UserRoles::Professional).is_some() {
-            env::panic("Only professionals can mint a service".as_bytes());
+            env::panic(b"Only professionals can mint a service");
         }
         let initial_storage_usage = env::storage_usage();
-        env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
+        // env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
             id: self.total_services,
@@ -148,24 +151,33 @@ impl Marketplace {
         for _i in 0 .. quantity {
             service.on_sale = true;
 
-
             if self.service_by_id.insert(&self.total_services, &service).is_some() {
-                env::panic("Service already exists".as_bytes());
+                env::panic(b"Service already exists");
             }
 
             services_set.insert(&self.total_services);
             self.total_services += 1;
             service.id = self.total_services;
+
+            NearEvent::log_service_mint(
+                service.id.clone(),
+                service.actual_owner.clone().to_string(),
+                service.metadata.title.clone(),
+                service.metadata.description.clone(),
+                service.metadata.categories.clone(),
+                service.metadata.price.clone(),
+                service.duration.clone(),
+            );
         }
 
         self.services_by_account.insert(&sender, &services_set);
 
         // Manejo de storage
         let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
+        // env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
 
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+        // env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund(required_storage_in_bytes);
 
@@ -174,7 +186,7 @@ impl Marketplace {
     }
 
 
-    /// Adquisición de un servicio.
+    /// Adquisicion de un servicio.
     /// Solo ejecutable por empleadores.
     #[payable]
     pub fn buy_service(&mut self, service_id: u64) {
@@ -185,18 +197,18 @@ impl Marketplace {
         
         // Verificar que este en venta
         if !service.on_sale {
-            env::panic("The indicated service is not on sale".as_bytes())
+            env::panic(b"The indicated service is not on sale")
         }
 
         let sender = env::predecessor_account_id();
         let buyer = self.get_user(string_to_valid_account_id(&sender).clone());
         // Verificar que quien compra tenga rol de empleador.
         if buyer.roles.get(&UserRoles::Admin).is_none() && buyer.roles.get(&UserRoles::Employeer).is_none() {
-            env::panic("Only employers can buy services".as_bytes());
+            env::panic(b"Only employers can buy services");
         }
         // Verificar que no lo haya comprado ya.
         if buyer.account_id == service.actual_owner.clone() {
-            env::panic("Already is the service owner".as_bytes());
+            env::panic(b"Already is the service owner");
         }
         
         // Realizar el pago en NEARs.
@@ -870,7 +882,7 @@ impl Marketplace {
     #[private]
     fn update_user_mints(&mut self, quantity: u16) -> User {
         let sender = env::predecessor_account_id();
-        let mut user = expect_value_found(self.users.get(&sender), "Before mint a nft, create an user".as_bytes());
+        let mut user = expect_value_found(self.users.get(&sender), "Before mint a service, create an user".as_bytes());
         
         if user.mints + quantity > USER_MINT_LIMIT {
             env::panic(format!("Exceeded user mint limit {}", USER_MINT_LIMIT).as_bytes());
