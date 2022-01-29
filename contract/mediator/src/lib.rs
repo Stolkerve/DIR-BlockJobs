@@ -7,8 +7,11 @@ use near_sdk::collections::UnorderedMap;
 // use near_sdk::json_types::ValidAccountId;
 use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter, Result};
 // use std::convert::TryFrom;
+
+mod events;
+use events::NearEvent;
 
 // const YOCTO_NEAR: u128 = 1000000000000000000000000;
 // const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
@@ -32,6 +35,17 @@ pub enum DisputeStatus {
     Finished,   //Indica que la disputa finalizo exitosamente -Duracion: indefinida
 }
 
+impl Display for DisputeStatus {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        match self {
+            DisputeStatus::Open => write!(f, "Open"),
+            DisputeStatus::Resolving => write!(f, "Resolving"),
+            DisputeStatus::Executable => write!(f, "Executable"),
+            DisputeStatus::Finished => write!(f, "Finished"),
+        }
+    }
+}
+
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Vote {
@@ -44,25 +58,25 @@ pub struct Vote {
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Dispute {
-    // Identificador para cada disputa
+    // Identificador para cada disputa.
     id: DisputeId,
     service_id: u64,
-    // Lista de miembros del jurado y sus respectivos votos
+    // Lista de miembros del jurado y sus respectivos votos.
     jury_members: Vec<AccountId>,
     votes: HashSet<Vote>,
-    // Estado actual de la disputa
+    // Estado actual de la disputa.
     dispute_status: DisputeStatus,
-    // Tiempos
-    initial_time_stamp: u64,
-    finish_time_stamp: Option<u64>, //Time
-    // Partes
-    applicant: AccountId, // Empleador demandante
-    accused: AccountId,   // Profesional acusado
+    // Tiempos.
+    initial_timestamp: u64,
+    finish_timestamp: Option<u64>, //Time.
+    // Partes.
+    applicant: AccountId, // Empleador demandante.
+    accused: AccountId,   // Profesional acusado.
     winner: Option<AccountId>,
-    // Pruebas
-    applicant_proves: String,       // Un markdown con las pruebas
-    accused_proves: Option<String>, // Un markdown con las pruebas
-    // Precio pagado por el servicio
+    // Pruebas.
+    applicant_proves: String,       // Un markdown con las pruebas.
+    accused_proves: Option<String>, // Un markdown con las pruebas.
+    // Precio pagado por el servicio.
     price: u128,
 }
 
@@ -115,8 +129,8 @@ impl Mediator {
             jury_members: Vec::new(),
             votes: HashSet::new(),
             dispute_status: DisputeStatus::Open,
-            initial_time_stamp: env::block_timestamp(),
-            finish_time_stamp: None,
+            initial_timestamp: env::block_timestamp(),
+            finish_timestamp: None,
             applicant: applicant,
             accused: accused.to_string(),
             winner: None,
@@ -128,6 +142,24 @@ impl Mediator {
 
         self.disputes.insert(&dispute.id, &dispute);
         self.disputes_counter += 1;
+
+        let status: String = dispute.dispute_status.to_string();
+
+        NearEvent::log_dispute_new(
+            dispute.id.clone(),
+            dispute.service_id.clone(),
+            dispute.applicant.clone(),
+            dispute.accused.clone(),
+            dispute.jury_members.clone(),
+            None,
+            status,
+            dispute.initial_timestamp.clone(),
+            0,
+            dispute.applicant_proves.clone(),
+            "".to_string(),
+            dispute.price.clone(),
+            None
+        );
 
         return self.disputes_counter -1;
     }
@@ -182,6 +214,12 @@ impl Mediator {
             NO_DEPOSIT,
             BASE_GAS,
         ));
+
+        NearEvent::log_dispute_aplication(
+            dispute_id.clone(), 
+            env::signer_account_id()
+        );
+
         true
     }
 
@@ -222,6 +260,13 @@ impl Mediator {
         if !dispute.jury_members.contains(&sender) {
             env::panic(b"You can't permission to vote in the indicate dispute");
         }
+
+        NearEvent::log_dispute_vote(
+            dispute_id.clone(), 
+            sender.clone().to_string(), 
+            vote.clone()
+        );
+
         let _res = ext_ft::validate_tokens(
             sender.clone(),
             &self.token_contract,
@@ -308,10 +353,10 @@ impl Mediator {
         let actual_time = env::block_timestamp();
 
         // Actualizar por tiempo
-        if actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
+        if actual_time >= (dispute.initial_timestamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
             dispute.dispute_status = DisputeStatus::Resolving;
         }
-        if (actual_time >= (dispute.initial_time_stamp + (ONE_DAY * 10))) && (dispute.dispute_status == DisputeStatus::Resolving) {
+        if (actual_time >= (dispute.initial_timestamp + (ONE_DAY * 10))) && (dispute.dispute_status == DisputeStatus::Resolving) {
             dispute.dispute_status = DisputeStatus::Executable;
         }
         if dispute.dispute_status == DisputeStatus::Executable {
@@ -355,7 +400,7 @@ impl Mediator {
                     );
                 }
 
-                dispute.finish_time_stamp = Some(env::block_timestamp());
+                dispute.finish_timestamp = Some(env::block_timestamp());
 
                 let _res = ext_marketplace::return_service_by_mediator(
                     dispute.service_id,
@@ -366,8 +411,14 @@ impl Mediator {
                 );
             }
         }
+        
         self.disputes.insert(&dispute_id, &dispute);
-        return dispute;
+
+        NearEvent::log_dispute_change_status(
+            dispute_id.clone(),
+            dispute.dispute_status.clone().to_string());
+
+        dispute
     }
 
 
