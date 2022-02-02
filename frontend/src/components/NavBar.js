@@ -29,6 +29,9 @@ export default function NavBar() {
                     <Link to="/services" className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md mr-4">
                         Buscar Servicios
                     </Link>
+                    <Link to="/disputes" className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md mr-4">
+                        Ver Disputas
+                    </Link>
                     <NavBarContent />
                 </div>
             </div>

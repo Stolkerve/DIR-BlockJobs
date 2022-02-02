@@ -20,8 +20,17 @@ export default function UserProfile({ user }) {
                 <img src={user.personal_data.picture} className="w-32 h-32 rounded-full mr-4 object-cover" />
                 <div>
                     <div className="text-3xl font-semibold uppercase">Perfil de <span className="text-[#04AADD]">{user.account_id}</span></div>
-                    <div> reputacion <span className={user.reputation === 0 ? "text-gray-900" : user.reputation > 0 ? "text-green-400" : "text-red"}>{user.reputation}</span></div>
-                    {/* <div> roles <span className={user.reputation === 0 ? "text-gray-900" : user.reputation > 0 ? "text-green-400" : "text-red"}>{user.reputation}</span></div> */}
+                    <div className="font-semibold"> Reputacion: <span className={user.reputation === 0 ? "text-gray-900" : user.reputation > 0 ? "text-green-400" : "text-red"}>{user.reputation}</span></div>
+                    <div className="flex flex-row whitespace-pre-wrap font-semibold">
+                        <div>Roles:</div>
+                        {
+                            user.roles.map((v, i) => {return (
+                                <div key={v}
+                                    className={v === "Judge" ? "text-green-400" : v === "Admin" ? "text-[#04AADD]" : ""}
+                                > {v}</div>
+                            )})
+                        }
+                    </div>
                 </div>
             </div>
             <div className="flex flex-row mt-8">

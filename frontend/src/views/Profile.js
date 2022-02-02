@@ -62,7 +62,7 @@ export default function Profile() {
 					</div>
 				) : (
 					<div className="relative">
-						<div className="absolute right-0 hover:cursor-pointer">
+						<div className="absolute -right-8 top-3 hover:cursor-pointer">
 							<FaEdit size={24} color='#881337' onClick={openModal}/>
 						</div>
 						<UserProfile user={user}/>

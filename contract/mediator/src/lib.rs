@@ -481,6 +481,12 @@ impl Mediator {
         let dispute = expect_value_found(self.disputes.get(&dispute_id), b"Dispute not found");
         dispute
     }
+    pub fn get_disputes(&self, from_index: u64, limit: u64) -> Vec<Dispute> {
+        let values = self.disputes.values_as_vector();
+        return (from_index..std::cmp::min(from_index + limit, self.disputes.len()))
+            .map(|index| values.get(index).unwrap())
+            .collect();
+    }
 
     pub fn get_total_disputes(&self) -> u64 {
         self.disputes_counter

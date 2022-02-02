@@ -61,7 +61,7 @@ export default function MyServices() {
                             {
                                 services.filter(v => !v.sold).map((v, i) => {
                                     return (
-                                        <div key={v.id} className="hover:cursor-pointer my-4" onClick={()=>{navigate(`/service/${v.id}`)}}>
+                                        <div key={v.id} className="my-4">
                                             <ServicesCard service={v} />
                                         </div>
                                     )
@@ -73,7 +73,7 @@ export default function MyServices() {
                             {
                                 services.filter(v => (v.actual_owner == window.accountId) && (v.sold)).map((v, i) => {
                                     return (
-                                        <div key={v.id} className="hover:cursor-pointer my-4" onClick={()=>{navigate(`/service/${v.id}`)}}>
+                                        <div key={v.id} className="my-4">
                                             <ServicesCard service={v} />
                                         </div>
                                     )
@@ -85,7 +85,7 @@ export default function MyServices() {
                             {
                                 services.filter(v => (v.actual_owner != window.accountId) && (v.sold)).map((v, i) => {
                                     return (
-                                        <div key={v.id} className="hover:cursor-pointer my-4" onClick={()=>{navigate(`/service/${v.id}`)}}>
+                                        <div key={v.id} className="my-4">
                                             <ServicesCard service={v} />
                                         </div>
                                     )

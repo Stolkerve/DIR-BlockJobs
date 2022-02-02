@@ -55,6 +55,10 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
         setterHook(v)
     }
 
+    const fiatUSD2NEAR = (usdAmount) => {
+
+    }
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog
