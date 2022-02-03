@@ -1,17 +1,12 @@
-import React, { Fragment, useEffect, useState } from "react"
-
-import { utils } from "near-api-js";
+import React, { Fragment, useState } from "react"
 
 import { Transition, Dialog } from '@headlessui/react'
-import SyntaxHighlighter from 'react-syntax-highlighter/dist/esm/prism'
-import {base16AteliersulphurpoolLight} from 'react-syntax-highlighter/dist/esm/styles/prism'
-import remarkGfm from 'remark-gfm'
-import ReactMarkdown from 'react-markdown'
 import { toast } from "react-toastify";
 
-import { reclaimDispute } from "../utils";
+import { addAccusedProves, reclaimDispute } from "../utils";
+import MarkdownViewer from "./MarkdowViewer";
 
-export default function CreateDisputeDialog({ isOpen, closeModal, openModal, serviceId }) {
+export default function CreateDisputeDialog({ isOpen, closeModal, openModal, serviceId, disputeId }) {
     const [typing, setTyping] = useState(false)
     const [sendinigProves, setSendinigProves] = useState(false)
     const [typingTimeout, ssendinigProvesimeout] = useState(0)
@@ -58,7 +53,9 @@ export default function CreateDisputeDialog({ isOpen, closeModal, openModal, ser
                                 as="h3"
                                 className="text-lg font-semibold leading-6 text-gray-900"
                             >
-                                Crear un nuevo servicio
+                                {
+                                    disputeId == null ? `Crear una nueva disputa` : `Agrege pruebas a su favor`
+                                }
                             </Dialog.Title>
                             <div className="mt-2">
                                 {
@@ -82,30 +79,8 @@ export default function CreateDisputeDialog({ isOpen, closeModal, openModal, ser
                             </div>
                             <div className="mt-2 max-h-[500px]">
                                 <div className="text-gray-700 text-sm font-semibold">Pre visualizacion</div>
-                                <div >
-                                    <ReactMarkdown
-                                    className="border-[#27C0EF] border-2 w-full min-h-[38px] rounded py-2 px-4 max-h-[400px] overflow-y-scroll overflow-x-scroll"
-                                    children={proveInput}
-                                    remarkPlugins={[remarkGfm]}
-                                    components={{
-                                        code({node, inline, className, children, ...props}) {
-                                          const match = /language-(\w+)/.exec(className || '')
-                                          return !inline && match ? (
-                                            <SyntaxHighlighter
-                                              children={String(children).replace(/\n$/, '')}
-                                              style={base16AteliersulphurpoolLight}
-                                              language={match[1]}
-                                              PreTag="div"
-                                              {...props}
-                                            />
-                                          ) : (
-                                            <code className={className} {...props}>
-                                              {children}
-                                            </code>
-                                          )
-                                        }
-                                    }}
-                                />
+                                <div className="border-[#27C0EF] border-2 w-full min-h-[100px] rounded py-2 px-4 max-h-[400px] overflow-y-scroll overflow-x-scroll">
+                                    <MarkdownViewer text={proveInput} />
                                 </div>
                             </div>
                             <div className="mt-8">
@@ -118,9 +93,14 @@ export default function CreateDisputeDialog({ isOpen, closeModal, openModal, ser
                                     disabled={sendinigProves}
                                     onClick={async () => {
                                         if (proveInput.length > 0) {
-                                            setSendinigProves(true)
-                                            await reclaimDispute(serviceId, proveInput)
-                                            setSendinigProves(false)
+                                            if(disputeId == null) {
+                                                setSendinigProves(true)
+                                                await reclaimDispute(serviceId, proveInput)
+                                                setSendinigProves(false)
+                                                console.log("a")
+                                            } else {
+                                                await addAccusedProves(disputeId, proveInput)
+                                            }
                                         } else {
                                             toast.error("Por favor, agrege las pruebas")
                                         }

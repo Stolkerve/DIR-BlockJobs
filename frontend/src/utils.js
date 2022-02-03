@@ -10,13 +10,12 @@ const mediatorConfig = getConfig(process.env.NODE_ENV || "development", process.
 
 // Initialize contract & set global variables
 export async function initContract() {
-  // let keystore = new keyStores.BrowserLocalStorageKeyStore();
-  // marketplaceConfig.keyStore = keystore;
-  // mediatorConfig.keyStore = keystore;
+  let keystore = new keyStores.BrowserLocalStorageKeyStore();
+  marketplaceConfig.keyStore = keystore;
+  mediatorConfig.keyStore = keystore;
  
   // Initialize connection to the NEAR testnet
-  const near = await connect(Object.assign({ deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, marketplaceConfig))
-  const near2 = await connect(Object.assign({ deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, mediatorConfig))
+  const near = await connect(Object.assign({ deps: { keyStore: keystore } }, marketplaceConfig))
 
   // Initializing Wallet based Account. It can work with NEAR testnet wallet that
   // is hosted at https://wallet.testnet.near.org
@@ -33,7 +32,8 @@ export async function initContract() {
     ],
     // Change methods can modify the state. But you don"t receive the returned value when called.
     changeMethods: [
-      "update_dispute_status"
+      "update_dispute_status",
+      "add_accused_proves",
     ],
     sender: mediatorConfig.contractName
   })
@@ -228,6 +228,17 @@ export async function reclaimDispute(serviceId, proves) {
   try {
     let amt = utils.format.parseNearAmount("0.1");
     return await window.contract.reclaim_dispute({ service_id: serviceId, proves: proves}, "300000000000000", amt)
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+export async function addAccusedProves(disputeId, proves) {
+  try {
+    // let amt = utils.format.parseNearAmount("0.1");
+    return await window.contract2.add_accused_proves({ dispute_id: disputeId, accused_proves: proves}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)

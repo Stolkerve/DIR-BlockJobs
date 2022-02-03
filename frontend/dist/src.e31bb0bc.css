@@ -1138,6 +1138,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   right: 0px;
 }
 
+.top-0 {
+  top: 0px;
+}
+
 .-right-8 {
   right: -2rem;
 }
@@ -1160,6 +1164,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .m-auto {
   margin: auto;
+}
+
+.-m-\[13px\] {
+  margin: -13px;
 }
 
 .m-8 {
@@ -1258,6 +1266,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: 2rem;
 }
 
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .mb-20 {
   margin-bottom: 5rem;
 }
@@ -1268,10 +1280,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .mt-6 {
   margin-top: 1.5rem;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem;
 }
 
 .mt-10 {
@@ -1350,8 +1358,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   min-height: 100vh;
 }
 
-.min-h-\[38px\] {
-  min-height: 38px;
+.min-h-\[100px\] {
+  min-height: 100px;
+}
+
+.min-h-\[400px\] {
+  min-height: 400px;
 }
 
 .w-full {
@@ -1366,6 +1378,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 5rem;
 }
 
+.w-auto {
+  width: auto;
+}
+
 .w-56 {
   width: 14rem;
 }
@@ -1376,6 +1392,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .w-\[26px\] {
   width: 26px;
+}
+
+.w-\[50\%\] {
+  width: 50%;
 }
 
 .min-w-\[80\%\] {
@@ -1659,6 +1679,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-\[\#00A8DB\] {
   --tw-bg-opacity: 1;
   background-color: rgb(0 168 219 / var(--tw-bg-opacity));
+}
+
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#d2f0fa\] {
@@ -1989,14 +2014,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(165 162 184 / var(--tw-text-opacity));
 }
 
-.text-cyan-500 {
-  --tw-text-opacity: 1;
-  color: rgb(6 182 212 / var(--tw-text-opacity));
-}
-
 .text-gray-800 {
   --tw-text-opacity: 1;
   color: rgb(31 41 55 / var(--tw-text-opacity));
+}
+
+.text-cyan-500 {
+  --tw-text-opacity: 1;
+  color: rgb(6 182 212 / var(--tw-text-opacity));
 }
 
 .opacity-0 {

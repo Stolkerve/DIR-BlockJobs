@@ -30,7 +30,7 @@ pub type DisputeId = u64;
 #[serde(crate = "near_sdk::serde")]
 pub enum DisputeStatus {
     Open,       //Tiempo para subir pruebas y para registrarse los jurados -Duracion: 5 dias
-    Resolving,  //Tiempo para realizar las votaciones -Duracion: 5 dias
+    Voting,  //Tiempo para realizar las votaciones -Duracion: 5 dias
     Executable, //Tiempo para ejecutarse los resultado -Duracion: 0.5 dias
     Finished,   //Indica que la disputa finalizo exitosamente -Duracion: indefinida
 }
@@ -39,7 +39,7 @@ impl Display for DisputeStatus {
     fn fmt(&self, f: &mut Formatter) -> Result {
         match self {
             DisputeStatus::Open => write!(f, "Open"),
-            DisputeStatus::Resolving => write!(f, "Resolving"),
+            DisputeStatus::Voting => write!(f, "Voting"),
             DisputeStatus::Executable => write!(f, "Executable"),
             DisputeStatus::Finished => write!(f, "Finished"),
         }
@@ -185,7 +185,7 @@ impl Mediator {
         }
 
         dispute.accused_proves.insert(accused_proves);
-        dispute.dispute_status = DisputeStatus::Resolving;
+        dispute.dispute_status = DisputeStatus::Voting;
 
         self.disputes.insert(&dispute_id, &dispute);
 
@@ -253,8 +253,8 @@ impl Mediator {
         let dispute = self.update_dispute_status(dispute_id);
 
         // Verificar que la disputa este en tiempo de votacion
-        if dispute.dispute_status != DisputeStatus::Resolving {
-            env::panic(b"You cannot vote when the status is different from resolving");
+        if dispute.dispute_status != DisputeStatus::Voting {
+            env::panic(b"You cannot vote when the status is different from Voting");
         }
         // Verificar que sea miembro del jurado
         if !dispute.jury_members.contains(&sender) {
@@ -354,9 +354,9 @@ impl Mediator {
 
         // Actualizar por tiempo
         if actual_time >= (dispute.initial_timestamp + (ONE_DAY * 5)) && (dispute.dispute_status == DisputeStatus::Open) {
-            dispute.dispute_status = DisputeStatus::Resolving;
+            dispute.dispute_status = DisputeStatus::Voting;
         }
-        if (actual_time >= (dispute.initial_timestamp + (ONE_DAY * 10))) && (dispute.dispute_status == DisputeStatus::Resolving) {
+        if (actual_time >= (dispute.initial_timestamp + (ONE_DAY * 10))) && (dispute.dispute_status == DisputeStatus::Voting) {
             dispute.dispute_status = DisputeStatus::Executable;
         }
         if dispute.dispute_status == DisputeStatus::Executable {
@@ -706,7 +706,7 @@ fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
 //         let mut judges_votes = 0;
 //         for i in 2..max_epochs {
 //             let mut context = get_context(false);
-//             if dispute.dispute_status == DisputeStatus::Resolving && judges_votes < 2{
+//             if dispute.dispute_status == DisputeStatus::Voting && judges_votes < 2{
 //                 context.predecessor_account_id = judges[judges_votes].clone();
 //                 contract.vote(dispute.id.clone(), true); //judges_votes != 0
 //                 judges_votes += 1;

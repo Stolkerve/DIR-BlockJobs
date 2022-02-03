@@ -25,7 +25,9 @@ export default function Disputes() {
                     <div>
                         {
                             disputes.map((v, i) => { return (
-                                <DisputeCard key={v.id} dispute={v} />
+                                <div className="mb-4">
+                                    <DisputeCard key={v.id} dispute={v} />
+                                </div>
                             )})
                         }
                     </div>
