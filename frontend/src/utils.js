@@ -1,18 +1,19 @@
 import { connect, Contract, keyStores, WalletConnection, utils } from "near-api-js"
 import { toast } from "react-toastify";
-import { async } from "regenerator-runtime";
 import getConfig from "./config"
-import { NFTStorage, File } from 'nft.storage'
-// import { pack } from 'ipfs-car/pack';CONTRACT_NAME
+import { NFTStorage } from 'nft.storage'
+import contractsAccounts from "./contractsAccounts.json"
 
-const marketplaceConfig = getConfig(process.env.NODE_ENV || "development", process.env.MARKETPLACE_CONTRACT)
-const mediatorConfig = getConfig(process.env.NODE_ENV || "development", process.env.MEDIATOR_CONTRACT)
+const marketplaceConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.MARKETPLACE_CONTRACT)
+const mediatorConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.MEDIATOR_CONTRACT)
+const ftConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.FT_CONTRACT)
 
 // Initialize contract & set global variables
 export async function initContract() {
   let keystore = new keyStores.BrowserLocalStorageKeyStore();
   marketplaceConfig.keyStore = keystore;
   mediatorConfig.keyStore = keystore;
+  ftConfig.keyStore = keystore;
  
   // Initialize connection to the NEAR testnet
   const near = await connect(Object.assign({ deps: { keyStore: keystore } }, marketplaceConfig))
@@ -24,24 +25,8 @@ export async function initContract() {
   // Getting the Account ID. If still unauthorized, it's just empty string
   window.accountId = window.walletConnection.getAccountId()
 
-  window.contract2 = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
-    viewMethods: [
-      "get_dispute",
-      "get_disputes",
-      "get_total_disputes",
-    ],
-    // Change methods can modify the state. But you don"t receive the returned value when called.
-    changeMethods: [
-      "update_dispute_status",
-      "add_accused_proves",
-    ],
-    sender: mediatorConfig.contractName
-  })
-  // console.log(window.contract2)
-
   // Initializing our contract APIs by contract name and configuration
   window.contract = await new Contract(window.walletConnection.account(), marketplaceConfig.contractName, {
-    // View methods are read only. They don't modify the state, but usually return some value.
     viewMethods: [
       "get_user",
       "get_users_by_role",
@@ -52,7 +37,6 @@ export async function initContract() {
       "get_total_services",
       "get_services",
     ],
-    // Change methods can modify the state. But you don"t receive the returned value when called.
     changeMethods: [
       "add_user",
       "update_user_categories",
@@ -69,6 +53,42 @@ export async function initContract() {
     ],
     sender: marketplaceConfig.contractName
   })
+
+  window.contract2 = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
+    viewMethods: [
+      "get_dispute",
+      "get_disputes",
+      "get_total_disputes",
+      "get_max_jurors"
+    ],
+    changeMethods: [
+      "update_dispute_status",
+      "add_accused_proves",
+      "pre_vote",
+      "vote"
+    ],
+    sender: mediatorConfig.contractName
+  })
+
+  window.contract3 = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
+    viewMethods: [
+      "get_total_supply",
+      "get_balance_of",
+      "get_minter",
+      "get_pending_to_mint",
+      "get_allowance_of",
+      "verify_blocked_amount",
+    ],
+    changeMethods: [
+      "mint",
+      "mint_test",
+      "transfer_tokens",
+      "block_tokens",
+      "withdraw_tokens",
+    ],
+    sender: ftConfig.contractName
+  })
+
   window.nftStorageClient = new NFTStorage({ token: String(process.env.NFT_STORAGE_API_KEY) })
 }
 
@@ -249,7 +269,29 @@ export async function addAccusedProves(disputeId, proves) {
 
 export async function updateDisputeStatus(disputeId) {
   try {
-    return await window.contract2.update_dispute_status({dispute_id: disputeId})
+    return await window.contract2.update_dispute_status({dispute_id: disputeId}, "300000000000000")
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function preVote(disputeId) {
+  try {
+    return await window.contract2.pre_vote({dispute_id: disputeId}, "300000000000000")
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function vote(disputeId, vote) {
+  try {
+    return await window.contract2.vote({dispute_id: disputeId, vote: vote}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -272,6 +314,28 @@ export async function getDisputes(fromIndex, limit) {
 export async function getDispute(disputeId) {
   try {
     return await window.contract2.get_dispute({dispute_id: disputeId})
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function getMaxJurors() {
+  try {
+    return await window.contract2.get_max_jurors()
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function mintTest(receiver) {
+  try {
+    return await window.contract3.mint_test({receiver: receiver})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)

@@ -927,6 +927,20 @@ impl Marketplace {
         
         true
     }
+    
+    pub fn validate_user_test(&self, account_id: AccountId) -> bool {
+        // let user_id = string_to_valid_account_id(&account_id);
+        // let user = self.get_user(user_id);
+
+        // if !user.roles.get(&UserRoles::Judge).is_some() {
+        //     env::panic(b"Is required have a Judge status to can vote");
+        // }
+        // if user.reputation < 3 {
+        //     env::panic(b"Your reputation isn't sufficient");
+        // }
+        
+        true
+    }
 
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.

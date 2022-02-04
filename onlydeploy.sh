@@ -35,7 +35,8 @@ cd ../../
 echo "Creando el fichero .env en frontend"
 cd ./frontend/src/
 NEWLINE=$'\n'
-echo "MARKETPLACE_CONTRACT=$MA_ID${NEWLINE}MEDIATOR_CONTRACT=$ME_ID" > .env
+TAP=$'\t'
+echo "{${NEWLINE}${TAP}\"MARKETPLACE_CONTRACT\": \"$MA_ID\",${NEWLINE}${TAP}\"MEDIATOR_CONTRACT\": \"$ME_ID\",${NEWLINE}${TAP}\"FT_CONTRACT\": \"${FT_ID}\"${NEWLINE}}" > contractsAccounts.json
 cd ../../
 
 echo "inicializando el contrato de FT"

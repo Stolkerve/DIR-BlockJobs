@@ -8,6 +8,8 @@ import Disputes from '../views/Disputes';
 import {ImProfile} from "react-icons/im"
 import {RiSuitcaseFill} from "react-icons/ri"
 import {MdHowToVote} from "react-icons/md"
+import MyTokens from "./Mytokens";
+import { BiCoinStack } from "react-icons/bi";
 
 export default function DashBoard() {
 	const navigate = useNavigate()
@@ -15,8 +17,8 @@ export default function DashBoard() {
 	
 	let [selectedLeftSize, setSelectedLeftSize] = useState(0)
 	
-	const leftSize = ["profile", "services", "disputes"]
-	const leftSizeIcons = [<ImProfile/>, <RiSuitcaseFill/>, <MdHowToVote/>]
+	const leftSize = ["profile", "services", "disputes", "tokens"]
+	const leftSizeIcons = [<ImProfile/>, <RiSuitcaseFill/>, <MdHowToVote/>, <BiCoinStack/>]
 
 	useEffect(() => {
 		for (let index = 0; index < leftSize.length; index++) {
@@ -32,7 +34,7 @@ export default function DashBoard() {
 	<div className="flex">
 	    <div className="min-w-[100px] min-h-screen h-auto bg-[#F8F7FF]">
 			{
-				["Profile", "Services", "Disputes"].map((v, i) => {return (
+				["Profile", "Services", "Disputes", "Tokens"].map((v, i) => {return (
 					<div className="flex justify-between" key={i}>
 						<button onClick={() => {
 								setSelectedLeftSize(i)
@@ -55,6 +57,7 @@ export default function DashBoard() {
             <Route 	path="/profile" 	element={<Profile />}/>
             <Route 	path="/services" 	element={<MyServices />}/>
             <Route 	path="/disputes" 	element={<Disputes />}/>
+            <Route 	path="/tokens" 		element={<MyTokens />}/>
         </Routes>
 	</div>
     )

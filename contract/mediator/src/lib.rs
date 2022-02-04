@@ -185,7 +185,7 @@ impl Mediator {
         }
 
         dispute.accused_proves.insert(accused_proves);
-        dispute.dispute_status = DisputeStatus::Voting;
+        // dispute.dispute_status = DisputeStatus::Voting;
 
         self.disputes.insert(&dispute_id, &dispute);
 
@@ -202,7 +202,7 @@ impl Mediator {
         if dispute.dispute_status != DisputeStatus::Open {
             env::panic(b"The time to join as a jury member is over");
         }
-        let _res = ext_marketplace::validate_user(
+        let _res = ext_marketplace::validate_user_test(
             env::signer_account_id(),
             &self.marketplace_contract,
             NO_DEPOSIT,
@@ -237,6 +237,10 @@ impl Mediator {
 
                 dispute.jury_members.push(user_id);
 
+                if dispute.jury_members.len() == self.max_jurors as usize {
+                    dispute.dispute_status = DisputeStatus::Voting
+                }
+
                 self.disputes.insert(&dispute_id, &dispute);
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),
@@ -267,7 +271,7 @@ impl Mediator {
             vote.clone()
         );
 
-        let _res = ext_ft::validate_tokens(
+        let _res = ext_ft::validate_tokens_test(
             sender.clone(),
             &self.token_contract,
             NO_DEPOSIT,
@@ -348,7 +352,7 @@ impl Mediator {
     /// Para verificar y actualizar el estado de la disputa.
     /// 
     pub fn update_dispute_status(&mut self, dispute_id: DisputeId) -> Dispute {
-        let mut dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
+        let mut dispute: Dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
 
         let actual_time = env::block_timestamp();
 
@@ -370,8 +374,15 @@ impl Mediator {
                     agains_votes_counter += 1;
                 }
             }
+
+            // reiniciar si se cumple esta condicion
             if pro_votes_counter == agains_votes_counter {
                 dispute.dispute_status = DisputeStatus::Open;
+                dispute.accused_proves = Some("".to_string());
+
+                dispute.applicant_proves.clear();
+                dispute.jury_members.clear();
+                dispute.votes.clear();
             }
             else {
                 dispute.dispute_status = DisputeStatus::Finished;
@@ -492,6 +503,10 @@ impl Mediator {
         self.disputes_counter
     }
 
+    pub fn get_max_jurors(&self) -> u8 {
+        self.max_jurors
+    }
+
     // Retorna un vector con los jurados actuales de una disputa indicada. 
     pub fn get_dispute_jury_members(&self, dispute_id: DisputeId) -> Vec<AccountId> {
         self.assert_dispute_exist(dispute_id);
@@ -600,13 +615,13 @@ impl Mediator {
 
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
-    fn validate_user(account_id: AccountId);
+    fn validate_user_test(account_id: AccountId);
     fn return_service_by_mediator(service_id: u64);
     fn ban_user_by_mediator(user_id: AccountId);
 }
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
-    fn validate_tokens(account_id: AccountId);
+    fn validate_tokens_test(account_id: AccountId);
     // fn increase_allowance(account: AccountId);
     // fn decrease_allowance(account: AccountId);
     fn applicant_winner(votes: HashSet<Vote>);

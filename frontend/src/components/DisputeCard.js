@@ -6,9 +6,10 @@ import { GrUpdate } from 'react-icons/gr';
 
 import { Transition, Dialog } from '@headlessui/react'
 import { updateDisputeStatus } from "../utils";
-
-export default function DisputeCard({ dispute }) {
+//getMaxJurors let [maxJurors, serMaxJurors] = useState(0)
+export default function DisputeCard({ dispute, maxJurors }) {
     let [isOpen, setIsOpen] = useState(false)
+
     const navigate = useNavigate()
 
     const closeModal = () => {
@@ -28,7 +29,7 @@ export default function DisputeCard({ dispute }) {
                         <div className="mr-6">Disputa № {dispute.id}</div>
                     </div>
                     <div className="flex items-center whitespace-pre-wrap font-normal">
-                        <div className="mr-4">Votes: <span className="">{dispute.votes.length}</span></div>
+                        <div className="mr-4">Votes: <span className="">{dispute.votes.length}</span> / {maxJurors}</div>
                         <div className="mr-4">Status: <span className="text-green-700">{dispute.dispute_status}</span></div>
                         <div className="">Servicio ID: <span className="">{dispute.service_id}</span></div>
                     </div>

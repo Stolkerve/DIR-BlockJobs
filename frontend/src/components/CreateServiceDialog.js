@@ -302,6 +302,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                             })
                                                             const imgData = metadata.data.image;
                                                             const finalUrl = `https://ipfs.io/ipfs/${imgData.host}${imgData.pathname}`
+                                                            console.log(finalUrl)
                                                             serviceMetadata.icon = finalUrl
                                                             setLoadingPicture(false)
                                                         }
@@ -310,6 +311,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                         }
                                                     }
                                                         
+                                                    console.log(serviceMetadata)
                                                     if (!service) {
                                                         await mintService(serviceMetadata, amountOfServices, durationService, amt)
                                                     }
@@ -319,7 +321,6 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                 } else {
                                                     toast.error(finalValidatorMsg)
                                                 }
-                                                console.log(serviceMetadata)
 
 
                                             } catch (e) {

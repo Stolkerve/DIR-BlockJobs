@@ -8,6 +8,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { ImProfile } from "react-icons/im"
 import { RiSuitcaseFill } from "react-icons/ri"
 import { MdHowToVote, MdLogout } from "react-icons/md"
+import { BiCoinStack } from "react-icons/bi"
 
 import { useGlobalState } from "../state"
 
@@ -66,6 +67,13 @@ function NavBarContent() {
             icon: <MdHowToVote />,
             action: () => {
                 navegation("/dashboard/disputes")
+            }
+        },
+        {
+            title: "JobsCoin",
+            icon: <BiCoinStack />,
+            action: () => {
+                navegation("/dashboard/tokens")
             }
         },
         {
