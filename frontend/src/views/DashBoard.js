@@ -10,6 +10,7 @@ import {RiSuitcaseFill} from "react-icons/ri"
 import {MdHowToVote} from "react-icons/md"
 import MyTokens from "./Mytokens";
 import { BiCoinStack } from "react-icons/bi";
+import MyDisputes from "./MyDisputes";
 
 export default function DashBoard() {
 	const navigate = useNavigate()
@@ -32,7 +33,7 @@ export default function DashBoard() {
 
     return (
 	<div className="flex">
-	    <div className="min-w-[100px] min-h-screen h-auto bg-[#F8F7FF]">
+	    <div className="max-w-[150px] min-h-screen h-auto bg-[#F8F7FF]">
 			{
 				["Profile", "Services", "Disputes", "Tokens"].map((v, i) => {return (
 					<div className="flex justify-between" key={i}>
@@ -42,7 +43,7 @@ export default function DashBoard() {
 							}}
 							className={selectedLeftSize == i
 								? "text-[#352E5B] border-violet-600 border-r-2 text-left py-4 pl-6 w-full pr-14" :
-								"text-[#A5A2B8] text-left py-4 pl-6 w-full pr-14"
+								"text-[#A5A2B8] text-left py-4 pl-6 w-full pr-14 transition ease-in-out hover:text-[#352E5B] duration-300"
 							}
 						>
 							<div className="flex items-center">
@@ -56,7 +57,7 @@ export default function DashBoard() {
 		<Routes>
             <Route 	path="/profile" 	element={<Profile />}/>
             <Route 	path="/services" 	element={<MyServices />}/>
-            <Route 	path="/disputes" 	element={<Disputes />}/>
+            <Route 	path="/disputes" 	element={<MyDisputes />}/>
             <Route 	path="/tokens" 		element={<MyTokens />}/>
         </Routes>
 	</div>

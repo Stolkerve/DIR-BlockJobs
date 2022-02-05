@@ -21,7 +21,7 @@ export default function DisputeCard({ dispute, maxJurors }) {
     }
 
     return (
-        <div className="rounded-md border-2 border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#313335] relative hover:cursor-pointer">
+        <div className="rounded-md border-2 border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#313335] relative hover:cursor-pointer transition ease-in-out hover:scale-[1.02]">
             <div onClick={() => { navigate(`/dispute/${dispute.id}`) }} className="flex">
 
                 <div className="">
@@ -45,8 +45,8 @@ export default function DisputeCard({ dispute, maxJurors }) {
                     </div>
                 </div>
             </div>
-            <div className="absolute hover:cursor-pointer right-0 top-0 -m-[13px] p-2 bg-[#27C0EF] rounded-full" onClick={openModal} key={"update-dipute"}>
-                <GrUpdate />
+            <div className="absolute hover:animate-spin hover:cursor-pointer right-0 top-0 -m-[13px] p-2 bg-[#27C0EF] rounded-full" onClick={openModal} key={"update-dipute"}>
+                <GrUpdate/>
             </div>
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog

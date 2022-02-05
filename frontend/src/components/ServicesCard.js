@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function ServicesCard({service}) {
     const navigate = useNavigate()
     return (
-        <div onClick={()=>{navigate(`/service/${service.id}`)}}  className="hover:cursor-pointer rounded-md border-2 border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#74787B]">
+        <div onClick={()=>{navigate(`/service/${service.id}`)}}  className="hover:cursor-pointer rounded-md border-2 shadow-md border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#74787B] transition ease-in-out hover:scale-[1.02]">
             <div className="flex justify-between">
                 <div className="flex self-baseline">
                     {
