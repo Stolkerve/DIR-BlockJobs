@@ -1,4 +1,6 @@
 function getConfig(env, contractName) {
+  env = "testnet"
+
   switch (env) {
 
   case 'production':
