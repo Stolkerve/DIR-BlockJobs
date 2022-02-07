@@ -11,7 +11,7 @@ use std::fmt::{Debug, Display, Formatter, Result};
 // use std::convert::TryFrom;
 
 mod events;
-use events::NearEvent;
+use events::Event;
 
 // const YOCTO_NEAR: u128 = 1000000000000000000000000;
 // const STORAGE_PRICE_PER_BYTE: Balance = 10_000_000_000_000_000_000;
@@ -145,7 +145,7 @@ impl Mediator {
 
         let status: String = dispute.dispute_status.to_string();
 
-        NearEvent::log_dispute_new(
+        Event::log_dispute_new(
             dispute.id.clone(),
             dispute.service_id.clone(),
             dispute.applicant.clone(),
@@ -215,7 +215,7 @@ impl Mediator {
             BASE_GAS,
         ));
 
-        NearEvent::log_dispute_aplication(
+        Event::log_dispute_aplication(
             dispute_id.clone(), 
             env::signer_account_id()
         );
@@ -265,7 +265,7 @@ impl Mediator {
             env::panic(b"You can't permission to vote in the indicate dispute");
         }
 
-        NearEvent::log_dispute_vote(
+        Event::log_dispute_vote(
             dispute_id.clone(), 
             sender.clone().to_string(), 
             vote.clone()
@@ -425,7 +425,7 @@ impl Mediator {
         
         self.disputes.insert(&dispute_id, &dispute);
 
-        NearEvent::log_dispute_change_status(
+        Event::log_dispute_change_status(
             dispute_id.clone(),
             dispute.dispute_status.clone().to_string());
 

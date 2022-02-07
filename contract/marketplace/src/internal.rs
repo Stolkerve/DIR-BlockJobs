@@ -33,7 +33,7 @@ pub(crate) fn deposit_refund(storage_used: u64) {
 }
 
 pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
-    env::log(format!("Storage cost per bytes: {}", env::storage_byte_cost()).as_bytes());
+    // env::log(format!("Storage cost per bytes: {}", env::storage_byte_cost()).as_bytes());
     let required_cost = env::storage_byte_cost() * Balance::from(storage_used);
     let attached_deposit = env::attached_deposit();
 
@@ -75,7 +75,7 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
     //     let serialized = serde_json::to_string(&example).unwrap();
 
     //     let string = format!("String: {}", &serialized);
-    //     env::log(string.as_bytes());
+    //     // env::log(string.as_bytes());
 
     // // pub fn string_to_json(&self, service_id: ServiceId) -> Category {
     // pub fn string_to_json(&self) -> Category {
@@ -87,7 +87,7 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
     //     let serialized = serde_json::to_string(&example).unwrap();
 
     //     let string = format!("String: {}", &serialized);
-    //     env::log(string.as_bytes());
+    //     // env::log(string.as_bytes());
 
     //     let deserialized: Category = serde_json::from_str(&serialized).unwrap();
     //     deserialized
@@ -142,7 +142,7 @@ impl Marketplace {
     //         "The service owner and the receiver should be different"
     //     );
 
-    //     env::log(
+    //     // env::log(
     //         format!(
     //             "Transfer {} from @{} to @{}",
     //             service_id, &owner_id, receiver_id
@@ -162,7 +162,7 @@ impl Marketplace {
     //     self.service_by_id.insert(service_id, &service);
 
     //     if let Some(memo) = memo {
-    //         env::log(format!("Memo: {}", memo).as_bytes());
+    //         // env::log(format!("Memo: {}", memo).as_bytes());
     //     }
 
     //     (owner_id, employer_account_ids)
@@ -178,7 +178,7 @@ impl Marketplace {
     //     let serialized = serde_json::to_string(&example).unwrap();
 
     //     let string = format!("String: {}", &serialized);
-    //     env::log(string.as_bytes());
+    //     // env::log(string.as_bytes());
 
     // // pub fn string_to_json(&self, service_id: ServiceId) -> Category {
     // pub fn string_to_json(&self) -> Category {
@@ -190,7 +190,7 @@ impl Marketplace {
     //     let serialized = serde_json::to_string(&example).unwrap();
 
     //     let string = format!("String: {}", &serialized);
-    //     env::log(string.as_bytes());
+    //     // env::log(string.as_bytes());
 
     //     let deserialized: Category = serde_json::from_str(&serialized).unwrap();
     //     deserialized

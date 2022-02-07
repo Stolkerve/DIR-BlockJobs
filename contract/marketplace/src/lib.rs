@@ -15,7 +15,7 @@ mod internal;
 mod user;
 
 mod event;
-pub use event::NearEvent;
+pub use event::Event;
 
 near_sdk::setup_alloc!();
 
@@ -200,7 +200,7 @@ impl Marketplace {
             self.total_services += 1;
             service.id = self.total_services;
 
-            NearEvent::log_service_mint(
+            Event::log_service_mint(
                 service.id.clone(),
                 service.actual_owner.clone().to_string(),
                 service.metadata.title.clone(),
@@ -282,7 +282,7 @@ impl Marketplace {
             );
         };
 
-        NearEvent::log_service_buy(
+        Event::log_service_buy(
             service.id.clone(),
             sender.clone().to_string()
         );
@@ -375,7 +375,7 @@ impl Marketplace {
                 service.on_dispute = true;
                 self.service_by_id.insert(&service_id, &service);
 
-                // NearEvent::log_dispute_new(
+                // Event::log_dispute_new(
                     
                 // );
             }
@@ -424,7 +424,7 @@ impl Marketplace {
             BASE_GAS,
         ));
 
-        NearEvent::log_service_reclaim(
+        Event::log_service_reclaim(
             service.id.clone(),
             sender_id.clone().to_string()
         );
@@ -500,7 +500,7 @@ impl Marketplace {
             BASE_GAS,
         ));
 
-        NearEvent::log_service_return(
+        Event::log_service_return(
             service.id.clone(),
             service.creator_id.clone().to_string()
         );
@@ -578,7 +578,7 @@ impl Marketplace {
             deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
         }
 
-        NearEvent::log_service_update_metadata(
+        Event::log_service_update_metadata(
             service.id.clone(),
             service.metadata.title.clone(),
             service.metadata.description.clone(),
@@ -617,7 +617,7 @@ impl Marketplace {
         service.on_sale = on_sale;
         self.service_by_id.insert(&service_id, &service);
 
-        NearEvent::log_service_update_on_sale(
+        Event::log_service_update_on_sale(
             service_id.clone(),
             on_sale.clone()
         );
@@ -679,7 +679,7 @@ impl Marketplace {
 
         let rol: String = roles[0].to_string();
 
-        NearEvent::log_user_new(
+        Event::log_user_new(
             new_user.account_id.clone().to_string(),
             rol,
             new_user.personal_data.clone(),
@@ -777,7 +777,7 @@ impl Marketplace {
             deposit_refund_to(required_storage_in_bytes, account_id);
         }
 
-        NearEvent::log_user_update_data(
+        Event::log_user_update_data(
             user.account_id.clone(),
             data.clone()
         );
@@ -811,7 +811,7 @@ impl Marketplace {
         
         let rol: String = role.to_string();
 
-        NearEvent::log_user_update_roles(
+        Event::log_user_update_roles(
             account_id.clone().to_string(),
             rol
         );
@@ -928,7 +928,7 @@ impl Marketplace {
         true
     }
     
-    pub fn validate_user_test(&self, account_id: AccountId) -> bool {
+    pub fn validate_user_test(&self, _account_id: AccountId) -> bool {
         // let user_id = string_to_valid_account_id(&account_id);
         // let user = self.get_user(user_id);
 

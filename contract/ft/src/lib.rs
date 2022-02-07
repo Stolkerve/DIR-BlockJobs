@@ -7,8 +7,8 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::collections::{LazyOption, LookupMap};
 use std::collections::HashSet;
 use near_sdk::json_types::{ValidAccountId, U128};
-use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
-//use std::convert::TryFrom;
+use near_sdk::{env, log, near_bindgen, AccountId, Balance,
+    PanicOnDefault, PromiseOrValue};
 
 near_sdk::setup_alloc!();
 
@@ -33,6 +33,7 @@ pub struct Token {
     pub pending_to_mint: Balance,
     // Cantidad de tokens bloqueados minima para poder ser miembro del jurado.
     pub min_blocked_amount: Balance,
+    sales_contract: AccountId,
 }
 
 const IMAGE_ICON: &str = "";
@@ -42,7 +43,7 @@ impl Token {
     /// Inicializa el contrato estableciendo el total supply
     /// Asigna la metadata por default
     #[init]
-    pub fn new_default_meta(owner_id: ValidAccountId, initial_supply: U128) -> Self {
+    pub fn new_default_meta(owner_id: ValidAccountId, initial_supply: U128, sales_contract: AccountId) -> Self {
         Self::new(
             owner_id,
             initial_supply,
@@ -55,6 +56,7 @@ impl Token {
                 reference_hash: None,
                 decimals: 24,
             },
+            sales_contract,
         )
     }
 
@@ -64,6 +66,7 @@ impl Token {
         owner_id: ValidAccountId,
         total_services: U128,
         metadata: FungibleTokenMetadata,
+        sales_contract: AccountId
     ) -> Self {
         assert!(!env::state_exists(), "Already initialized");
         metadata.assert_valid();
@@ -75,6 +78,7 @@ impl Token {
             allowance: LookupMap::new(b"a".to_vec()),
             pending_to_mint: 0,
             min_blocked_amount: 10_000,
+            sales_contract: sales_contract
         };
         this.token.internal_register_account(owner_id.as_ref());
         this.token.internal_deposit(owner_id.as_ref(), total_services.into());
@@ -124,7 +128,10 @@ impl Token {
     pub fn transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
         let sender = env::predecessor_account_id();
 
-        self.token.internal_register_account(&to);
+        // self.token.internal_register_account(&to);
+        if !self.token.accounts.contains_key(&to) {
+            self.token.accounts.insert(&to, &0);
+        }
         self.token.internal_transfer(&sender, &to, amount, None);
 
         amount
@@ -258,10 +265,11 @@ impl Token {
             return true;
         }
     }
+
     /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
     /// Solo ejecutable por y desde desde Mediator.
     /// 
-    pub fn validate_tokens_test(&self, account_id: AccountId) -> bool {
+    pub fn validate_tokens_test(&self, _account_id: AccountId) -> bool {
         // let balance = self.get_allowance_of(&account_id);
         // if balance < self.min_blocked_amount {
         //     env::panic(b"Insufficient balance");
@@ -269,6 +277,20 @@ impl Token {
         //     return true;
         // }
         return true;
+    }
+
+    pub fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) {
+        assert!(env::predecessor_account_id() == self.sales_contract, "You haven't permissions");
+
+        env::log(b"Call received");
+
+        if !self.token.accounts.contains_key(&to) {
+            self.token.accounts.insert(&to, &0);
+        }
+        self.token.internal_transfer(&from, &to, amount, None);
+
+        env::log(b"Call returned");
+        // amount
     }
 
     /**********************/
