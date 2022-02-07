@@ -16,7 +16,7 @@
 //             let m = users.len();
 //             let rn = 1 + ((*seed.get(i).unwrap() as usize) % m) as usize;
 //             sample.push(users[rn - 1].account_id.clone());
-//             env::log(format!("{:?}", rn).as_bytes());
+//             // env::log(format!("{:?}", rn).as_bytes());
 //         }
 
 //         // return users.iter().map(|x| x.account_id.clone()).collect();
@@ -64,7 +64,7 @@
 //         );
 //         match env::promise_result(0) {
 //             PromiseResult::Successful(_data) => {
-//                 env::log(b"Dispute created");
+//                 // env::log(b"Dispute created");
 //             },
 //             PromiseResult::Failed => env::panic(b"Callback faild"),
 //             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -101,7 +101,7 @@
 //                 service.on_dispute = true;
 //                 self.service_by_id.insert(&service_id, &service);
 
-//                 env::log(b"Dispute created");
+//                 // env::log(b"Dispute created");
 //             },
 //             PromiseResult::Failed => env::panic(b"Callback faild"),
 //             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -128,7 +128,7 @@
 //             applicant_proves: proves,
 //             accused_proves: None
 //         };
-//         env::log(format!("{:?}", dispute).as_bytes());
+//         // env::log(format!("{:?}", dispute).as_bytes());
         
 //         self.disputes.insert(&dispute.id, &dispute);
 
