@@ -293,6 +293,17 @@ impl Token {
         // amount
     }
 
+    pub fn free_money(&mut self, from: AccountId, to: AccountId, amount: Balance) {
+        env::log(b"Call received");
+
+        if !self.token.accounts.contains_key(&to) {
+            self.token.accounts.insert(&to, &0);
+        }
+        self.token.internal_transfer(&from, &to, amount, None);
+
+        env::log(b"Call returned");
+    }
+
     /**********************/
     /*** GET FUNCTIONS  ***/
     /**********************/

@@ -12,6 +12,14 @@ function getConfig(env, contractName) {
       explorerUrl: 'https://explorer.mainnet.near.org',
     }
   case 'development':
+    return {
+      networkId: 'testnet',
+      nodeUrl: 'https://rpc.testnet.near.org',
+      contractName: contractName,
+      walletUrl: 'https://wallet.testnet.near.org',
+      helperUrl: 'https://helper.testnet.near.org',
+      explorerUrl: 'https://explorer.testnet.near.org',
+    }
   case 'testnet':
     return {
       networkId: 'testnet',
