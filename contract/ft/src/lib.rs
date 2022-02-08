@@ -279,29 +279,15 @@ impl Token {
         return true;
     }
 
-    pub fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) {
+    // #[payable]
+    pub fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) -> Balance {    
         assert!(env::predecessor_account_id() == self.sales_contract, "You haven't permissions");
 
-        env::log(b"Call received");
-
         if !self.token.accounts.contains_key(&to) {
             self.token.accounts.insert(&to, &0);
         }
         self.token.internal_transfer(&from, &to, amount, None);
-
-        env::log(b"Call returned");
-        // amount
-    }
-
-    pub fn free_money(&mut self, from: AccountId, to: AccountId, amount: Balance) {
-        env::log(b"Call received");
-
-        if !self.token.accounts.contains_key(&to) {
-            self.token.accounts.insert(&to, &0);
-        }
-        self.token.internal_transfer(&from, &to, amount, None);
-
-        env::log(b"Call returned");
+        amount
     }
 
     /**********************/
