@@ -1,11 +1,12 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::{AccountId, Balance, Duration, env, ext_contract, Gas, 
-    near_bindgen, PanicOnDefault, Promise, PromiseResult, Timestamp};
+    near_bindgen, PanicOnDefault, Promise, PromiseResult, Timestamp, 
+};
 // use chrono::prelude::{Utc, DateTime};
 
 near_sdk::setup_alloc!();
 
-const TOKENS_FOR_SALE: Balance = 100_000_000;
+const TOKENS_FOR_SALE: Balance = 500_000;
 const BJT_PER_NEAR: Balance = 1000;
 const MIN_TO_BUY: Balance = 1 * NEAR;
 // const START_TIME_ISO8601: &str = "2021-09-15T12:00:09Z";
@@ -13,8 +14,8 @@ const ONE_DAY: u64 = 86400000000000;
 const SALE_DURATION: Duration = 30 * ONE_DAY;
 const NEAR: Balance = 1_000_000_000_000_000_000_000_000;
 const NO_DEPOSIT: Balance = 0;
-const GAS_BASE: Gas = 250_000_000_000_000;
-const GAS_CALL_BACK: Gas = 150_000_000_000_000;
+const GAS_BASE: Gas = 100_000_000_000_000;
+const GAS_CALL_BACK: Gas = 60_000_000_000_000;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -50,39 +51,36 @@ impl Sale {
     /// Comprar tokens BJT a cambio de NEARs.
     /// 
     #[payable]
-    pub fn buy_ft(&mut self) -> bool {
+    pub fn buy_ft(&mut self) {
         assert!(self.is_finished == false, "The sale is ended");
         assert!(env::attached_deposit() >= MIN_TO_BUY, "The minimum to buy is 1 NEAR");
 
         let amount = env::attached_deposit()/NEAR * BJT_PER_NEAR;
-        env::log(format!("Amount of {} BJT tokens", amount).as_bytes());
-        env::log(format!("FT contract: {}", self.ft_contract).as_bytes());
 
-        let _res = ext_ft::ft_sale(
+        ext_ft::ft_sale(
             env::current_account_id(),
             env::signer_account_id(),
-            amount,
+            amount.clone(),
             &self.ft_contract,
-            NEAR, 
-            GAS_BASE
+            NO_DEPOSIT,
+            // env::attached_deposit(), 
+            GAS_BASE,
         ).then(ext_self::on_buy_ft(
             amount,
             &env::current_account_id(),
             NO_DEPOSIT, 
+            // GAS_BASE,
             GAS_CALL_BACK
         ));
-
-        env::log(b"Contract called");
-        true
     }
 
-    pub fn on_buy_ft(&mut self, amount: Balance) {
+    pub fn on_buy_ft(&mut self, amount: Balance) -> Balance {
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
                 env::log(format!("{} tokens selled to {}", amount, env::signer_account_id()).as_bytes());
 
                 self.pending_tokens -= amount;
-                // return self.pending_tokens;
+                return self.pending_tokens;
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -114,10 +112,10 @@ impl Sale {
 }
 
 #[ext_contract(ext_ft)]
-pub trait ExtFT {
-    fn ft_sale(from: AccountId, to: AccountId, amount: Balance);
+trait FungibleToken {
+    fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) -> Balance;
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
-    fn on_buy_ft(amount: Balance);
+    fn on_buy_ft(&mut self, amount: Balance) -> Balance;
 }
