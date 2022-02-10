@@ -12,6 +12,8 @@ use near_sdk::{env, log, near_bindgen, AccountId, Balance,
 
 near_sdk::setup_alloc!();
 
+const DECIMALS: Balance = 1_000_000_000_000_000_000_000_000; 
+
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Vote {
@@ -64,7 +66,7 @@ impl Token {
     #[init]
     pub fn new(
         owner_id: ValidAccountId,
-        total_services: U128,
+        total_supply: U128,
         metadata: FungibleTokenMetadata,
         sales_contract: AccountId
     ) -> Self {
@@ -80,8 +82,9 @@ impl Token {
             min_blocked_amount: 10_000,
             sales_contract: sales_contract
         };
+        let amount: Balance = total_supply.into();
         this.token.internal_register_account(owner_id.as_ref());
-        this.token.internal_deposit(owner_id.as_ref(), total_services.into());
+        this.token.internal_deposit(owner_id.as_ref(), amount*DECIMALS);
         this
     }
 
@@ -94,7 +97,7 @@ impl Token {
     /// 
     pub fn mint(&mut self, receiver: ValidAccountId) {
         self.assert_minter(env::predecessor_account_id());
-        self.mint_into(&receiver.to_string(), self.pending_to_mint);
+        self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
 
         self.pending_to_mint = 0;
     }
@@ -103,7 +106,7 @@ impl Token {
     /// No se puede mintear por sobre esa cantidad.
     /// 
     pub fn mint_test(&mut self, receiver: ValidAccountId) {
-        self.mint_into(&receiver.to_string(), self.pending_to_mint);
+        self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
 
         self.pending_to_mint = 0;
     }
@@ -119,9 +122,9 @@ impl Token {
     /// Cambiar la cantidad minima de tokens a bloquear para poder
     /// ser miembro del jurado.
     /// 
-    pub fn update_min_blocked_amount(&mut self, amount: u128) -> bool {
+    pub fn update_min_blocked_amount(&mut self, amount: Balance) -> bool {
         self.assert_owner();
-        self.min_blocked_amount = amount;
+        self.min_blocked_amount = amount*DECIMALS;
         true
     }
 
@@ -132,7 +135,7 @@ impl Token {
         if !self.token.accounts.contains_key(&to) {
             self.token.accounts.insert(&to, &0);
         }
-        self.token.internal_transfer(&sender, &to, amount, None);
+        self.token.internal_transfer(&sender, &to, amount*DECIMALS, None);
 
         amount
     }
@@ -144,10 +147,10 @@ impl Token {
     pub fn block_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
         let contract = self.owner.clone();
-        self.ft_transfer(contract, amount.into(), None);
+        self.ft_transfer(contract, (amount*DECIMALS).into() , None);
 
         // Modificar allowance sumando lo bloqueado
-        self.allowance.insert(&sender, &(amount + self.allowance.get(&sender).unwrap_or(0)));
+        self.allowance.insert(&sender, &(amount*DECIMALS + self.allowance.get(&sender).unwrap_or(0)));
 
         // Retornar allowance
         self.allowance.get(&sender).unwrap_or(0)
@@ -161,11 +164,11 @@ impl Token {
         let sender = env::signer_account_id();
         let contract = self.owner.clone().into();
 
-        if self.allowance.get(&sender) >= Some(amount) {
-            self.token.internal_transfer(&contract, &sender, amount, None);
+        if self.allowance.get(&sender) >= Some(amount*DECIMALS) {
+            self.token.internal_transfer(&contract, &sender, amount*DECIMALS, None);
         };
 
-        let new_allowace = self.allowance.get(&sender).unwrap_or(0) - amount;
+        let new_allowace = self.allowance.get(&sender).unwrap_or(0) - amount*DECIMALS;
         // Modificar allowance restando lo que se retira
         self.allowance.insert(&sender, &new_allowace);
         
@@ -270,13 +273,7 @@ impl Token {
     /// Solo ejecutable por y desde desde Mediator.
     /// 
     pub fn validate_tokens_test(&self, _account_id: AccountId) -> bool {
-        // let balance = self.get_allowance_of(&account_id);
-        // if balance < self.min_blocked_amount {
-        //     env::panic(b"Insufficient balance");
-        // } else {
-        //     return true;
-        // }
-        return true;
+        true
     }
 
     // #[payable]
@@ -286,7 +283,7 @@ impl Token {
         if !self.token.accounts.contains_key(&to) {
             self.token.accounts.insert(&to, &0);
         }
-        self.token.internal_transfer(&from, &to, amount, None);
+        self.token.internal_transfer(&from, &to, amount*DECIMALS, None);
         amount
     }
 
