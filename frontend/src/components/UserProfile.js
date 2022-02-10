@@ -2,25 +2,13 @@ import React from 'react'
 
 export default function UserProfile({ user }) {
 
-    const colorRep = (val) => {
-        if (val == 0) {
-            return "text-black"
-        }
-        else if (val > 0) {
-            return "text-green-400"
-        }
-        else {
-            return "red"
-        }
-    }
-
     return (
         <div className="text-[#352E5B] font-bebas-neue">
             <div className="md:flex mb-4 shadow-lg rounded-xl w-auto">
                 <img src={user.personal_data.picture} className="w-32 h-32 md:w-48 md:h-auto md:rounded md:rounded-bl-xl md:rounded-tl-xl rounded-full mr-4 object-cover " />
                 <div className="p-3">
                     <div className="text-3xl font-semibold uppercase text-[#04AADD] mb-2">{user.account_id}</div>
-                    <div className="flex items-center h-full">
+                    <div className="flex items-center ">
                         <div>
                             <div className="font-semibold"> Reputacion: <span className={user.reputation === 0 ? "text-gray-900" : user.reputation > 0 ? "text-green-400" : "text-red"}>{user.reputation}</span></div>
                             <div className="flex flex-row whitespace-pre-wrap font-semibold">

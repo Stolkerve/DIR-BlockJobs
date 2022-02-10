@@ -32,7 +32,7 @@ export default function Profile() {
 		if (user) {
 			user.personal_data = JSON.parse(user.personal_data)
 			setUser(user)
-			setTimeout(() => { setLoading(false) }, 3000)
+			setLoading(false)
 			console.log(user)
 		}
 		else {

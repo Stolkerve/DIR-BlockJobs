@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import ServicesCard from "../components/ServicesCard";
 import CreateServiceDialog from "../components/CreateServiceDialog";
+import SkeletonLoaderService from "../components/SkeletonLoaderService";
 
 import { getUserServices } from "../utils";
-
 
 export default function MyServices() {
     let [services, setServices] = useState([]);
@@ -39,10 +39,43 @@ export default function MyServices() {
         <div className="m-8 w-full">
             {
                 loading ? (
-                    <div className="h-screen">
-                        <svg className="spinner" viewBox="0 0 50 50">
-                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
-                        </svg>
+                    <div className="">
+                        <div className="shadow-md border-2 rounded-lg px-6 py-4 w-full mt-4">
+                            <div className="text-xl font-bold text-gray-800">Mis servicios</div>
+                            {
+                                [0, 1].map((v, i) => {
+                                    return (
+                                        <div key={v.id} className="my-6">
+                                            <SkeletonLoaderService />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="shadow-md border-2 rounded-lg px-6 py-4 w-full mt-4">
+                            <div className="text-xl font-bold text-gray-800">Servicios adquiridos</div>
+                            {
+                                [0, 1].map((v, i) => {
+                                    return (
+                                        <div key={v.id} className="my-4">
+                                            <SkeletonLoaderService />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="shadow-md border-2 rounded-lg px-6 py-4 w-full mt-4">
+                            <div className="text-xl font-bold text-gray-800">Servicios vendidos</div>
+                            {
+                                [0, 1].map((v, i) => {
+                                    return (
+                                        <div key={v.id} className="my-4">
+                                            <SkeletonLoaderService />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
                 ) : (
                     <div>
@@ -54,7 +87,7 @@ export default function MyServices() {
                                 Crear Servicio
                             </button>
                         </div>
-                        
+
                         <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} service={null} />
                         <div className="shadow-md border-2 rounded-lg px-6 py-4 w-full mt-4">
                             <div className="text-xl font-bold text-gray-800">Mis servicios</div>
@@ -98,4 +131,3 @@ export default function MyServices() {
         </div>
     )
 }
-

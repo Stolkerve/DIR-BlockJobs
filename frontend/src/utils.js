@@ -333,9 +333,9 @@ export async function getMaxJurors() {
   }
 }
 
-export async function mintTest(receiver) {
+export async function getBalanceOf(account) {
   try {
-    return await window.contract3.mint_test({receiver: receiver})
+    return await window.contract3.get_balance_of({account: account})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
