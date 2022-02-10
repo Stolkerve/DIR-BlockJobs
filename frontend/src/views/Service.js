@@ -8,6 +8,8 @@ import CreateServiceDialog from "../components/CreateServiceDialog";
 import CreateDisputeDialog from "../components/CreateDisputeDialog";
 import ServicesCard from "../components/ServicesCard";
 import UserProfile from "../components/UserProfile";
+import SkeletonLoaderService from "../components/SkeletonLoaderService";
+import SkeletonLoaderProfile from "../components/SkeletonLoaderProfile";
 
 import { useGlobalState } from "../state";
 
@@ -112,10 +114,15 @@ export default function Service() {
             <div className="m-8">
                 {
                     loading ? (
-                        <div className="h-screen">
-                            <svg className="spinner" viewBox="0 0 50 50">
-                                <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
-                            </svg>
+                        <div className="">
+                            <div className="border-2 rounded-lg px-6 py-4 mt-4 shadow-md">
+                                <div className="text-2xl font-bold text-gray-800 mb-4">Servicio</div>
+                                <SkeletonLoaderService />
+                            </div>
+                            <div className="border-2 rounded-lg shadow-md px-6 py-4 mt-4">
+                                <div className="text-2xl font-bold text-gray-800 mb-4">Perfil del usuario</div>
+                                <SkeletonLoaderProfile />
+                            </div>
                         </div>
                     ) : (
                         <div>
@@ -145,7 +152,7 @@ export default function Service() {
                                     <></>
                                 )
                             }
-                            <div className="border-2 rounded-lg px-6 py-4 mt-4">
+                            <div className="border-2 rounded-lg px-6 py-4 shadow-md mt-4">
                                 <div className="text-2xl font-bold text-gray-800 mb-4">Servicio</div>
                                 <ServicesCard service={service}/>
                                 {
@@ -156,7 +163,7 @@ export default function Service() {
                                     </>
                                 }
                             </div>
-                            <div className="border-2 rounded-lg px-6 py-4 mt-4">
+                            <div className="border-2 rounded-lg shadow-md px-6 py-4 mt-4">
                                 <div className="text-2xl font-bold text-gray-800 mb-4">Perfil del usuario</div>
                                 <UserProfile user={user} />
                             </div>
