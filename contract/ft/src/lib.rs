@@ -51,8 +51,8 @@ impl Token {
             initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "BlockJobs fungible token".to_string(),
-                symbol: "BJT".to_string(),
+                name: "JobsCoin".to_string(),
+                symbol: "JOBS".to_string(),
                 icon: Some(IMAGE_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
@@ -73,7 +73,7 @@ impl Token {
         assert!(!env::state_exists(), "Already initialized");
         metadata.assert_valid();
         let mut this = Self {
-            token: FungibleToken::new(b"b".to_vec()),
+            token: FungibleToken::new(b"t".to_vec()),
             metadata: LazyOption::new(b"m".to_vec(), Some(&metadata)),
             minter: env::predecessor_account_id(),
             owner: owner_id.clone(),
@@ -168,9 +168,9 @@ impl Token {
             self.token.internal_transfer(&contract, &sender, amount*DECIMALS, None);
         };
 
-        let new_allowace = self.allowance.get(&sender).unwrap_or(0) - amount*DECIMALS;
+        let new_allowance = self.allowance.get(&sender).unwrap_or(0) - amount*DECIMALS;
         // Modificar allowance restando lo que se retira
-        self.allowance.insert(&sender, &new_allowace);
+        self.allowance.insert(&sender, &new_allowance);
         
         // Retornar la allowance actualizada
         self.allowance.get(&sender).unwrap_or(0)
