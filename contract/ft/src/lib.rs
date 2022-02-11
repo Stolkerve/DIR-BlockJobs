@@ -51,8 +51,8 @@ impl Token {
             initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "JobsCoin".to_string(),
-                symbol: "JOBS".to_string(),
+                name: "JobsCoin Proof".to_string(),
+                symbol: "JOBSP".to_string(),
                 icon: Some(IMAGE_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
