@@ -168,36 +168,33 @@ export default function Service() {
 
                                         }
                                         <div>
-                                            <div className="text-[#034D82] text-4xl font-extrabold">{service.metadata.title}</div>
-                                            <div className="truncate text-slate-700">{service.metadata.description}</div>
+                                            <div className="text-[#034D82] text-3xl font-extrabold">{service.metadata.title}</div>
+                                            <div className="truncate text-slate-800 font-semibold text-xl">{service.metadata.description}</div>
                                         </div>
                                     </div>
                                     {/* <div class="border mx-2"></div> */}
-                                    <div className="flex whitespace-pre-wrap self-start font-medium">
-                                        <div>Duration:
-                                            <span className="font-light"> {service.duration} Days</span>
+                                    <div className="flex whitespace-pre-wrap self-start font-medium text-slate-800">
+                                        <div className="mr-2">Duration:
+                                            <span className="font-light"> {service.duration} days</span>
                                         </div>
-                                        {<span> | </span>}
 
-                                        <div className="flex items-center">Sold:
+                                        <div className="flex items-center mr-2">Sold:
                                             <span className="font-light mx-1">
                                                 {
                                                     service.sold ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
                                                 }
                                             </span>
                                         </div>
-                                        {<span> | </span>}
 
-                                        <div className="flex items-center">On Sale:
+                                        <div className="flex items-center mr-2">On Sale:
                                             <span className="font-light mx-1">
                                                 {
                                                     service.on_sale ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
                                                 }
                                             </span>
                                         </div>
-                                        {<span> | </span>}
 
-                                        <div className="flex items-center">On Dispute:
+                                        <div className="flex items-center mr-2">On Dispute:
                                             <span className="font-light mx-1">
                                                 {
                                                     service.on_dispute ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
@@ -207,23 +204,23 @@ export default function Service() {
                                     </div>
                                 </div>
 
-                                <div className="font-light text-sm items-center mt-1 whitespace-pre-wrap">
-                                    <div className="whitespace-pre-wrap">
-                                        <div><span className="font-semibold">Creador: </span>{service.creator_id}</div>
+                                <div className="font-light items-center mt-1 whitespace-pre-wrap text-lg text-slate-800">
+                                    <div className="whitespace-pre-wrap flex">
+                                        <div className="mr-3"><span className="font-semibold">Creador: </span>{service.creator_id}</div>
                                         <div><span className="font-semibold">Dueño: </span>{service.actual_owner}</div>
                                     </div>
 
-                                    <div className=" text-sm flex items-center">
-                                        {service.metadata.price}
+                                    <div className="text-lg flex items-center">
+                                        <span className="font-semibold">Price</span>: {service.metadata.price}
                                         <img className="w-[26px]" src={require("../../assets/logo-black.svg")}></img>
                                     </div>
                                 </div>
                                 {
                                     service.sold &&
-                                    <>
-                                        <div className="text font-bold text-gray-800 mb-4">Momento de compra {dateToString(service.buy_moment)}</div>
-                                        <div className="text font-bold text-gray-800 mb-4">Terminara el {timeLeftService(service.buy_moment)}</div>
-                                    </>
+                                    <div className="mt-4 flex">
+                                        <div className="text font-bold text-gray-800 mb-2 mr-3">Momento de compra {dateToString(service.buy_moment)}</div>
+                                        <div className="text font-bold text-gray-800">Terminara el {timeLeftService(service.buy_moment)}</div>
+                                    </div>
                                 }
                             </div>
                             <div className="border-2 rounded-lg shadow-md px-6 py-4 mt-4">

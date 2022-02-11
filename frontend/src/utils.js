@@ -7,13 +7,12 @@ import contractsAccounts from "./contractsAccounts.json"
 const marketplaceConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.MARKETPLACE_CONTRACT)
 const mediatorConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.MEDIATOR_CONTRACT)
 const ftConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.FT_CONTRACT)
+const salesConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.SALES_CONTRACT)
+const refConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.REF_CONTRACT)
 
 // Initialize contract & set global variables
 export async function initContract() {
   let keystore = new keyStores.BrowserLocalStorageKeyStore();
-  marketplaceConfig.keyStore = keystore;
-  mediatorConfig.keyStore = keystore;
-  ftConfig.keyStore = keystore;
  
   // Initialize connection to the NEAR testnet
   const near = await connect(Object.assign({ deps: { keyStore: keystore } }, marketplaceConfig))
@@ -89,6 +88,27 @@ export async function initContract() {
     sender: ftConfig.contractName
   })
 
+  window.contract4 = await new Contract(window.walletConnection.account(), salesConfig.contractName, {
+    viewMethods: [
+      "verify_sale_finished"
+    ],
+    changeMethods: [
+      "withdraw",
+      "buy_ft"
+    ],
+    sender: salesConfig.contractName
+  })
+  //BJT_PER_NEAR = 1000
+
+  window.contract5 = await new Contract(window.walletConnection.account(), refConfig.contractName, {
+    viewMethods: [
+      "get_return",
+    ],
+    changeMethods: [],
+    sender: refConfig.contractName
+  })
+
+  // nft storage
   window.nftStorageClient = new NFTStorage({ token: String(process.env.NFT_STORAGE_API_KEY) })
 }
 
@@ -336,6 +356,18 @@ export async function getMaxJurors() {
 export async function getBalanceOf(account) {
   try {
     return await window.contract3.get_balance_of({account: account})
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function buyFT(amount) {
+  try {
+    let amt = utils.format.parseNearAmount(String(amount));
+    return await window.contract4.buy_ft({}, "300000000000000", amt)
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)

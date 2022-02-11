@@ -1,5 +1,6 @@
 import { utils } from "near-api-js";
 import React, { useEffect, useState } from "react";
+import BuyJobsCoinDialog from "../components/BuyJobsCoinDialog";
 
 import SkeletonLoaderService from "../components/SkeletonLoaderService"
 import { getBalanceOf } from "../utils";
@@ -8,11 +9,22 @@ export default function MyTokens() {
     const [loading, setLoading] = useState(true)
     const [jobsCoinBalance, setJobsCoinBalance] = useState(0)
     const [nearBalance, setNearBalance] = useState(0)
+    let [isOpen, setIsOpen] = useState(false)
+
     useEffect(async () => {
-        setJobsCoinBalance(utils.format.formatNearAmount(await getBalanceOf(window.accountId), 8))
+        const b = (await getBalanceOf(window.accountId)).toLocaleString().replaceAll(".", "");
+        setJobsCoinBalance(utils.format.formatNearAmount(b, 8))
         setNearBalance(utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available, 4))
         setLoading(false)
     }, [])
+
+    function closeModal() {
+        setIsOpen(false)
+    }
+
+    function openModal() {
+        setIsOpen(true)
+    }
 
     return (
         <div className="m-8 w-full">
@@ -59,45 +71,6 @@ export default function MyTokens() {
                                 }
                             </div>
                         </div>
-                        {/* <div className="flex">
-                            <div className="mr-4">
-                            </div>
-                            <div>
-                                <div className="my-2">
-                                    {
-                                        loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                        ) : (
-                                            <div>{jobsCoinBalance}</div>
-                                        )
-                                    }
-                                </div>
-                                <div className="my-2">
-                                    {
-                                        loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                        ) : (
-                                            <div>{nearBalance}</div>
-                                        )
-                                    }
-                                </div>
-                                <div className="my-2">
-                                    {
-                                        loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                        ) : (
-                                            <div>{"aaa"}</div>
-                                        )
-                                    }
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
                 </div>
 
@@ -110,7 +83,7 @@ export default function MyTokens() {
                             <button
                                 className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
                                 onClick={() => {
-                                    window.open("https://testnet.ref.finance/", "_blank")
+                                    openModal()
                                 }}
                             >
                                 Compra
@@ -186,6 +159,7 @@ export default function MyTokens() {
                     }
                 </div>
             </div>
+            <BuyJobsCoinDialog closeModal={closeModal} isOpen={isOpen} openModal={openModal} />
         </div>
     )
 }

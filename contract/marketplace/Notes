@@ -39,3 +39,6 @@ near view $MA_ID get_user_service_id '{"account_id": "'$ID'"}' --accountId $MA_I
 near view $MA_ID get_total_services '{}' --accountId $MA_ID
 
 near view $MA_ID get_services '{"from_index":, "limit": }'
+
+
+near view exchange.ref-dev.testnet get_pool '{"pool_id":347}' --accountId stolkerve4.testnet
