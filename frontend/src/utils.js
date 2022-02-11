@@ -70,7 +70,7 @@ export async function initContract() {
     sender: mediatorConfig.contractName
   })
 
-  window.contract3 = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
+  window.contract3 = await new Contract(window.walletConnection.account(), ftConfig.contractName, {
     viewMethods: [
       "get_total_supply",
       "get_balance_of",

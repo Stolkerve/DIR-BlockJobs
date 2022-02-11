@@ -9,8 +9,7 @@ export default function MyTokens() {
     const [jobsCoinBalance, setJobsCoinBalance] = useState(0)
     const [nearBalance, setNearBalance] = useState(0)
     useEffect(async () => {
-        //await getBalanceOf(window.accountId)
-        setJobsCoinBalance(0)
+        setJobsCoinBalance(utils.format.formatNearAmount(await getBalanceOf(window.accountId), 8))
         setNearBalance(utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available, 4))
         setLoading(false)
     }, [])
@@ -22,11 +21,46 @@ export default function MyTokens() {
                 <div className="shadow-md border-2 rounded-md whitespace-pre-wrap p-4 w-fit">
                     <div className="text-2xl font-bold text-gray-800 mb-2 text-center">Tokens </div>
                     <div className="text-lg font-bold text-gray-800">
-                        <div className="flex">
+                        <div class="grid grid-cols-2 grid-flow-row auto-rows-min">
+                            <img className="my-2 w-[32px]" src={require("../../assets/dai-2.svg")}></img>
+                            <div className="self-center">
+                                {
+                                    loading ? (
+                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
+                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
+                                        </svg>
+                                    ) : (
+                                        <div>{jobsCoinBalance}</div>
+                                    )
+                                }
+                            </div>
+                            <img className="my-2 w-[32px]" src={require("../../assets/logo-black.svg")}></img>
+                            <div className="self-center">
+                                {
+                                    loading ? (
+                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
+                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
+                                        </svg>
+                                    ) : (
+                                        <div>{nearBalance}</div>
+                                    )
+                                }
+                            </div>
+                            <img className="my-2 w-[32px]" src={require("../../assets/daii.svg")}></img>
+                            <div className="self-center">
+                                {
+                                    loading ? (
+                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
+                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
+                                        </svg>
+                                    ) : (
+                                        <div>{0}</div>
+                                    )
+                                }
+                            </div>
+                        </div>
+                        {/* <div className="flex">
                             <div className="mr-4">
-                                <img className="my-2 w-[32px]" src={require("../../assets/dai-2.svg")}></img>
-                                <img className="my-2 w-[32px]" src={require("../../assets/logo-black.svg")}></img>
-                                <img className="my-2 w-[32px]" src={require("../../assets/daii.svg")}></img>
                             </div>
                             <div>
                                 <div className="my-2">
@@ -63,7 +97,7 @@ export default function MyTokens() {
                                     }
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -79,7 +113,7 @@ export default function MyTokens() {
                                     window.open("https://testnet.ref.finance/", "_blank")
                                 }}
                             >
-                                🤑 Compra 🤑
+                                Compra
                             </button>
                             <button
                                 className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
@@ -87,13 +121,23 @@ export default function MyTokens() {
                                     window.open("https://testnet.ref.finance/", "_blank")
                                 }}
                             >
-                                🤑 Trade 🤑
+                                Trade
                             </button>
                             <button
                                 className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-
+                                onClick={() => {
+                                    window.open("https://wallet.testnet.near.org/send-money", "_blank")
+                                }}
                             >
-                                🤑 Transferir 🤑
+                                Transferir
+                            </button>
+                            <button
+                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+                                onClick={() => {
+                                    window.open("https://wallet.testnet.near.org/receive-money", "_blank")
+                                }}
+                            >
+                                Recibir
                             </button>
                         </div>
                     </div>
@@ -134,7 +178,7 @@ export default function MyTokens() {
                     {
                         [0, 1, 2, 3, 4, 5].map((v, i) => {
                             return (
-                                <div key={v.id} className="my-6">
+                                <div key={i} className="my-6">
                                     <SkeletonLoaderService />
                                 </div>
                             )

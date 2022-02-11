@@ -11,6 +11,9 @@ import UserProfile from "../components/UserProfile";
 import SkeletonLoaderService from "../components/SkeletonLoaderService";
 import SkeletonLoaderProfile from "../components/SkeletonLoaderProfile";
 
+import {ImCross, ImCheckmark} from "react-icons/im"
+import { useNavigate } from "react-router-dom";
+
 import { useGlobalState } from "../state";
 
 export default function Service() {
@@ -21,8 +24,8 @@ export default function Service() {
     let [loadingReclaimService, setLoadingReclaimService] = useState(false)
     let [isOpen, setIsOpen] = useState(false)
     const params = useParams();
-    
-    useEffect(async ()=>{
+    const navigate = useNavigate()
+    useEffect(async () => {
         let loadingService = true
         let loadingUser = true
 
@@ -44,38 +47,38 @@ export default function Service() {
             setLoading(false)
         }
     }, [])
-    
+
     const handleBuyService = async () => {
         const userBalance = utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available)
-        
+
         if (service.metadata.price < userBalance) {
             const amount = utils.format.parseNearAmount(String(service.metadata.price))
             console.log(amount)
             await buyService(service.id, amount)
             return
         }
-        
+
         toast.error("No tienes suficientes fondos para adquirir este servicio")
     }
 
     const closeModal = () => {
         setIsOpen(false)
     }
-    
+
     const openModal = () => {
         setIsOpen(true)
     }
-    
+
     const dateToString = (date) => {
         let d = new Date(Math.round(date / 1000000)).toLocaleDateString()
         return d
     }
-    
+
     const timeLeftService = (sold_moment) => {
         // let s = new Date(Math.round((sold_moment) / 1000000)) - clock
         let s = new Date(Math.round((sold_moment) / 1000000))
         s.setDate(s.getDate() + service.duration)
-        return s.getDate() + "/" + (s.getMonth() + 1) + "/" + s.getFullYear() + "  (" +  s.getHours() + ":" + s.getMinutes() + ":" + s.getSeconds() + ")";
+        return s.getDate() + "/" + (s.getMonth() + 1) + "/" + s.getFullYear() + "  (" + s.getHours() + ":" + s.getMinutes() + ":" + s.getSeconds() + ")";
     }
 
     const handleReclainService = async () => {
@@ -100,16 +103,16 @@ export default function Service() {
     return (
         <div className="">
             {
-                service ? 
-                ((service.actual_owner == window.accountId) && (service.creator_id == window.accountId) && (!service.sold) && isUserCreated) ? (
-                    <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} service={service}/>
-                ) : ((service.actual_owner == window.accountId) && (service.creator_id != window.accountId) && (service.sold) && isUserCreated) ? (
-                    <CreateDisputeDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} serviceId={service.id}/>
-                ) : (
-                    <></>
-                ): (
-                    <></>
-                )
+                service ?
+                    ((service.actual_owner == window.accountId) && (service.creator_id == window.accountId) && (!service.sold) && isUserCreated) ? (
+                        <CreateServiceDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} service={service} />
+                    ) : ((service.actual_owner == window.accountId) && (service.creator_id != window.accountId) && (service.sold) && isUserCreated) ? (
+                        <CreateDisputeDialog isOpen={isOpen} closeModal={closeModal} openModal={openModal} serviceId={service.id} />
+                    ) : (
+                        <></>
+                    ) : (
+                        <></>
+                    )
             }
             <div className="m-8">
                 {
@@ -153,8 +156,68 @@ export default function Service() {
                                 )
                             }
                             <div className="border-2 rounded-lg px-6 py-4 shadow-md mt-4">
-                                <div className="text-2xl font-bold text-gray-800 mb-4">Servicio</div>
-                                <ServicesCard service={service}/>
+                                <div className="flex justify-between">
+                                    <div className="flex self-baseline">
+                                        {
+                                            service.metadata.icon ? (
+                                                <img className="w-32 h-32 rounded-full mr-4 object-cover" src={service.metadata.icon} />
+                                            ) :
+                                                (
+                                                    <></>
+                                                )
+
+                                        }
+                                        <div>
+                                            <div className="text-[#034D82] text-4xl font-extrabold">{service.metadata.title}</div>
+                                            <div className="truncate text-slate-700">{service.metadata.description}</div>
+                                        </div>
+                                    </div>
+                                    {/* <div class="border mx-2"></div> */}
+                                    <div className="flex whitespace-pre-wrap self-start font-medium">
+                                        <div>Duration:
+                                            <span className="font-light"> {service.duration} Days</span>
+                                        </div>
+                                        {<span> | </span>}
+
+                                        <div className="flex items-center">Sold:
+                                            <span className="font-light mx-1">
+                                                {
+                                                    service.sold ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
+                                                }
+                                            </span>
+                                        </div>
+                                        {<span> | </span>}
+
+                                        <div className="flex items-center">On Sale:
+                                            <span className="font-light mx-1">
+                                                {
+                                                    service.on_sale ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
+                                                }
+                                            </span>
+                                        </div>
+                                        {<span> | </span>}
+
+                                        <div className="flex items-center">On Dispute:
+                                            <span className="font-light mx-1">
+                                                {
+                                                    service.on_dispute ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="font-light text-sm items-center mt-1 whitespace-pre-wrap">
+                                    <div className="whitespace-pre-wrap">
+                                        <div><span className="font-semibold">Creador: </span>{service.creator_id}</div>
+                                        <div><span className="font-semibold">Dueño: </span>{service.actual_owner}</div>
+                                    </div>
+
+                                    <div className=" text-sm flex items-center">
+                                        {service.metadata.price}
+                                        <img className="w-[26px]" src={require("../../assets/logo-black.svg")}></img>
+                                    </div>
+                                </div>
                                 {
                                     service.sold &&
                                     <>
