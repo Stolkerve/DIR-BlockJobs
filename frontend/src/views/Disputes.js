@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DisputeCard from "../components/DisputeCard";
+import DisputesFilter from "../components/DisputesFilter";
 import SkeletonLoaderDispute from "../components/SkeletonLoaderDispute";
 import { getDisputes, getMaxJurors } from "../utils";
 
@@ -34,16 +35,23 @@ export default function Disputes() {
                         }
                     </div>
                 ) : (
-                    <div>
-                        {
-                            disputes.map((v, i) => {
-                                return (
-                                    <div className="mb-4">
-                                        <DisputeCard key={v.id} dispute={v} maxJurors={maxJurors} />
-                                    </div>
-                                )
-                            })
-                        }
+                    <div className="flex flex-row">
+                        <div className="relative">
+                            <DisputesFilter />
+                        </div>
+                        <div className="mx-auto">
+                            <div className="border-2 shadow-md rounded-lg px-8 py-8 mt-4">
+                                {
+                                    disputes.map((v, i) => {
+                                        return (
+                                            <div className="mb-4">
+                                                <DisputeCard key={v.id} dispute={v} maxJurors={maxJurors} />
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
                     </div>
                 )
             }

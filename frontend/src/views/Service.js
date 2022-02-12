@@ -90,7 +90,7 @@ export default function Service() {
             console.log("Hora correcta")
         }
         else {
-            await reclaimServiceTest(service.id)
+            await reclaimService(service.id)
             location.reload();
         }
     }

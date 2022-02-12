@@ -13,7 +13,7 @@ export default function MyTokens() {
 
     useEffect(async () => {
         const b = (await getBalanceOf(window.accountId)).toLocaleString().replaceAll(".", "");
-        setJobsCoinBalance(utils.format.formatNearAmount(b, 8))
+        setJobsCoinBalance(utils.format.formatNearAmount(b, 4))
         setNearBalance(utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available, 4))
         setLoading(false)
     }, [])

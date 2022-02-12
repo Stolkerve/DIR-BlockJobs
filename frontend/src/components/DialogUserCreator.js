@@ -1,6 +1,4 @@
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
-
-import { utils } from "near-api-js";
 import Select from 'react-select'
 import { toast } from "react-toastify"
 import { Transition, Dialog } from '@headlessui/react'

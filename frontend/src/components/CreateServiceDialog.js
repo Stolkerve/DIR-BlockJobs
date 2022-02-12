@@ -1,34 +1,39 @@
-import React, {Fragment, useEffect, useState} from "react"
-
+import React, { Fragment, useEffect, useState } from "react"
 import { utils } from "near-api-js";
-
 import { Transition, Dialog } from '@headlessui/react'
-
+import AsyncSelect from 'react-select/async';
 import Select from 'react-select';
 import { toast } from "react-toastify";
+
+import categoriesData from "../../assets/categoriesData.json"
+import tokensData from "../../assets/tokensData.json"
+
 // import makeAnimated from 'react-select/animated';
 
 import { mintService, updateService } from "../utils";
 
-export default function CreateServiceDialog({ isOpen, closeModal, openModal, service}) {
+export default function CreateServiceDialog({ isOpen, closeModal, openModal, service }) {
     const [loadingPicture, setLoadingPicture] = useState(false)
     const [titleService, setTitleService] = useState(service ? service.metadata.title : "")
     const [descriptionService, setDescriptionService] = useState(service ? service.metadata.description : "")
-    const [categoriesService, setCategoriesService] = useState("")
+    const [categoriesService, setCategoriesService] = useState(service ? JSON.parse(service.metadata.categories) : null)
     const [iconServiceFile, setIconServiceFile] = useState(null)
     const [priceService, setPriceService] = useState(service ? service.metadata.price : 0)
     const [durationService, setDurationService] = useState(service ? service.duration : 0)
     const [amountOfServices, setAmountOfServicesService] = useState(0)
 
-    // useEffect(() => {
-    //     console.log(service)
-    // }, [])
-
-    const options = [
-        { value: 'Chocolate', label: 'Prueba' },
-        { value: 'Strawberry', label: 'Prueba' },
-        { value: 'Vanilla', label: 'Prueba' }
-    ]
+    const filterCategories = (inputValue) => {
+        return categoriesData.filter((i) =>
+          i.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+      };
+      
+    const promiseOptions = (inputValue) =>
+    new Promise((resolve) => {
+        setTimeout(() => {
+        resolve(filterCategories(inputValue));
+        }, 1000);
+    });
 
     const handleOnChangeDuration = (e) => {
         const final = Number(e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1'))
@@ -137,9 +142,19 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                     className="mb-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-[#27C0EF]"
                                 ></textarea>
 
-                                <label className="text-gray-700 text-sm font-semibold">
-                                    Imagen
-                                </label>
+                                <label className="text-gray-700 text-sm font-semibold">Categorias</label>
+                                <AsyncSelect className="max-h-[50px]" cacheOptions defaultOptions isMulti value={categoriesService} onChange={(value) => { setCategoriesService(value) }} loadOptions={promiseOptions}/>
+
+                                <div className="mt-2">
+                                    <label className="text-gray-700 text-sm font-semibold mt-2">Metodo de pago</label>
+                                    <Select className="w-auto" options={tokensData}/>
+                                </div>
+
+                                <div className="mt-2">
+                                    <label className="text-gray-700 text-sm font-semibold mt-2">
+                                        Imagen
+                                    </label>
+                                </div>
                                 <div>
                                     <input
                                         accept="image/*"
@@ -151,68 +166,54 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                     />
                                 </div>
 
-                                <label className="text-gray-700 text-sm font-semibold">
-                                    Categorias
-                                </label>
-                                <div>
-                                    <Select
-                                        closeMenuOnSelect={false}
-                                        // components={animatedComponents}
-                                        isMulti
-                                        options={options}
-                                        className="react-select" classNamePrefix="react-select"
-                                    />
-                                </div>
-
                                 <div className="flex flex-row mb-2">
                                     {
-
                                         !service ?
-                                        [
-                                            { title: "Duracion (dias)", value: durationService, action: handleOnChangeDuration, counter: handleCounter, value: durationService, setter: setDurationService },
-                                            { title: "Cantidad", value: amountOfServices, action: handleOnChangeAmount, counter: handleCounter, value: amountOfServices, setter: setAmountOfServicesService },
-                                            { title: "Precio (NEARS)", value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
-                                        ].map((v, i) => {
-                                            return (
-                                                <div className="h-auto w-32 mr-4" key={i}>
-                                                    <label className="w-full text-gray-700 text-sm font-semibold">{v.title}
-                                                    </label>
-                                                    <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
-                                                        <button className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={() => { v.counter(-1, v.value, v.setter) }}>
-                                                            <span className="m-auto text-2xl font-thin">−</span>
-                                                        </button>
-                                                        <input className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
-                                                            value={v.value} onChange={v.action}
-                                                        ></input>
-                                                        <button className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={() => { v.counter(1, v.value, v.setter) }}>
-                                                            <span className="m-auto text-2xl font-thin">+</span>
-                                                        </button>
+                                            [
+                                                { title: "Duracion (dias)", value: durationService, action: handleOnChangeDuration, counter: handleCounter, value: durationService, setter: setDurationService },
+                                                { title: "Cantidad", value: amountOfServices, action: handleOnChangeAmount, counter: handleCounter, value: amountOfServices, setter: setAmountOfServicesService },
+                                                { title: "Precio (NEARS)", value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
+                                            ].map((v, i) => {
+                                                return (
+                                                    <div className="h-auto w-32 mr-4" key={i}>
+                                                        <label className="w-full text-gray-700 text-sm font-semibold">{v.title}
+                                                        </label>
+                                                        <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+                                                            <button className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={() => { v.counter(-1, v.value, v.setter) }}>
+                                                                <span className="m-auto text-2xl font-thin">−</span>
+                                                            </button>
+                                                            <input className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
+                                                                value={v.value} onChange={v.action}
+                                                            ></input>
+                                                            <button className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={() => { v.counter(1, v.value, v.setter) }}>
+                                                                <span className="m-auto text-2xl font-thin">+</span>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        }) : 
-                                        [
-                                            { title: "Duracion (dias)", value: durationService, action: handleOnChangeDuration, counter: handleCounter, value: durationService, setter: setDurationService },
-                                            { title: "Precio (NEARS)", value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
-                                        ].map((v, i) => {
-                                            return (
-                                                <div className="h-auto w-32 mr-4" key={i}>
-                                                    <label className="w-full text-gray-700 text-sm font-semibold">{v.title}
-                                                    </label>
-                                                    <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
-                                                        <button className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={() => { v.counter(-1, v.value, v.setter) }}>
-                                                            <span className="m-auto text-2xl font-thin">−</span>
-                                                        </button>
-                                                        <input className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700"
-                                                            value={v.value} onChange={v.action}
-                                                        ></input>
-                                                        <button className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={() => { v.counter(1, v.value, v.setter) }}>
-                                                            <span className="m-auto text-2xl font-thin">+</span>
-                                                        </button>
+                                                )
+                                            }) :
+                                            [
+                                                { title: "Duracion (dias)", value: durationService, action: handleOnChangeDuration, counter: handleCounter, value: durationService, setter: setDurationService },
+                                                { title: "Precio (NEARS)", value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
+                                            ].map((v, i) => {
+                                                return (
+                                                    <div className="h-auto w-32 mr-4" key={i}>
+                                                        <label className="w-full text-gray-700 text-sm font-semibold">{v.title}
+                                                        </label>
+                                                        <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+                                                            <button className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={() => { v.counter(-1, v.value, v.setter) }}>
+                                                                <span className="m-auto text-2xl font-thin">−</span>
+                                                            </button>
+                                                            <input className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700"
+                                                                value={v.value} onChange={v.action}
+                                                            ></input>
+                                                            <button className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={() => { v.counter(1, v.value, v.setter) }}>
+                                                                <span className="m-auto text-2xl font-thin">+</span>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })
+                                                )
+                                            })
                                     }
                                 </div>
 
@@ -233,6 +234,10 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                 {
                                                     ok: descriptionService.length > 0,
                                                     msg: "Falta la descripcion"
+                                                },
+                                                {
+                                                    ok: categoriesService.length > 0,
+                                                    msg: "Falta categorias"
                                                 },
                                                 {
                                                     ok: iconServiceFile != null,
@@ -279,7 +284,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                 description: descriptionService,
                                                 icon: service ? service.metadata.icon : "",
                                                 price: priceService,
-                                                categories: categoriesService,
+                                                categories: JSON.stringify(categoriesService.map((v) => v.value)),
                                             }
                                             try {
                                                 let finalValidatorMsg = ""
@@ -293,7 +298,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
 
                                                 if (finalOk) {
                                                     if (iconServiceFile) {
-                                                        if (iconServiceFile.size < ((1024 ** 1024 ) * 5)) {
+                                                        if (iconServiceFile.size < ((1024 ** 1024) * 5)) {
                                                             setLoadingPicture(true)
                                                             const metadata = await window.nftStorageClient.store({
                                                                 name: iconServiceFile.name,
@@ -310,7 +315,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                             toast.error("No se puede subir archivos mayores de 5MB")
                                                         }
                                                     }
-                                                        
+
                                                     console.log(serviceMetadata)
                                                     if (!service) {
                                                         await mintService(serviceMetadata, amountOfServices, durationService, amt)
