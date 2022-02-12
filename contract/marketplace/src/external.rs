@@ -8,7 +8,7 @@ trait FungibleTokenReceiver {
 
 #[near_bindgen]
 impl FungibleTokenReceiver for Marketplace {
-    fn ft_on_transfer(&mut self, sender_id: AccountId, amount: U128, msg: String) -> PromiseOrValue<U128> {
+    fn ft_on_transfer(&mut self, _sender_id: AccountId, _amount: U128, _msg: String) -> PromiseOrValue<U128> {
         PromiseOrValue::Value(U128(0))
     }
 }
@@ -118,4 +118,5 @@ pub trait ExtSelf {
 #[ext_contract(ext_contract)]
 trait ExtContract {
     fn ft_transfer(&mut self, receiver_id: AccountId, amount: U128, memo: Option<String>);
+    fn internal_transfer(&mut self, sender_id:AccountId, receiver_id: AccountId, amount: U128, memo: Option<String>);
 }
