@@ -32,15 +32,15 @@ pub struct Service {
     pub creator_id: AccountId,
     pub actual_owner: AccountId,
     pub employers_account_ids: HashSet<AccountId>,
-    // Dias que va a durar el trabajo ofrecido 
+    // Dias que va a durar el trabajo ofrecido.
     pub duration: u16,
-    // Uso de timestamp para fijar momento de compra
+    // Uso de timestamp para fijar momento de compra.
     pub buy_moment: u64,
-    // Determinar si esta en manos del profesional (false) o de un empleador (true)
+    // Determinar si esta en manos del profesional (false) o de un empleador (true).
     pub sold: bool,
-    // Determinar si esta en venta
+    // Determinar si esta en venta.
     pub on_sale: bool,
-    // Determinar si esta en disputa
+    // Determinar si esta en disputa.
     pub on_dispute: bool,
 }
 
@@ -261,10 +261,9 @@ impl Marketplace {
                 service.metadata.price.into(),
                 None,
                 &token, ONE_YOCTO, GAS_FT_TRANSFER
-            // )
-            // .then(ext_self::on_buy_service(
-            //     service_id,
-            //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+            ).then(ext_self::on_buy_service(
+                service_id,
+                &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
             );
         };
 

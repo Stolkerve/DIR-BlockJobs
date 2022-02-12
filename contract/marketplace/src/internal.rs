@@ -67,7 +67,7 @@ pub(crate) fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
 //     Promise::new(account_id).transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE)
 // }
 
-
+#[near_bindgen]
 impl Marketplace {
 
     /******************************/
