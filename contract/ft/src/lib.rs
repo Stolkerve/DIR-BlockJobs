@@ -12,7 +12,7 @@ use near_sdk::{env, log, near_bindgen, AccountId, Balance,
 
 near_sdk::setup_alloc!();
 
-const DECIMALS: Balance = 1_000_000_000_000_000_000_000_000; 
+const DECIMALS: Balance = 1_000_000_000_000_000_000; 
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -56,7 +56,7 @@ impl Token {
                 icon: Some(IMAGE_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
-                decimals: 24,
+                decimals: 18,
             },
             sales_contract,
         )
@@ -128,7 +128,7 @@ impl Token {
         true
     }
 
-    pub fn transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
+    pub fn ft_transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
         let sender = env::predecessor_account_id();
 
         // self.token.internal_register_account(&to);
@@ -262,6 +262,7 @@ impl Token {
     /// 
     pub fn validate_tokens(&self, account_id: AccountId) -> bool {
         let balance = self.get_allowance_of(&account_id);
+        
         if balance < self.min_blocked_amount {
             env::panic(b"Insufficient balance");
         } else {

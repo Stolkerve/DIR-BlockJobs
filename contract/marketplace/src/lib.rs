@@ -23,6 +23,7 @@ const GAS_FT_TRANSFER: Gas = 70_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
+const FT_DECIMALS: Balance = 1_000_000_000_000_000_000;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -258,7 +259,7 @@ impl Marketplace {
             // Realizar el pago en el token indicado.
             ext_contract::ft_transfer(
                 self.contract_me.clone(),
-                service.metadata.price.into(),
+                (service.metadata.price*FT_DECIMALS).into(),
                 None,
                 &token, ONE_YOCTO, GAS_FT_TRANSFER
             ).then(ext_self::on_buy_service(
