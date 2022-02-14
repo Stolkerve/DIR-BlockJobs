@@ -13,8 +13,8 @@ impl FungibleTokenReceiver for Marketplace {
     }
 }
 
+#[near_bindgen]
 impl Marketplace {
-
     /// Callback luego de realizarse el pago que queda inicialmente bloqueado.
     pub fn on_buy_service(&mut self, service_id: u64) -> Service {
         match env::promise_result(0) {
@@ -43,6 +43,7 @@ impl Marketplace {
             PromiseResult::NotReady => env::panic(b"Callback faild"),
         };
     }
+
 
     /// Callback desde contrato mediador.
     /// 
@@ -118,5 +119,4 @@ pub trait ExtSelf {
 #[ext_contract(ext_contract)]
 trait ExtContract {
     fn ft_transfer(&mut self, receiver_id: AccountId, amount: U128, memo: Option<String>);
-    fn internal_transfer(&mut self, sender_id:AccountId, receiver_id: AccountId, amount: U128, memo: Option<String>);
 }
