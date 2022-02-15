@@ -32,7 +32,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
     new Promise((resolve) => {
         setTimeout(() => {
         resolve(filterCategories(inputValue));
-        }, 1000);
+        }, 500);
     });
 
     const handleOnChangeDuration = (e) => {

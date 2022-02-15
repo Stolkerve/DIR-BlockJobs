@@ -12,10 +12,6 @@
         "label": "Diseño de logotipos"
     },
     {
-        "value": "Entrada de datos",
-        "label": "Entrada de datos"
-    },
-    {
         "value": "Redacción de artículos",
         "label": "Redacción de artículos"
     },
@@ -52,16 +48,12 @@
         "label": "HTML5"
     },
     {
-        "value": "Programación en C++",
-        "label": "Programación en C++"
+        "value": "C++",
+        "label": "C++"
     },
     {
         "value": "English (UK) Translator",
         "label": "English (UK) Translator"
-    },
-    {
-        "value": "Ingeniería",
-        "label": "Ingeniería"
     },
     {
         "value": "Diseño 3D",
@@ -84,10 +76,6 @@
         "label": "Amazon Web Services"
     },
     {
-        "value": "iPad",
-        "label": "iPad"
-    },
-    {
         "value": "Solidity",
         "label": "Solidity"
     },
@@ -106,10 +94,6 @@
     {
         "value": "Contabilidad",
         "label": "Contabilidad"
-    },
-    {
-        "value": "Identidad corporativa",
-        "label": "Identidad corporativa"
     },
     {
         "value": "UX / User Experience",
@@ -216,16 +200,8 @@
         "label": "Content Creation"
     },
     {
-        "value": "Manejo de email",
-        "label": "Manejo de email"
-    },
-    {
         "value": "Desarrollador de aplicaciones",
         "label": "Desarrollador de aplicaciones"
-    },
-    {
-        "value": "Salesforce.com",
-        "label": "Salesforce.com"
     },
     {
         "value": "2D Animation",
@@ -268,20 +244,8 @@
         "label": "Diseño de íconos"
     },
     {
-        "value": "Data Extraction",
-        "label": "Data Extraction"
-    },
-    {
-        "value": "Investigación en internet",
-        "label": "Investigación en internet"
-    },
-    {
         "value": "Payment Gateway Integration",
         "label": "Payment Gateway Integration"
-    },
-    {
-        "value": "Call Center",
-        "label": "Call Center"
     },
     {
         "value": "Trading",
@@ -302,10 +266,6 @@
     {
         "value": "Gráficos en movimiento",
         "label": "Gráficos en movimiento"
-    },
-    {
-        "value": "Joomla",
-        "label": "Joomla"
     },
     {
         "value": "Diseño publicitario",
@@ -344,10 +304,6 @@
         "label": "Video Streaming"
     },
     {
-        "value": "Chat Operation",
-        "label": "Chat Operation"
-    },
-    {
         "value": "Docker",
         "label": "Docker"
     },
@@ -366,10 +322,6 @@
     {
         "value": "jQuery",
         "label": "jQuery"
-    },
-    {
-        "value": "Social Media Post Design",
-        "label": "Social Media Post Design"
     },
     {
         "value": "Adobe Premiere Pro",
@@ -392,10 +344,6 @@
         "label": "Pintura"
     },
     {
-        "value": "Comentarios",
-        "label": "Comentarios"
-    },
-    {
         "value": "Difusión de video",
         "label": "Difusión de video"
     },
@@ -412,20 +360,8 @@
         "label": "Ruby"
     },
     {
-        "value": "Gestión telefónica",
-        "label": "Gestión telefónica"
-    },
-    {
-        "value": "Verilog / VHDL",
-        "label": "Verilog / VHDL"
-    },
-    {
         "value": "Character Illustration",
         "label": "Character Illustration"
-    },
-    {
-        "value": "Gestión de productos",
-        "label": "Gestión de productos"
     },
     {
         "value": "Tailandés",
@@ -442,22 +378,6 @@
     {
         "value": "Microsoft Exchange",
         "label": "Microsoft Exchange"
-    },
-    {
-        "value": "Travel Ready",
-        "label": "Travel Ready"
-    },
-    {
-        "value": "Video Tours",
-        "label": "Video Tours"
-    },
-    {
-        "value": "Xamarin",
-        "label": "Xamarin"
-    },
-    {
-        "value": "Customer Experience",
-        "label": "Customer Experience"
     },
     {
         "value": "Film Production",
@@ -492,10 +412,6 @@
         "label": "Selenium"
     },
     {
-        "value": "User Experience Research",
-        "label": "User Experience Research"
-    },
-    {
         "value": "Adobe Lightroom",
         "label": "Adobe Lightroom"
     },
@@ -512,24 +428,12 @@
         "label": "LESS/Sass/SCSS"
     },
     {
-        "value": "Paralegal Services",
-        "label": "Paralegal Services"
-    },
-    {
         "value": "Powershell",
         "label": "Powershell"
     },
     {
-        "value": "Carga de videos",
-        "label": "Carga de videos"
-    },
-    {
         "value": "Xero",
         "label": "Xero"
-    },
-    {
-        "value": "Automation",
-        "label": "Automation"
     },
     {
         "value": "Desktop Application",
@@ -556,10 +460,6 @@
         "label": "Software Engineering"
     },
     {
-        "value": "Impuestos",
-        "label": "Impuestos"
-    },
-    {
         "value": "User Story Writing",
         "label": "User Story Writing"
     },
@@ -576,10 +476,6 @@
         "label": "Realidad aumentada"
     },
     {
-        "value": "Business Strategy",
-        "label": "Business Strategy"
-    },
-    {
         "value": "Diseño conceptual",
         "label": "Diseño conceptual"
     },
@@ -590,10 +486,6 @@
     {
         "value": "Consolas de juegos",
         "label": "Consolas de juegos"
-    },
-    {
-        "value": "Hadoop",
-        "label": "Hadoop"
     },
     {
         "value": "Learning Management Systems (LMS)",
@@ -632,24 +524,8 @@
         "label": "Crowdfunding"
     },
     {
-        "value": "Event Management",
-        "label": "Event Management"
-    },
-    {
         "value": "GatsbyJS",
         "label": "GatsbyJS"
-    },
-    {
-        "value": "Diseño industrial",
-        "label": "Diseño industrial"
-    },
-    {
-        "value": "Media Relations",
-        "label": "Media Relations"
-    },
-    {
-        "value": "Lenguajes naturales",
-        "label": "Lenguajes naturales"
     },
     {
         "value": "PCB Design and Layout",
@@ -688,32 +564,8 @@
         "label": "Essay Writing"
     },
     {
-        "value": "Análisis de elementos finitos",
-        "label": "Análisis de elementos finitos"
-    },
-    {
-        "value": "LinkedIn Profile",
-        "label": "LinkedIn Profile"
-    },
-    {
-        "value": "Mecatrónica",
-        "label": "Mecatrónica"
-    },
-    {
         "value": "Network Security",
         "label": "Network Security"
-    },
-    {
-        "value": "Procreate",
-        "label": "Procreate"
-    },
-    {
-        "value": "Cuentos cortos",
-        "label": "Cuentos cortos"
-    },
-    {
-        "value": "Technology Sales",
-        "label": "Technology Sales"
     },
     {
         "value": "Webflow",
@@ -736,28 +588,12 @@
         "label": "Bash Scripting"
     },
     {
-        "value": "ClickFunnels",
-        "label": "ClickFunnels"
-    },
-    {
         "value": "Gráficos generados por ordenador",
         "label": "Gráficos generados por ordenador"
     },
     {
-        "value": "Digital Agency Sales",
-        "label": "Digital Agency Sales"
-    },
-    {
         "value": "Eclipse",
         "label": "Eclipse"
-    },
-    {
-        "value": "Employee Training",
-        "label": "Employee Training"
-    },
-    {
-        "value": "Fashion Consulting",
-        "label": "Fashion Consulting"
     },
     {
         "value": "Firmware",
@@ -772,60 +608,16 @@
         "label": "Intérprete"
     },
     {
-        "value": "Legal Analysis",
-        "label": "Legal Analysis"
-    },
-    {
-        "value": "Local Area Networking",
-        "label": "Local Area Networking"
-    },
-    {
-        "value": "Medical Billing and Coding",
-        "label": "Medical Billing and Coding"
-    },
-    {
-        "value": "NetSuite",
-        "label": "NetSuite"
-    },
-    {
-        "value": "Operations Research",
-        "label": "Operations Research"
-    },
-    {
-        "value": "Prometheus Monitoring",
-        "label": "Prometheus Monitoring"
-    },
-    {
         "value": "Reverse Engineering",
         "label": "Reverse Engineering"
-    },
-    {
-        "value": "Lemas",
-        "label": "Lemas"
-    },
-    {
-        "value": "Technical Recruiter",
-        "label": "Technical Recruiter"
     },
     {
         "value": "Web Crawling",
         "label": "Web Crawling"
     },
     {
-        "value": "A+ Certified IT Technician",
-        "label": "A+ Certified IT Technician"
-    },
-    {
-        "value": "Directorio activo",
-        "label": "Directorio activo"
-    },
-    {
         "value": "API Testing",
         "label": "API Testing"
-    },
-    {
-        "value": "Automovilística",
-        "label": "Automovilística"
     },
     {
         "value": "Traductor de Búlgaro",
@@ -840,36 +632,16 @@
         "label": "Anuncios"
     },
     {
-        "value": "Conversion Rate Optimization",
-        "label": "Conversion Rate Optimization"
-    },
-    {
         "value": "Data Management",
         "label": "Data Management"
-    },
-    {
-        "value": "Educational Research",
-        "label": "Educational Research"
     },
     {
         "value": "Facebook Shops",
         "label": "Facebook Shops"
     },
     {
-        "value": "Publicación en foros",
-        "label": "Publicación en foros"
-    },
-    {
         "value": "Google Apps Scripts",
         "label": "Google Apps Scripts"
-    },
-    {
-        "value": "Investment Banking",
-        "label": "Investment Banking"
-    },
-    {
-        "value": "maquillaje",
-        "label": "maquillaje"
     },
     {
         "value": "MERN Stack",
@@ -882,10 +654,6 @@
     {
         "value": "Oil Painting",
         "label": "Oil Painting"
-    },
-    {
-        "value": "Payment Processing",
-        "label": "Payment Processing"
     },
     {
         "value": "PLC",
@@ -930,14 +698,6 @@
     {
         "value": "3D Rigging",
         "label": "3D Rigging"
-    },
-    {
-        "value": "Ingeniería aeroespacial",
-        "label": "Ingeniería aeroespacial"
-    },
-    {
-        "value": "American Sign Language Translator",
-        "label": "American Sign Language Translator"
     },
     {
         "value": "Apache Maven",
@@ -996,72 +756,8 @@
         "label": "Gamificación"
     },
     {
-        "value": "Estrategia de crecimiento",
-        "label": "Estrategia de crecimiento"
-    },
-    {
-        "value": "Health Plans Digitization",
-        "label": "Health Plans Digitization"
-    },
-    {
-        "value": "Gestión de inventario",
-        "label": "Gestión de inventario"
-    },
-    {
-        "value": "Kickstarter",
-        "label": "Kickstarter"
-    },
-    {
         "value": "Logo Animation",
         "label": "Logo Animation"
-    },
-    {
-        "value": "Medical Translation",
-        "label": "Medical Translation"
-    },
-    {
-        "value": "Neo4j",
-        "label": "Neo4j"
-    },
-    {
-        "value": "Organization Design",
-        "label": "Organization Design"
-    },
-    {
-        "value": "Payment Consulting",
-        "label": "Payment Consulting"
-    },
-    {
-        "value": "Power Automate",
-        "label": "Power Automate"
-    },
-    {
-        "value": "Relaciones públicas",
-        "label": "Relaciones públicas"
-    },
-    {
-        "value": "Salesforce Commerce Cloud",
-        "label": "Salesforce Commerce Cloud"
-    },
-    {
-        "value": "Security",
-        "label": "Security"
-    },
-    {
-        "value": "Shipping Containers",
-        "label": "Shipping Containers"
-    },
-    {
-        "value": "Deportes",
-        "label": "Deportes"
-    },
-    {
-        "value": "Tax Preparation",
-        "label": "Tax Preparation"
-    },
-    {
-        "value": "Umbraco",
-        "label": "Umbraco"
     },
     {
         "value": "Vietnamita",
@@ -1074,10 +770,6 @@
     {
         "value": "2D Drafting",
         "label": "2D Drafting"
-    },
-    {
-        "value": "Academic Medicine",
-        "label": "Academic Medicine"
     },
     {
         "value": "Adobe Experience Manager",
@@ -1116,28 +808,12 @@
         "label": "Bosnian Translator"
     },
     {
-        "value": "Business Analytics",
-        "label": "Business Analytics"
-    },
-    {
-        "value": "Catalog Design",
-        "label": "Catalog Design"
-    },
-    {
-        "value": "Publicación de anuncios clasificados",
-        "label": "Publicación de anuncios clasificados"
-    },
-    {
         "value": "CNC Programming",
         "label": "CNC Programming"
     },
     {
         "value": "Consulting",
         "label": "Consulting"
-    },
-    {
-        "value": "Criminal Law",
-        "label": "Criminal Law"
     },
     {
         "value": "Digital Electronics",
@@ -1148,22 +824,6 @@
         "label": "Electron JS"
     },
     {
-        "value": "Equity Research",
-        "label": "Equity Research"
-    },
-    {
-        "value": "Fashion Writing",
-        "label": "Fashion Writing"
-    },
-    {
-        "value": "Floor Plan",
-        "label": "Floor Plan"
-    },
-    {
-        "value": "Diseño de muebles",
-        "label": "Diseño de muebles"
-    },
-    {
         "value": "GIF Animation",
         "label": "GIF Animation"
     },
@@ -1172,40 +832,8 @@
         "label": "GPS"
     },
     {
-        "value": "Sistemas de calefacción",
-        "label": "Sistemas de calefacción"
-    },
-    {
-        "value": "Ciencias humanas",
-        "label": "Ciencias humanas"
-    },
-    {
-        "value": "iMacros",
-        "label": "iMacros"
-    },
-    {
         "value": "Infrastructure Architecture",
         "label": "Infrastructure Architecture"
-    },
-    {
-        "value": "Interaction Design",
-        "label": "Interaction Design"
-    },
-    {
-        "value": "Interspire",
-        "label": "Interspire"
-    },
-    {
-        "value": "ISM Radio Module",
-        "label": "ISM Radio Module"
-    },
-    {
-        "value": "Klaviyo",
-        "label": "Klaviyo"
-    },
-    {
-        "value": "Logistics",
-        "label": "Logistics"
     },
     {
         "value": "MERN",
@@ -1216,14 +844,6 @@
         "label": "MIDI"
     },
     {
-        "value": "Monday.com",
-        "label": "Monday.com"
-    },
-    {
-        "value": "Nutrición",
-        "label": "Nutrición"
-    },
-    {
         "value": "P2P Network",
         "label": "P2P Network"
     },
@@ -1232,28 +852,8 @@
         "label": "PayPal"
     },
     {
-        "value": "Planning Consulting",
-        "label": "Planning Consulting"
-    },
-    {
-        "value": "Administración de propiedades",
-        "label": "Administración de propiedades"
-    },
-    {
         "value": "Reading Tutoring",
         "label": "Reading Tutoring"
-    },
-    {
-        "value": "Redis",
-        "label": "Redis"
-    },
-    {
-        "value": "Research and Development",
-        "label": "Research and Development"
-    },
-    {
-        "value": "Salesforce CPQ",
-        "label": "Salesforce CPQ"
     },
     {
         "value": "Scientific Writing",
@@ -1264,24 +864,8 @@
         "label": "SEOMoz"
     },
     {
-        "value": "Slack",
-        "label": "Slack"
-    },
-    {
-        "value": "Splunk",
-        "label": "Splunk"
-    },
-    {
-        "value": "Supply Chain",
-        "label": "Supply Chain"
-    },
-    {
         "value": "Systems Engineering",
         "label": "Systems Engineering"
-    },
-    {
-        "value": "Gestión de tiempo",
-        "label": "Gestión de tiempo"
     },
     {
         "value": "VBScript",
@@ -1290,22 +874,6 @@
     {
         "value": "Visual Design",
         "label": "Visual Design"
-    },
-    {
-        "value": "Welding",
-        "label": "Welding"
-    },
-    {
-        "value": "Workday Compensation",
-        "label": "Workday Compensation"
-    },
-    {
-        "value": "Workday Security",
-        "label": "Workday Security"
-    },
-    {
-        "value": "Zendesk",
-        "label": "Zendesk"
     },
     {
         "value": "Academic Administration",
@@ -1332,10 +900,6 @@
         "label": "Apollo"
     },
     {
-        "value": "Instalación de aparato",
-        "label": "Instalación de aparato"
-    },
-    {
         "value": "ARM",
         "label": "ARM"
     },
@@ -1344,36 +908,12 @@
         "label": "Autodesk"
     },
     {
-        "value": "Balaustradas",
-        "label": "Balaustradas"
-    },
-    {
-        "value": "Battery Charging and Batteries",
-        "label": "Battery Charging and Batteries"
-    },
-    {
         "value": "Biomedical Engineering",
         "label": "Biomedical Engineering"
     },
     {
-        "value": "Lluvia de ideas",
-        "label": "Lluvia de ideas"
-    },
-    {
-        "value": "Building Regulations",
-        "label": "Building Regulations"
-    },
-    {
         "value": "Calculus",
         "label": "Calculus"
-    },
-    {
-        "value": "Reparación y colocación de alfombras",
-        "label": "Reparación y colocación de alfombras"
-    },
-    {
-        "value": "CCTV Repair",
-        "label": "CCTV Repair"
     },
     {
         "value": "Chromium",
@@ -1436,24 +976,8 @@
         "label": "Facebook SDK"
     },
     {
-        "value": "Feng Shui",
-        "label": "Feng Shui"
-    },
-    {
-        "value": "Finale / Sibelius",
-        "label": "Finale / Sibelius"
-    },
-    {
-        "value": "Food Safety",
-        "label": "Food Safety"
-    },
-    {
         "value": "Genetic Algorithms",
         "label": "Genetic Algorithms"
-    },
-    {
-        "value": "Global Tax Compliance",
-        "label": "Global Tax Compliance"
     },
     {
         "value": "Google Earth",
@@ -1474,10 +998,6 @@
     {
         "value": "HyperMesh",
         "label": "HyperMesh"
-    },
-    {
-        "value": "Immigration Law",
-        "label": "Immigration Law"
     },
     {
         "value": "Intros & Outros",
@@ -1628,10 +1148,6 @@
         "label": "Tally Definition Language"
     },
     {
-        "value": "Tax Management Consulting",
-        "label": "Tax Management Consulting"
-    },
-    {
         "value": "Technical Drawing / Tech Pack",
         "label": "Technical Drawing / Tech Pack"
     },
@@ -1640,20 +1156,12 @@
         "label": "Telecom Sales"
     },
     {
-        "value": "Toon Boom",
-        "label": "Toon Boom"
-    },
-    {
         "value": "Underwriting",
         "label": "Underwriting"
     },
     {
         "value": "Veeam",
         "label": "Veeam"
-    },
-    {
-        "value": "Visa Ready Resources",
-        "label": "Visa Ready Resources"
     },
     {
         "value": "VoiceXML",
@@ -1668,56 +1176,12 @@
         "label": "Wireless Sensors"
     },
     {
-        "value": "XenForo",
-        "label": "XenForo"
-    },
-    {
-        "value": "Trabajo y remoción de jardín",
-        "label": "Trabajo y remoción de jardín"
-    },
-    {
         "value": "2D Layout",
         "label": "2D Layout"
     },
     {
         "value": "A&P",
         "label": "A&P"
-    },
-    {
-        "value": "A/R analysis",
-        "label": "A/R analysis"
-    },
-    {
-        "value": "A/V editing",
-        "label": "A/V editing"
-    },
-    {
-        "value": "AAUS Scientific Diver",
-        "label": "AAUS Scientific Diver"
-    },
-    {
-        "value": "Abatement",
-        "label": "Abatement"
-    },
-    {
-        "value": "Ableton",
-        "label": "Ableton"
-    },
-    {
-        "value": "ABO Certified",
-        "label": "ABO Certified"
-    },
-    {
-        "value": "AC3",
-        "label": "AC3"
-    },
-    {
-        "value": "Accelerator Physics",
-        "label": "Accelerator Physics"
-    },
-    {
-        "value": "Actimize",
-        "label": "Actimize"
     },
     {
         "value": "Adobe Air",
@@ -1736,26 +1200,6 @@
         "label": "Adobe Pagemaker"
     },
     {
-        "value": "Affinity Designer",
-        "label": "Affinity Designer"
-    },
-    {
-        "value": "Airbnb",
-        "label": "Airbnb"
-    },
-    {
-        "value": "Aircraft Structures",
-        "label": "Aircraft Structures"
-    },
-    {
-        "value": "Airspace Management",
-        "label": "Airspace Management"
-    },
-    {
-        "value": "Akka",
-        "label": "Akka"
-    },
-    {
         "value": "Album Design",
         "label": "Album Design"
     },
@@ -1764,44 +1208,12 @@
         "label": "Algebra Tutoring"
     },
     {
-        "value": "Alibre Design",
-        "label": "Alibre Design"
-    },
-    {
         "value": "Alternative Rock",
         "label": "Alternative Rock"
     },
     {
-        "value": "Alumni Relations",
-        "label": "Alumni Relations"
-    },
-    {
-        "value": "Amazon Fire",
-        "label": "Amazon Fire"
-    },
-    {
-        "value": "Anaplan",
-        "label": "Anaplan"
-    },
-    {
-        "value": "Annuals",
-        "label": "Annuals"
-    },
-    {
-        "value": "Anritsu Certified",
-        "label": "Anritsu Certified"
-    },
-    {
         "value": "Anthropology",
         "label": "Anthropology"
-    },
-    {
-        "value": "Antitrust Economics",
-        "label": "Antitrust Economics"
-    },
-    {
-        "value": "Appfolio",
-        "label": "Appfolio"
     },
     {
         "value": "iBooks Author de Apple",
@@ -1976,10 +1388,6 @@
         "label": "CSS2"
     },
     {
-        "value": "Custom Duties Tax",
-        "label": "Custom Duties Tax"
-    },
-    {
         "value": "cxf",
         "label": "cxf"
     },
@@ -2036,10 +1444,6 @@
         "label": "Ember.js"
     },
     {
-        "value": "Employment Tax",
-        "label": "Employment Tax"
-    },
-    {
         "value": "Equity Transaction Advice",
         "label": "Equity Transaction Advice"
     },
@@ -2052,22 +1456,6 @@
         "label": "Excavación"
     },
     {
-        "value": "Expatriate Tax",
-        "label": "Expatriate Tax"
-    },
-    {
-        "value": "Fact Checking",
-        "label": "Fact Checking"
-    },
-    {
-        "value": "Finance Transformation",
-        "label": "Finance Transformation"
-    },
-    {
-        "value": "Fire Alarm Design",
-        "label": "Fire Alarm Design"
-    },
-    {
         "value": "FLANN",
         "label": "FLANN"
     },
@@ -2076,16 +1464,8 @@
         "label": "Flatbed Trucking"
     },
     {
-        "value": "Revestimiento del suelo",
-        "label": "Revestimiento del suelo"
-    },
-    {
         "value": "Forensic Consulting",
         "label": "Forensic Consulting"
-    },
-    {
-        "value": "Marcos y armazones",
-        "label": "Marcos y armazones"
     },
     {
         "value": "Freight",
@@ -2260,10 +1640,6 @@
         "label": "Manuscripts"
     },
     {
-        "value": "Media and Entertainment Tax",
-        "label": "Media and Entertainment Tax"
-    },
-    {
         "value": "Mergers and Acquisitions",
         "label": "Mergers and Acquisitions"
     },
@@ -2380,10 +1756,6 @@
         "label": "Product Cover"
     },
     {
-        "value": "Property Tax",
-        "label": "Property Tax"
-    },
-    {
         "value": "PSD2CMS",
         "label": "PSD2CMS"
     },
@@ -2396,64 +1768,12 @@
         "label": "Qi"
     },
     {
-        "value": "Plataforma de encuestas Qualtrics",
-        "label": "Plataforma de encuestas Qualtrics"
-    },
-    {
-        "value": "Quora",
-        "label": "Quora"
-    },
-    {
-        "value": "RADAR/LIDAR",
-        "label": "RADAR/LIDAR"
-    },
-    {
-        "value": "RAN Call Testing",
-        "label": "RAN Call Testing"
-    },
-    {
-        "value": "Rasch Analysis",
-        "label": "Rasch Analysis"
-    },
-    {
-        "value": "REALbasic",
-        "label": "REALbasic"
-    },
-    {
-        "value": "Redshift",
-        "label": "Redshift"
-    },
-    {
-        "value": "Remote Quality Audit",
-        "label": "Remote Quality Audit"
-    },
-    {
-        "value": "RF Manual Site Survey",
-        "label": "RF Manual Site Survey"
-    },
-    {
-        "value": "Motores de cohetes",
-        "label": "Motores de cohetes"
-    },
-    {
-        "value": "RSS",
-        "label": "RSS"
-    },
-    {
-        "value": "Ryu Controller",
-        "label": "Ryu Controller"
-    },
-    {
         "value": "Samsung",
         "label": "Samsung"
     },
     {
         "value": "SAP Hybris",
         "label": "SAP Hybris"
-    },
-    {
-        "value": "Sarbanes-Oxley (SOX)",
-        "label": "Sarbanes-Oxley (SOX)"
     },
     {
         "value": "Scheme",
@@ -2468,21 +1788,10 @@
         "label": "Escultura"
     },
     {
-        "value": "Security Systems",
-        "label": "Security Systems"
-    },
-    {
-        "value": "Shared Services",
-        "label": "Shared Services"
-    },
-    {
         "value": "Sigrity",
         "label": "Sigrity"
     },
-    {
-        "value": "Site Reliability Engineering",
-        "label": "Site Reliability Engineering"
-    },
+
     {
         "value": "SoC Design",
         "label": "SoC Design"
@@ -2520,68 +1829,8 @@
         "label": "Test"
     },
     {
-        "value": "Ingeniería textil",
-        "label": "Ingeniería textil"
-    },
-    {
-        "value": "Trabajos de Baldosas",
-        "label": "Trabajos de Baldosas"
-    },
-    {
-        "value": "SDK de Tizen para wearables",
-        "label": "SDK de Tizen para wearables"
-    },
-    {
-        "value": "TradeStation",
-        "label": "TradeStation"
-    },
-    {
-        "value": "Transaction Tax",
-        "label": "Transaction Tax"
-    },
-    {
-        "value": "Truck Courier",
-        "label": "Truck Courier"
-    },
-    {
-        "value": "TS/ISO 16949 Audit",
-        "label": "TS/ISO 16949 Audit"
-    },
-    {
-        "value": "TYPO3",
-        "label": "TYPO3"
-    },
-    {
-        "value": "US Taxation",
-        "label": "US Taxation"
-    },
-    {
-        "value": "Van Courier",
-        "label": "Van Courier"
-    },
-    {
         "value": "Vector Calculus",
         "label": "Vector Calculus"
-    },
-    {
-        "value": "Very-large-scale integration (VLSI)",
-        "label": "Very-large-scale integration (VLSI)"
-    },
-    {
-        "value": "Virtuozzo",
-        "label": "Virtuozzo"
-    },
-    {
-        "value": "Vowpal Wabbit",
-        "label": "Vowpal Wabbit"
-    },
-    {
-        "value": "Walking Path Analysis",
-        "label": "Walking Path Analysis"
-    },
-    {
-        "value": "Wealth Management",
-        "label": "Wealth Management"
     },
     {
         "value": "WebOS",
@@ -2598,18 +1847,6 @@
     {
         "value": "Wireless Coverage Assessment",
         "label": "Wireless Coverage Assessment"
-    },
-    {
-        "value": "WMS",
-        "label": "WMS"
-    },
-    {
-        "value": "Wrike",
-        "label": "Wrike"
-    },
-    {
-        "value": "Jabber",
-        "label": "Jabber"
     },
     {
         "value": "XQuery",
@@ -2652,10 +1889,6 @@
         "label": "Marketing en redes sociales"
     },
     {
-        "value": "Mecanografía",
-        "label": "Mecanografía"
-    },
-    {
         "value": "Edición",
         "label": "Edición"
     },
@@ -2680,20 +1913,12 @@
         "label": "Laravel"
     },
     {
-        "value": "Construcción de enlaces",
-        "label": "Construcción de enlaces"
-    },
-    {
         "value": "Escritura técnica",
         "label": "Escritura técnica"
     },
     {
         "value": "Arquitectura",
         "label": "Arquitectura"
-    },
-    {
-        "value": "CAD/CAM",
-        "label": "CAD/CAM"
     },
     {
         "value": "Extracción de datos web",
@@ -2716,20 +1941,8 @@
         "label": "Servicios de audio"
     },
     {
-        "value": "Talento de voz",
-        "label": "Talento de voz"
-    },
-    {
         "value": "Machine Learning (ML)",
         "label": "Machine Learning (ML)"
-    },
-    {
-        "value": "Análisis de negocios",
-        "label": "Análisis de negocios"
-    },
-    {
-        "value": "Diseño de interiores",
-        "label": "Diseño de interiores"
     },
     {
         "value": "Redes sociales",
@@ -2832,18 +2045,6 @@
         "label": "Figma"
     },
     {
-        "value": "Verificación / QA",
-        "label": "Verificación / QA"
-    },
-    {
-        "value": "Diseño de volantes",
-        "label": "Diseño de volantes"
-    },
-    {
-        "value": "Diseño de moda",
-        "label": "Diseño de moda"
-    },
-    {
         "value": "Deep Learning",
         "label": "Deep Learning"
     },
@@ -2896,32 +2097,12 @@
         "label": "Data Scraping"
     },
     {
-        "value": "Intuit QuickBooks",
-        "label": "Intuit QuickBooks"
-    },
-    {
         "value": "Visual Basic para aplicaciones",
         "label": "Visual Basic para aplicaciones"
     },
     {
         "value": "Kotlin",
         "label": "Kotlin"
-    },
-    {
-        "value": "VoIP",
-        "label": "VoIP"
-    },
-    {
-        "value": "Kubernetes",
-        "label": "Kubernetes"
-    },
-    {
-        "value": "Artista de la voz",
-        "label": "Artista de la voz"
-    },
-    {
-        "value": "Drupal",
-        "label": "Drupal"
     },
     {
         "value": "React.js Framework",
@@ -2942,10 +2123,6 @@
     {
         "value": "Japonés",
         "label": "Japonés"
-    },
-    {
-        "value": "Verificación de usabilidad",
-        "label": "Verificación de usabilidad"
     },
     {
         "value": "Facebook Ads",
@@ -2974,10 +2151,6 @@
     {
         "value": "Freelance",
         "label": "Freelance"
-    },
-    {
-        "value": "Mailchimp",
-        "label": "Mailchimp"
     },
     {
         "value": "Tensorflow",
@@ -3104,10 +2277,6 @@
         "label": "Cisco"
     },
     {
-        "value": "Modelaje",
-        "label": "Modelaje"
-    },
-    {
         "value": "Microservices",
         "label": "Microservices"
     },
@@ -3156,16 +2325,8 @@
         "label": "Bubble Developer"
     },
     {
-        "value": "Dropshipping",
-        "label": "Dropshipping"
-    },
-    {
         "value": "Traductor de Finlandés",
         "label": "Traductor de Finlandés"
-    },
-    {
-        "value": "Keyword Research",
-        "label": "Keyword Research"
     },
     {
         "value": "MQL4",
@@ -3182,14 +2343,6 @@
     {
         "value": "Derecho fiscal",
         "label": "Derecho fiscal"
-    },
-    {
-        "value": "Virtuemart",
-        "label": "Virtuemart"
-    },
-    {
-        "value": "Zoho CRM",
-        "label": "Zoho CRM"
     },
     {
         "value": "Assembler",
@@ -3212,44 +2365,16 @@
         "label": "Excel VB Capabilities"
     },
     {
-        "value": "Google Tag Management",
-        "label": "Google Tag Management"
-    },
-    {
-        "value": "Salud",
-        "label": "Salud"
-    },
-    {
         "value": "Microsoft Outlook",
         "label": "Microsoft Outlook"
-    },
-    {
-        "value": "Soporte telefónico",
-        "label": "Soporte telefónico"
     },
     {
         "value": "Investigación científica",
         "label": "Investigación científica"
     },
     {
-        "value": "Formación",
-        "label": "Formación"
-    },
-    {
-        "value": "Inalámbrico",
-        "label": "Inalámbrico"
-    },
-    {
-        "value": "Agile Project Management",
-        "label": "Agile Project Management"
-    },
-    {
         "value": "Big Data",
         "label": "Big Data"
-    },
-    {
-        "value": "Construction",
-        "label": "Construction"
     },
     {
         "value": "Traductor de Checo",
@@ -3262,10 +2387,6 @@
     {
         "value": "Geographical Information System (GIS)",
         "label": "Geographical Information System (GIS)"
-    },
-    {
-        "value": "Jenkins",
-        "label": "Jenkins"
     },
     {
         "value": "Medical Research",
@@ -3312,14 +2433,6 @@
         "label": "Estimation"
     },
     {
-        "value": "estilos de cabello",
-        "label": "estilos de cabello"
-    },
-    {
-        "value": "LinkedIn Recruiting",
-        "label": "LinkedIn Recruiting"
-    },
-    {
         "value": "Music Video",
         "label": "Music Video"
     },
@@ -3364,10 +2477,6 @@
         "label": "Cloud"
     },
     {
-        "value": "Computer Repair",
-        "label": "Computer Repair"
-    },
-    {
         "value": "Docker Compose",
         "label": "Docker Compose"
     },
@@ -3380,10 +2489,6 @@
         "label": "Encryption"
     },
     {
-        "value": "Field Technical Support",
-        "label": "Field Technical Support"
-    },
-    {
         "value": "GameMaker",
         "label": "GameMaker"
     },
@@ -3392,20 +2497,8 @@
         "label": "Hybrid App"
     },
     {
-        "value": "Interviewing",
-        "label": "Interviewing"
-    },
-    {
         "value": "Legal Assistance",
         "label": "Legal Assistance"
-    },
-    {
-        "value": "Manufacturing Engineering",
-        "label": "Manufacturing Engineering"
-    },
-    {
-        "value": "Medical Products",
-        "label": "Medical Products"
     },
     {
         "value": "Neural Networks",
@@ -3420,40 +2513,12 @@
         "label": "Derecho patrimonial"
     },
     {
-        "value": "Revit Architecture",
-        "label": "Revit Architecture"
-    },
-    {
-        "value": "Software Documentation",
-        "label": "Software Documentation"
-    },
-    {
-        "value": "Terraform",
-        "label": "Terraform"
-    },
-    {
-        "value": "WHMCS",
-        "label": "WHMCS"
-    },
-    {
-        "value": "A+ Certified Professional",
-        "label": "A+ Certified Professional"
-    },
-    {
         "value": "Desarrollo ágil",
         "label": "Desarrollo ágil"
     },
     {
-        "value": "Abogado",
-        "label": "Abogado"
-    },
-    {
         "value": "Bing Ads",
         "label": "Bing Ads"
-    },
-    {
-        "value": "Business Management",
-        "label": "Business Management"
     },
     {
         "value": "Chemistry Tutoring",
@@ -3462,10 +2527,6 @@
     {
         "value": "Computer Science Tutoring",
         "label": "Computer Science Tutoring"
-    },
-    {
-        "value": "Counselling and Psychotherapy",
-        "label": "Counselling and Psychotherapy"
     },
     {
         "value": "Digital Product Design",
@@ -3568,22 +2629,6 @@
         "label": "App Store Optimization"
     },
     {
-        "value": "Envío de artículos",
-        "label": "Envío de artículos"
-    },
-    {
-        "value": "Blazor",
-        "label": "Blazor"
-    },
-    {
-        "value": "Instrucción de negocios",
-        "label": "Instrucción de negocios"
-    },
-    {
-        "value": "Carpet Cleaning",
-        "label": "Carpet Cleaning"
-    },
-    {
         "value": "Cloud Networking",
         "label": "Cloud Networking"
     },
@@ -3684,10 +2729,6 @@
         "label": "Plantillas"
     },
     {
-        "value": "Upholstery Cleaning",
-        "label": "Upholstery Cleaning"
-    },
-    {
         "value": "Marketing viral",
         "label": "Marketing viral"
     },
@@ -3698,14 +2739,6 @@
     {
         "value": "3D Drafting",
         "label": "3D Drafting"
-    },
-    {
-        "value": "Account Payables Management",
-        "label": "Account Payables Management"
-    },
-    {
-        "value": "Advanced Business Application Programming (ABAP)",
-        "label": "Advanced Business Application Programming (ABAP)"
     },
     {
         "value": "Alpine JS",
@@ -3916,48 +2949,12 @@
         "label": "Voice Assistance Devices"
     },
     {
-        "value": "Windows 8",
-        "label": "Windows 8"
-    },
-    {
-        "value": "Workday Core HR",
-        "label": "Workday Core HR"
-    },
-    {
-        "value": "Workday Talent & Recruiting",
-        "label": "Workday Talent & Recruiting"
-    },
-    {
         "value": ".NET 5.0/6",
         "label": ".NET 5.0/6"
     },
     {
-        "value": "Academic Publishing",
-        "label": "Academic Publishing"
-    },
-    {
-        "value": "Agency Relationship Management",
-        "label": "Agency Relationship Management"
-    },
-    {
-        "value": "Alarm Management",
-        "label": "Alarm Management"
-    },
-    {
-        "value": "All-Source Analysis",
-        "label": "All-Source Analysis"
-    },
-    {
         "value": "Angular 4",
         "label": "Angular 4"
-    },
-    {
-        "value": "App Reskin",
-        "label": "App Reskin"
-    },
-    {
-        "value": "Reparación de electrodomésticos",
-        "label": "Reparación de electrodomésticos"
     },
     {
         "value": "Asana",
@@ -3980,20 +2977,8 @@
         "label": "Biostatistics"
     },
     {
-        "value": "Albañilería",
-        "label": "Albañilería"
-    },
-    {
-        "value": "Business Catalyst",
-        "label": "Business Catalyst"
-    },
-    {
         "value": "Calculus Tutoring",
         "label": "Calculus Tutoring"
-    },
-    {
-        "value": "Cars, Boats or Vans",
-        "label": "Cars, Boats or Vans"
     },
     {
         "value": "CGI",
@@ -4054,10 +3039,6 @@
     {
         "value": "External Auditing",
         "label": "External Auditing"
-    },
-    {
-        "value": "Family Law",
-        "label": "Family Law"
     },
     {
         "value": "Field Sales",
@@ -4252,10 +3233,6 @@
         "label": "Diseño de tatuajes"
     },
     {
-        "value": "Tax Reporting",
-        "label": "Tax Reporting"
-    },
-    {
         "value": "Technology",
         "label": "Technology"
     },
@@ -4266,10 +3243,6 @@
     {
         "value": "Town Planning",
         "label": "Town Planning"
-    },
-    {
-        "value": "Urban Design",
-        "label": "Urban Design"
     },
     {
         "value": "Señalización para vehículos",
@@ -4544,10 +3517,6 @@
         "label": "Circuit Board Layout"
     },
     {
-        "value": "Tecnologías limpias",
-        "label": "Tecnologías limpias"
-    },
-    {
         "value": "Closer",
         "label": "Closer"
     },
@@ -4588,10 +3557,6 @@
         "label": "Corporate Social Responsibility"
     },
     {
-        "value": "Courier",
-        "label": "Courier"
-    },
-    {
         "value": "Credit Repair",
         "label": "Credit Repair"
     },
@@ -4604,10 +3569,6 @@
         "label": "Customer Retention Marketing"
     },
     {
-        "value": "Protección contra humedad",
-        "label": "Protección contra humedad"
-    },
-    {
         "value": "Data Modeling",
         "label": "Data Modeling"
     },
@@ -4616,24 +3577,12 @@
         "label": "DataLife Engine"
     },
     {
-        "value": "Trabajos de Terraza",
-        "label": "Trabajos de Terraza"
-    },
-    {
         "value": "Development Assessment",
         "label": "Development Assessment"
     },
     {
         "value": "Digital Networking",
         "label": "Digital Networking"
-    },
-    {
-        "value": "Eliminación de desechos",
-        "label": "Eliminación de desechos"
-    },
-    {
-        "value": "Dojo",
-        "label": "Dojo"
     },
     {
         "value": "Draw.io",
@@ -4648,20 +3597,12 @@
         "label": "EBS Finance"
     },
     {
-        "value": "Ecological Consulting",
-        "label": "Ecological Consulting"
-    },
-    {
         "value": "Electronic Data Interchange (EDI)",
         "label": "Electronic Data Interchange (EDI)"
     },
     {
         "value": "Embroidery",
         "label": "Embroidery"
-    },
-    {
-        "value": "Energy and Resource Tax",
-        "label": "Energy and Resource Tax"
     },
     {
         "value": "Ergo",
@@ -4828,52 +3769,12 @@
         "label": "Julia Development"
     },
     {
-        "value": "Keap",
-        "label": "Keap"
-    },
-    {
-        "value": "Kizoa",
-        "label": "Kizoa"
-    },
-    {
-        "value": "Lavado y planchado",
-        "label": "Lavado y planchado"
-    },
-    {
-        "value": "Lettering",
-        "label": "Lettering"
-    },
-    {
-        "value": "Instrucción para la vida",
-        "label": "Instrucción para la vida"
-    },
-    {
-        "value": "LIMS (Laboratory Information Management System)",
-        "label": "LIMS (Laboratory Information Management System)"
-    },
-    {
         "value": "Lisp",
         "label": "Lisp"
     },
     {
         "value": "Live Survey",
         "label": "Live Survey"
-    },
-    {
-        "value": "LoRa",
-        "label": "LoRa"
-    },
-    {
-        "value": "LSAT Tutoring",
-        "label": "LSAT Tutoring"
-    },
-    {
-        "value": "Machinery 50T and over",
-        "label": "Machinery 50T and over"
-    },
-    {
-        "value": "MailerLite",
-        "label": "MailerLite"
     },
     {
         "value": "Managed Analytics",
@@ -4904,28 +3805,8 @@
         "label": "Mobile Repair"
     },
     {
-        "value": "Motorcycle Courier",
-        "label": "Motorcycle Courier"
-    },
-    {
-        "value": "Mule",
-        "label": "Mule"
-    },
-    {
-        "value": "MySpace",
-        "label": "MySpace"
-    },
-    {
-        "value": "nCino",
-        "label": "nCino"
-    },
-    {
         "value": "NgRx",
         "label": "NgRx"
-    },
-    {
-        "value": "Notary Public",
-        "label": "Notary Public"
     },
     {
         "value": "Office Add-ins",
@@ -4952,24 +3833,12 @@
         "label": "Procesamiento paralelo"
     },
     {
-        "value": "Patent Infringement Research",
-        "label": "Patent Infringement Research"
-    },
-    {
-        "value": "Pavimentación",
-        "label": "Pavimentación"
-    },
-    {
         "value": "PC Programming",
         "label": "PC Programming"
     },
     {
         "value": "PeopleSoft",
         "label": "PeopleSoft"
-    },
-    {
-        "value": "Personal Income Tax",
-        "label": "Personal Income Tax"
     },
     {
         "value": "Ingeniería del petróleo",
@@ -5108,14 +3977,6 @@
         "label": "Eslovaco"
     },
     {
-        "value": "Social Security Tax",
-        "label": "Social Security Tax"
-    },
-    {
-        "value": "Soundcloud Promotion",
-        "label": "Soundcloud Promotion"
-    },
-    {
         "value": "Sprout",
         "label": "Sprout"
     },
@@ -5126,10 +3987,6 @@
     {
         "value": "Swahili",
         "label": "Swahili"
-    },
-    {
-        "value": "Tax Centre of Excellence",
-        "label": "Tax Centre of Excellence"
     },
     {
         "value": "Technical Site Audit",
@@ -5496,14 +4353,6 @@
         "label": "Traductor de Francés"
     },
     {
-        "value": "Búsqueda financiera",
-        "label": "Búsqueda financiera"
-    },
-    {
-        "value": "Tarjetas de presentación",
-        "label": "Tarjetas de presentación"
-    },
-    {
         "value": "SEO Writing",
         "label": "SEO Writing"
     },
@@ -5516,16 +4365,8 @@
         "label": "Branding"
     },
     {
-        "value": "Análisis financiero",
-        "label": "Análisis financiero"
-    },
-    {
         "value": "J2EE",
         "label": "J2EE"
-    },
-    {
-        "value": "Marketing de afiliados",
-        "label": "Marketing de afiliados"
     },
     {
         "value": "Oracle",
@@ -5542,10 +4383,6 @@
     {
         "value": "Windows Server",
         "label": "Windows Server"
-    },
-    {
-        "value": "Derecho laboral",
-        "label": "Derecho laboral"
     },
     {
         "value": "XML",
@@ -6008,10 +4845,6 @@
         "label": "Financial Consulting"
     },
     {
-        "value": "Limpieza de la casa",
-        "label": "Limpieza de la casa"
-    },
-    {
         "value": "Ingeniería industrial",
         "label": "Ingeniería industrial"
     },
@@ -6224,20 +5057,12 @@
         "label": "Data Governance"
     },
     {
-        "value": "Domestic Cleaning",
-        "label": "Domestic Cleaning"
-    },
-    {
         "value": "ERP Software",
         "label": "ERP Software"
     },
     {
         "value": "Diagramas de flujo",
         "label": "Diagramas de flujo"
-    },
-    {
-        "value": "Furniture Removalist",
-        "label": "Furniture Removalist"
     },
     {
         "value": "Google PageSpeed Insights",
@@ -6256,16 +5081,8 @@
         "label": "Java Technical Architecture"
     },
     {
-        "value": "Iluminación",
-        "label": "Iluminación"
-    },
-    {
         "value": "Matte Painting",
         "label": "Matte Painting"
-    },
-    {
-        "value": "Motivational Speaking",
-        "label": "Motivational Speaking"
     },
     {
         "value": "Oracle APEX",
@@ -6300,20 +5117,8 @@
         "label": "Sound Effects"
     },
     {
-        "value": "Empresas nuevas",
-        "label": "Empresas nuevas"
-    },
-    {
         "value": "Test Strategy Writing",
         "label": "Test Strategy Writing"
-    },
-    {
-        "value": "Urban Planning",
-        "label": "Urban Planning"
-    },
-    {
-        "value": "Bodas",
-        "label": "Bodas"
     },
     {
         "value": "Yii2",
@@ -6516,10 +5321,6 @@
         "label": "Solutions Architecture"
     },
     {
-        "value": "Redes de almancenamiento",
-        "label": "Redes de almancenamiento"
-    },
-    {
         "value": "Swing (Java)",
         "label": "Swing (Java)"
     },
@@ -6536,116 +5337,12 @@
         "label": "Virtual Machines"
     },
     {
-        "value": "Water Treatment",
-        "label": "Water Treatment"
-    },
-    {
         "value": "API de Windows",
         "label": "API de Windows"
     },
     {
-        "value": "Workday Financials",
-        "label": "Workday Financials"
-    },
-    {
-        "value": "WPF",
-        "label": "WPF"
-    },
-    {
-        "value": "Abaqus",
-        "label": "Abaqus"
-    },
-    {
-        "value": "Planificación y compra de avisos",
-        "label": "Planificación y compra de avisos"
-    },
-    {
-        "value": "Airfield Lighting",
-        "label": "Airfield Lighting"
-    },
-    {
-        "value": "Alarm Systems",
-        "label": "Alarm Systems"
-    },
-    {
-        "value": "Alternative Investments",
-        "label": "Alternative Investments"
-    },
-    {
-        "value": "Apache Hadoop",
-        "label": "Apache Hadoop"
-    },
-    {
-        "value": "Appcelerator Titanium",
-        "label": "Appcelerator Titanium"
-    },
-    {
-        "value": "ArchiCAD",
-        "label": "ArchiCAD"
-    },
-    {
-        "value": "Eliminación de amianto",
-        "label": "Eliminación de amianto"
-    },
-    {
-        "value": "Automotive Engineering",
-        "label": "Automotive Engineering"
-    },
-    {
-        "value": "Bash",
-        "label": "Bash"
-    },
-    {
-        "value": "Billing",
-        "label": "Billing"
-    },
-    {
-        "value": "Bluetooth Module",
-        "label": "Bluetooth Module"
-    },
-    {
-        "value": "Budgeting and Forecasting",
-        "label": "Budgeting and Forecasting"
-    },
-    {
-        "value": "Inteligencia comercial",
-        "label": "Inteligencia comercial"
-    },
-    {
-        "value": "Capital Markets",
-        "label": "Capital Markets"
-    },
-    {
-        "value": "CATIA",
-        "label": "CATIA"
-    },
-    {
-        "value": "Change Management",
-        "label": "Change Management"
-    },
-    {
-        "value": "Ciencias del clima",
-        "label": "Ciencias del clima"
-    },
-    {
         "value": "Coding Lesson",
         "label": "Coding Lesson"
-    },
-    {
-        "value": "Compensation Consulting",
-        "label": "Compensation Consulting"
-    },
-    {
-        "value": "Computer Aided Manufacturing",
-        "label": "Computer Aided Manufacturing"
-    },
-    {
-        "value": "Contract Management",
-        "label": "Contract Management"
-    },
-    {
-        "value": "Corporate Income Tax",
-        "label": "Corporate Income Tax"
     },
     {
         "value": "D3.js",
@@ -6668,24 +5365,12 @@
         "label": "Energía"
     },
     {
-        "value": "Environmental Consulting",
-        "label": "Environmental Consulting"
-    },
-    {
         "value": "Esports",
         "label": "Esports"
     },
     {
         "value": "Reconocimiento facial",
         "label": "Reconocimiento facial"
-    },
-    {
-        "value": "Fastlane",
-        "label": "Fastlane"
-    },
-    {
-        "value": "Field Sales Management",
-        "label": "Field Sales Management"
     },
     {
         "value": "Financial Sales",
@@ -6700,34 +5385,6 @@
         "label": "Geología"
     },
     {
-        "value": "Google Canvas",
-        "label": "Google Canvas"
-    },
-    {
-        "value": "Graphical Network Simulator-3",
-        "label": "Graphical Network Simulator-3"
-    },
-    {
-        "value": "Manitas",
-        "label": "Manitas"
-    },
-    {
-        "value": "Hive",
-        "label": "Hive"
-    },
-    {
-        "value": "HVAC",
-        "label": "HVAC"
-    },
-    {
-        "value": "Instalación IKEA",
-        "label": "Instalación IKEA"
-    },
-    {
-        "value": "Instrumentación",
-        "label": "Instrumentación"
-    },
-    {
         "value": "Investigative Journalism",
         "label": "Investigative Journalism"
     },
@@ -6736,36 +5393,8 @@
         "label": "Japanese Teaching"
     },
     {
-        "value": "JMeter",
-        "label": "JMeter"
-    },
-    {
-        "value": "JUnit",
-        "label": "JUnit"
-    },
-    {
-        "value": "Kibana",
-        "label": "Kibana"
-    },
-    {
         "value": "Language Tutoring",
         "label": "Language Tutoring"
-    },
-    {
-        "value": "Legal Review",
-        "label": "Legal Review"
-    },
-    {
-        "value": "Local Interconnect Network (LIN)",
-        "label": "Local Interconnect Network (LIN)"
-    },
-    {
-        "value": "Mailwizz",
-        "label": "Mailwizz"
-    },
-    {
-        "value": "Masonry",
-        "label": "Masonry"
     },
     {
         "value": "Microbiología",
@@ -6776,36 +5405,8 @@
         "label": "Modding"
     },
     {
-        "value": "MuleSoft",
-        "label": "MuleSoft"
-    },
-    {
-        "value": "Nintex Workflow",
-        "label": "Nintex Workflow"
-    },
-    {
         "value": "Offline Conversion Facebook API Integration",
         "label": "Offline Conversion Facebook API Integration"
-    },
-    {
-        "value": "Oracle Primavera",
-        "label": "Oracle Primavera"
-    },
-    {
-        "value": "Embalaje y envío",
-        "label": "Embalaje y envío"
-    },
-    {
-        "value": "Pashto",
-        "label": "Pashto"
-    },
-    {
-        "value": "Phoenix",
-        "label": "Phoenix"
-    },
-    {
-        "value": "Recolección",
-        "label": "Recolección"
     },
     {
         "value": "Poeta",
@@ -6820,10 +5421,6 @@
         "label": "Predictive Analytics"
     },
     {
-        "value": "Programmatic Advertising",
-        "label": "Programmatic Advertising"
-    },
-    {
         "value": "Quantum",
         "label": "Quantum"
     },
@@ -6832,28 +5429,12 @@
         "label": "Red Hat"
     },
     {
-        "value": "Research Drone Footages",
-        "label": "Research Drone Footages"
-    },
-    {
         "value": "Rotoscoping",
         "label": "Rotoscoping"
     },
     {
         "value": "SAP PI",
         "label": "SAP PI"
-    },
-    {
-        "value": "Sencha / YahooUI",
-        "label": "Sencha / YahooUI"
-    },
-    {
-        "value": "Costura",
-        "label": "Costura"
-    },
-    {
-        "value": "Smart Lighting",
-        "label": "Smart Lighting"
     },
     {
         "value": "Social Impact",
@@ -6872,14 +5453,6 @@
         "label": "T-SQL (Transact Structures Query Language)"
     },
     {
-        "value": "Tax Compliance",
-        "label": "Tax Compliance"
-    },
-    {
-        "value": "TeamCity",
-        "label": "TeamCity"
-    },
-    {
         "value": "Technology Consulting",
         "label": "Technology Consulting"
     },
@@ -6888,20 +5461,8 @@
         "label": "Thermal Analysis"
     },
     {
-        "value": "Transfer Pricing",
-        "label": "Transfer Pricing"
-    },
-    {
-        "value": "Value Based Healthcare",
-        "label": "Value Based Healthcare"
-    },
-    {
         "value": "Virtual Staging",
         "label": "Virtual Staging"
-    },
-    {
-        "value": "Comercio visual",
-        "label": "Comercio visual"
     },
     {
         "value": "Weblogic",
@@ -6916,52 +5477,12 @@
         "label": "XAML"
     },
     {
-        "value": "XSLT",
-        "label": "XSLT"
-    },
-    {
-        "value": "Yii",
-        "label": "Yii"
-    },
-    {
-        "value": "802.11",
-        "label": "802.11"
-    },
-    {
-        "value": "A-GPS",
-        "label": "A-GPS"
-    },
-    {
-        "value": "A/R Management",
-        "label": "A/R Management"
-    },
-    {
-        "value": "A/V Systems",
-        "label": "A/V Systems"
-    },
-    {
-        "value": "ABAP List Viewer (ALV)",
-        "label": "ABAP List Viewer (ALV)"
-    },
-    {
-        "value": "ABIS",
-        "label": "ABIS"
-    },
-    {
-        "value": "Ableton Push",
-        "label": "Ableton Push"
-    },
-    {
         "value": "ABR Designation",
         "label": "ABR Designation"
     },
     {
         "value": "Academic Advising",
         "label": "Academic Advising"
-    },
-    {
-        "value": "Accounting Tutoring",
-        "label": "Accounting Tutoring"
     },
     {
         "value": "Ada programming",
@@ -6980,22 +5501,6 @@
         "label": "Adobe LiveCycle Designer"
     },
     {
-        "value": "Aerial Technical Site Survey",
-        "label": "Aerial Technical Site Survey"
-    },
-    {
-        "value": "Agronomía",
-        "label": "Agronomía"
-    },
-    {
-        "value": "Aircraft Propulsion",
-        "label": "Aircraft Propulsion"
-    },
-    {
-        "value": "Airframe",
-        "label": "Airframe"
-    },
-    {
         "value": "AJAX Frameworks",
         "label": "AJAX Frameworks"
     },
@@ -7004,108 +5509,28 @@
         "label": "Albanian Translator"
     },
     {
-        "value": "Alerting",
-        "label": "Alerting"
-    },
-    {
         "value": "Algolia",
         "label": "Algolia"
-    },
-    {
-        "value": "AlphaCAM",
-        "label": "AlphaCAM"
-    },
-    {
-        "value": "Altium NEXUS",
-        "label": "Altium NEXUS"
-    },
-    {
-        "value": "Alzheimers Care",
-        "label": "Alzheimers Care"
-    },
-    {
-        "value": "Analog",
-        "label": "Analog"
-    },
-    {
-        "value": "Animoto",
-        "label": "Animoto"
-    },
-    {
-        "value": "Anomaly Detection",
-        "label": "Anomaly Detection"
-    },
-    {
-        "value": "Antenna Measurements",
-        "label": "Antenna Measurements"
-    },
-    {
-        "value": "Antique Restoration",
-        "label": "Antique Restoration"
     },
     {
         "value": "Apache Solr",
         "label": "Apache Solr"
     },
     {
-        "value": "Apple Compressor",
-        "label": "Apple Compressor"
-    },
-    {
-        "value": "Apple Motion",
-        "label": "Apple Motion"
-    },
-    {
         "value": "ArangoDB",
         "label": "ArangoDB"
-    },
-    {
-        "value": "Monitoreo de software Argus",
-        "label": "Monitoreo de software Argus"
-    },
-    {
-        "value": "Art Installation",
-        "label": "Art Installation"
-    },
-    {
-        "value": "ASIC",
-        "label": "ASIC"
     },
     {
         "value": "Asset Management",
         "label": "Asset Management"
     },
     {
-        "value": "AutoML",
-        "label": "AutoML"
-    },
-    {
-        "value": "Avid",
-        "label": "Avid"
-    },
-    {
-        "value": "AWS Textract",
-        "label": "AWS Textract"
-    },
-    {
         "value": "backbone.js",
         "label": "backbone.js"
     },
     {
-        "value": "Balsamiq",
-        "label": "Balsamiq"
-    },
-    {
-        "value": "Base Station Equipment Management",
-        "label": "Base Station Equipment Management"
-    },
-    {
         "value": "BeautifulSoup",
         "label": "BeautifulSoup"
-    },
-    {
-        "value": "Bill of Materials (BOM) Evaluation",
-        "label": "Bill of Materials (BOM) Evaluation"
     },
     {
         "value": "Bioinformatics",
@@ -7124,40 +5549,8 @@
         "label": "Book Review"
     },
     {
-        "value": "Braintree",
-        "label": "Braintree"
-    },
-    {
-        "value": "Buildbox",
-        "label": "Buildbox"
-    },
-    {
-        "value": "Business Valuation",
-        "label": "Business Valuation"
-    },
-    {
-        "value": "Capture NX2",
-        "label": "Capture NX2"
-    },
-    {
-        "value": "Cocheras",
-        "label": "Cocheras"
-    },
-    {
-        "value": "Caspio",
-        "label": "Caspio"
-    },
-    {
-        "value": "Ceiling Installation",
-        "label": "Ceiling Installation"
-    },
-    {
         "value": "Cellular Modules",
         "label": "Cellular Modules"
-    },
-    {
-        "value": "Channel Sales",
-        "label": "Channel Sales"
     },
     {
         "value": "Chinese Tutoring",
@@ -7168,124 +5561,24 @@
         "label": "CircuitMaker"
     },
     {
-        "value": "ClickBank",
-        "label": "ClickBank"
-    },
-    {
-        "value": "Clothesline Installation",
-        "label": "Clothesline Installation"
-    },
-    {
         "value": "Cloud Sales",
         "label": "Cloud Sales"
-    },
-    {
-        "value": "Cocoa Touch",
-        "label": "Cocoa Touch"
-    },
-    {
-        "value": "Cognos",
-        "label": "Cognos"
-    },
-    {
-        "value": "COMPASS",
-        "label": "COMPASS"
-    },
-    {
-        "value": "Component Engineering",
-        "label": "Component Engineering"
-    },
-    {
-        "value": "Trabajo de concreto",
-        "label": "Trabajo de concreto"
-    },
-    {
-        "value": "Containerization",
-        "label": "Containerization"
     },
     {
         "value": "Cordana",
         "label": "Cordana"
     },
     {
-        "value": "Corporate Transactions",
-        "label": "Corporate Transactions"
-    },
-    {
-        "value": "Cover Letter",
-        "label": "Cover Letter"
-    },
-    {
-        "value": "Creo",
-        "label": "Creo"
-    },
-    {
-        "value": "CubeCart",
-        "label": "CubeCart"
-    },
-    {
-        "value": "Customs and Global Trade Services",
-        "label": "Customs and Global Trade Services"
-    },
-    {
-        "value": "Dapper",
-        "label": "Dapper"
-    },
-    {
-        "value": "Data Modernization",
-        "label": "Data Modernization"
-    },
-    {
         "value": "DaVinci Resolve",
         "label": "DaVinci Resolve"
-    },
-    {
-        "value": "DEMAT",
-        "label": "DEMAT"
     },
     {
         "value": "Development Consulting",
         "label": "Development Consulting"
     },
     {
-        "value": "Digital Strategy",
-        "label": "Digital Strategy"
-    },
-    {
-        "value": "DO-178 Certification",
-        "label": "DO-178 Certification"
-    },
-    {
-        "value": "DOP Management",
-        "label": "DOP Management"
-    },
-    {
-        "value": "Drilling Engineering",
-        "label": "Drilling Engineering"
-    },
-    {
         "value": "Dthreejs",
         "label": "Dthreejs"
-    },
-    {
-        "value": "EBS Procurement",
-        "label": "EBS Procurement"
-    },
-    {
-        "value": "ECPay",
-        "label": "ECPay"
-    },
-    {
-        "value": "Elixir",
-        "label": "Elixir"
-    },
-    {
-        "value": "Emerging Accounts",
-        "label": "Emerging Accounts"
-    },
-    {
-        "value": "Emprendimiento",
-        "label": "Emprendimiento"
     },
     {
         "value": "Erlang",
@@ -7296,20 +5589,12 @@
         "label": "Eventbrite"
     },
     {
-        "value": "Executive Compensation",
-        "label": "Executive Compensation"
-    },
-    {
         "value": "Fabric Printing Design",
         "label": "Fabric Printing Design"
     },
     {
         "value": "Fedora",
         "label": "Fedora"
-    },
-    {
-        "value": "Financial Services Tax",
-        "label": "Financial Services Tax"
     },
     {
         "value": "FIX API",
@@ -7324,28 +5609,8 @@
         "label": "Flex Circuit Design"
     },
     {
-        "value": "Flyscreen Installation",
-        "label": "Flyscreen Installation"
-    },
-    {
-        "value": "Forth",
-        "label": "Forth"
-    },
-    {
-        "value": "Freedom to Operate Search",
-        "label": "Freedom to Operate Search"
-    },
-    {
         "value": "Game Testing",
         "label": "Game Testing"
-    },
-    {
-        "value": "GarageBand",
-        "label": "GarageBand"
-    },
-    {
-        "value": "General Part Load",
-        "label": "General Part Load"
     },
     {
         "value": "GeoJSON",
@@ -7364,116 +5629,28 @@
         "label": "Graphics Programming"
     },
     {
-        "value": "Grease Monkey",
-        "label": "Grease Monkey"
-    },
-    {
-        "value": "Guidewire",
-        "label": "Guidewire"
-    },
-    {
         "value": "Handlebars.js",
         "label": "Handlebars.js"
-    },
-    {
-        "value": "Headlines",
-        "label": "Headlines"
-    },
-    {
-        "value": "Heron",
-        "label": "Heron"
-    },
-    {
-        "value": "Hiab Crane Trucking",
-        "label": "Hiab Crane Trucking"
-    },
-    {
-        "value": "Organización del hogar",
-        "label": "Organización del hogar"
-    },
-    {
-        "value": "Hot Water Installation",
-        "label": "Hot Water Installation"
     },
     {
         "value": "HTC Vive",
         "label": "HTC Vive"
     },
     {
-        "value": "IBM Bluemix",
-        "label": "IBM Bluemix"
-    },
-    {
-        "value": "IBM Integration bus",
-        "label": "IBM Integration bus"
-    },
-    {
-        "value": "Herramienta de transformación para IBM Websphere",
-        "label": "Herramienta de transformación para IBM Websphere"
-    },
-    {
-        "value": "iMovie",
-        "label": "iMovie"
-    },
-    {
-        "value": "Indirect Tax",
-        "label": "Indirect Tax"
-    },
-    {
-        "value": "Intercom",
-        "label": "Intercom"
-    },
-    {
         "value": "Irish",
         "label": "Irish"
-    },
-    {
-        "value": "ISV Sales",
-        "label": "ISV Sales"
-    },
-    {
-        "value": "J2ME",
-        "label": "J2ME"
-    },
-    {
-        "value": "Jamstack",
-        "label": "Jamstack"
     },
     {
         "value": "Javascript ES6",
         "label": "Javascript ES6"
     },
     {
-        "value": "Jingles & Intros",
-        "label": "Jingles & Intros"
-    },
-    {
-        "value": "K2",
-        "label": "K2"
-    },
-    {
-        "value": "Keyshot",
-        "label": "Keyshot"
-    },
-    {
         "value": "Knockout.js",
         "label": "Knockout.js"
     },
     {
-        "value": "Cortando el césped",
-        "label": "Cortando el césped"
-    },
-    {
         "value": "Level Design",
         "label": "Level Design"
-    },
-    {
-        "value": "Life Science Sales",
-        "label": "Life Science Sales"
-    },
-    {
-        "value": "Line Haulage",
-        "label": "Line Haulage"
     },
     {
         "value": "Litecoin",
@@ -7484,76 +5661,12 @@
         "label": "Livestock"
     },
     {
-        "value": "Lost-wax Casting",
-        "label": "Lost-wax Casting"
-    },
-    {
-        "value": "M&A Tax",
-        "label": "M&A Tax"
-    },
-    {
-        "value": "Machinery Equipment Hire",
-        "label": "Machinery Equipment Hire"
-    },
-    {
-        "value": "Makerbot",
-        "label": "Makerbot"
-    },
-    {
-        "value": "Managed Care",
-        "label": "Managed Care"
-    },
-    {
-        "value": "Material Coating",
-        "label": "Material Coating"
-    },
-    {
         "value": "Memoir Writing",
         "label": "Memoir Writing"
     },
     {
         "value": "MeteorJS",
         "label": "MeteorJS"
-    },
-    {
-        "value": "Microsoft Hololens",
-        "label": "Microsoft Hololens"
-    },
-    {
-        "value": "Mininet",
-        "label": "Mininet"
-    },
-    {
-        "value": "MODx",
-        "label": "MODx"
-    },
-    {
-        "value": "MOVEit",
-        "label": "MOVEit"
-    },
-    {
-        "value": "Multi Level Marketing",
-        "label": "Multi Level Marketing"
-    },
-    {
-        "value": "Nagios Core",
-        "label": "Nagios Core"
-    },
-    {
-        "value": "Nepali",
-        "label": "Nepali"
-    },
-    {
-        "value": "Ning",
-        "label": "Ning"
-    },
-    {
-        "value": "OctoberCMS",
-        "label": "OctoberCMS"
-    },
-    {
-        "value": "OKTA",
-        "label": "OKTA"
     },
     {
         "value": "OpenCL",
@@ -7564,36 +5677,8 @@
         "label": "Oracle EBS Tech Integration"
     },
     {
-        "value": "OTT",
-        "label": "OTT"
-    },
-    {
-        "value": "Palm",
-        "label": "Palm"
-    },
-    {
-        "value": "Parallels Desktop",
-        "label": "Parallels Desktop"
-    },
-    {
-        "value": "Patent Invalidity Search",
-        "label": "Patent Invalidity Search"
-    },
-    {
-        "value": "PAYE Tax",
-        "label": "PAYE Tax"
-    },
-    {
         "value": "PCI Express",
         "label": "PCI Express"
-    },
-    {
-        "value": "Performing Arts",
-        "label": "Performing Arts"
-    },
-    {
-        "value": "Personal Tax",
-        "label": "Personal Tax"
     },
     {
         "value": "phpBB",
@@ -7604,56 +5689,12 @@
         "label": "PHPUnit"
     },
     {
-        "value": "PlayFab",
-        "label": "PlayFab"
-    },
-    {
-        "value": "Polkadot",
-        "label": "Polkadot"
-    },
-    {
-        "value": "Power Amplifier RF",
-        "label": "Power Amplifier RF"
-    },
-    {
         "value": "Pre-production Animation",
         "label": "Pre-production Animation"
     },
     {
-        "value": "Private Equity",
-        "label": "Private Equity"
-    },
-    {
         "value": "Programming Help",
         "label": "Programming Help"
-    },
-    {
-        "value": "Protoshare",
-        "label": "Protoshare"
-    },
-    {
-        "value": "Psychometric Testing",
-        "label": "Psychometric Testing"
-    },
-    {
-        "value": "PureScript",
-        "label": "PureScript"
-    },
-    {
-        "value": "QlikView",
-        "label": "QlikView"
-    },
-    {
-        "value": "Quanum",
-        "label": "Quanum"
-    },
-    {
-        "value": "RabitMQ",
-        "label": "RabitMQ"
-    },
-    {
-        "value": "Radio Announcement",
-        "label": "Radio Announcement"
     },
     {
         "value": "Rapid Prototyping",
@@ -7664,148 +5705,28 @@
         "label": "Ray-tracing"
     },
     {
-        "value": "Records Management",
-        "label": "Records Management"
-    },
-    {
-        "value": "Refrigerated Load",
-        "label": "Refrigerated Load"
-    },
-    {
-        "value": "Reward",
-        "label": "Reward"
-    },
-    {
-        "value": "RichFaces",
-        "label": "RichFaces"
-    },
-    {
-        "value": "Trabajos de techado",
-        "label": "Trabajos de techado"
-    },
-    {
-        "value": "RWD",
-        "label": "RWD"
-    },
-    {
         "value": "Sails.js",
         "label": "Sails.js"
-    },
-    {
-        "value": "SAP BODS",
-        "label": "SAP BODS"
-    },
-    {
-        "value": "SAP Screen Personas",
-        "label": "SAP Screen Personas"
-    },
-    {
-        "value": "Schematic Review",
-        "label": "Schematic Review"
     },
     {
         "value": "Scientific Computing",
         "label": "Scientific Computing"
     },
     {
-        "value": "Scrivener",
-        "label": "Scrivener"
-    },
-    {
-        "value": "SDW N17 Service Qualification",
-        "label": "SDW N17 Service Qualification"
-    },
-    {
-        "value": "SFDC",
-        "label": "SFDC"
-    },
-    {
-        "value": "Diseño de señales",
-        "label": "Diseño de señales"
-    },
-    {
-        "value": "Sinhalese",
-        "label": "Sinhalese"
-    },
-    {
-        "value": "Small Cell Deployment",
-        "label": "Small Cell Deployment"
-    },
-    {
-        "value": "Solar Panel Installation",
-        "label": "Solar Panel Installation"
-    },
-    {
-        "value": "Sphinx",
-        "label": "Sphinx"
-    },
-    {
-        "value": "Squid Cache",
-        "label": "Squid Cache"
-    },
-    {
-        "value": "Diseño de tablas de surf",
-        "label": "Diseño de tablas de surf"
-    },
-    {
         "value": "Swift Package Manager",
         "label": "Swift Package Manager"
-    },
-    {
-        "value": "Tax Risk Management",
-        "label": "Tax Risk Management"
-    },
-    {
-        "value": "Technical Site Survey",
-        "label": "Technical Site Survey"
-    },
-    {
-        "value": "Teradata",
-        "label": "Teradata"
     },
     {
         "value": "Tether",
         "label": "Tether"
     },
     {
-        "value": "Tibco Spotfire",
-        "label": "Tibco Spotfire"
-    },
-    {
         "value": "Tinkercad",
         "label": "Tinkercad"
     },
     {
-        "value": "TopSolid Wood",
-        "label": "TopSolid Wood"
-    },
-    {
-        "value": "Trailers to be carried",
-        "label": "Trailers to be carried"
-    },
-    {
-        "value": "Travis CI",
-        "label": "Travis CI"
-    },
-    {
-        "value": "Trucks or Prime Movers",
-        "label": "Trucks or Prime Movers"
-    },
-    {
-        "value": "Twago",
-        "label": "Twago"
-    },
-    {
         "value": "Underscore.js",
         "label": "Underscore.js"
-    },
-    {
-        "value": "Valoración y tasación",
-        "label": "Valoración y tasación"
-    },
-    {
-        "value": "Varnish Cache",
-        "label": "Varnish Cache"
     },
     {
         "value": "Version Control Git",
@@ -7818,10 +5739,6 @@
     {
         "value": "Visual Effects",
         "label": "Visual Effects"
-    },
-    {
-        "value": "Vuforia",
-        "label": "Vuforia"
     },
     {
         "value": "Waterproof Design (IP68)",
@@ -7848,30 +5765,6 @@
         "label": "Wireless Sensors and Gateways"
     },
     {
-        "value": "Workday Time & Absence",
-        "label": "Workday Time & Absence"
-    },
-    {
-        "value": "Wufoo",
-        "label": "Wufoo"
-    },
-    {
-        "value": "Xoops",
-        "label": "Xoops"
-    },
-    {
-        "value": "Diseño de Yahoo! Store",
-        "label": "Diseño de Yahoo! Store"
-    },
-    {
-        "value": "Zemax",
-        "label": "Zemax"
-    },
-    {
-        "value": "Znode",
-        "label": "Znode"
-    },
-    {
         "value": "HTML",
         "label": "HTML"
     },
@@ -7892,20 +5785,12 @@
         "label": "Modelado 3D"
     },
     {
-        "value": "SEO",
-        "label": "SEO"
-    },
-    {
         "value": "Redacción",
         "label": "Redacción"
     },
     {
         "value": "Traducción",
         "label": "Traducción"
-    },
-    {
-        "value": "Servicios de video",
-        "label": "Servicios de video"
     },
     {
         "value": "After Effects",
@@ -7918,10 +5803,6 @@
     {
         "value": "Programación en C",
         "label": "Programación en C"
-    },
-    {
-        "value": "Cadena de bloques",
-        "label": "Cadena de bloques"
     },
     {
         "value": "Producción de video",
@@ -7964,10 +5845,6 @@
         "label": "Objective C"
     },
     {
-        "value": "Diseño de carteles",
-        "label": "Diseño de carteles"
-    },
-    {
         "value": "Búsqueda en la web",
         "label": "Búsqueda en la web"
     },
@@ -7978,14 +5855,6 @@
     {
         "value": "Smart Contracts",
         "label": "Smart Contracts"
-    },
-    {
-        "value": "Administración de sistemas",
-        "label": "Administración de sistemas"
-    },
-    {
-        "value": "Prospectos",
-        "label": "Prospectos"
     },
     {
         "value": "Redacción creativa",
@@ -8016,22 +5885,6 @@
         "label": "Django"
     },
     {
-        "value": "Planes de negocios",
-        "label": "Planes de negocios"
-    },
-    {
-        "value": "CRM",
-        "label": "CRM"
-    },
-    {
-        "value": "Gestión de proyectos",
-        "label": "Gestión de proyectos"
-    },
-    {
-        "value": "Redacción legal",
-        "label": "Redacción legal"
-    },
-    {
         "value": "Gramática inglesa",
         "label": "Gramática inglesa"
     },
@@ -8046,10 +5899,6 @@
     {
         "value": "Redacción comercial",
         "label": "Redacción comercial"
-    },
-    {
-        "value": "Envoltorios y embalajes",
-        "label": "Envoltorios y embalajes"
     },
     {
         "value": "Seguridad web",
@@ -8100,10 +5949,6 @@
         "label": "Turco"
     },
     {
-        "value": "Lead Generation",
-        "label": "Lead Generation"
-    },
-    {
         "value": "Maya",
         "label": "Maya"
     },
@@ -8114,10 +5959,6 @@
     {
         "value": "Google Adsense",
         "label": "Google Adsense"
-    },
-    {
-        "value": "Tareas generales",
-        "label": "Tareas generales"
     },
     {
         "value": "Ionic Framework",
@@ -8140,28 +5981,8 @@
         "label": "Diseño creativo"
     },
     {
-        "value": "Recursos humanos",
-        "label": "Recursos humanos"
-    },
-    {
-        "value": "Redacción médica",
-        "label": "Redacción médica"
-    },
-    {
-        "value": "Teneduría de libros",
-        "label": "Teneduría de libros"
-    },
-    {
-        "value": "Compras",
-        "label": "Compras"
-    },
-    {
         "value": "Ortografía de inglés",
         "label": "Ortografía de inglés"
-    },
-    {
-        "value": "Medicina",
-        "label": "Medicina"
     },
     {
         "value": "API Integration",
@@ -8220,20 +6041,12 @@
         "label": "DNS"
     },
     {
-        "value": "Inspecciones",
-        "label": "Inspecciones"
-    },
-    {
         "value": "OpenCV",
         "label": "OpenCV"
     },
     {
         "value": "Adobe Illustrator",
         "label": "Adobe Illustrator"
-    },
-    {
-        "value": "Elementor",
-        "label": "Elementor"
     },
     {
         "value": "Metamask",
@@ -8312,24 +6125,12 @@
         "label": "LabVIEW"
     },
     {
-        "value": "SketchUp",
-        "label": "SketchUp"
-    },
-    {
         "value": "Video Processing",
         "label": "Video Processing"
     },
     {
         "value": "WebRTC",
         "label": "WebRTC"
-    },
-    {
-        "value": "Autodesk Revit",
-        "label": "Autodesk Revit"
-    },
-    {
-        "value": "Email Campaign",
-        "label": "Email Campaign"
     },
     {
         "value": "Photo Retouching",
@@ -8368,10 +6169,6 @@
         "label": "2D Animation Explainer Video"
     },
     {
-        "value": "Amazon Product Launch",
-        "label": "Amazon Product Launch"
-    },
-    {
         "value": "Delphi",
         "label": "Delphi"
     },
@@ -8382,10 +6179,6 @@
     {
         "value": "OpenGL",
         "label": "OpenGL"
-    },
-    {
-        "value": "Power BI",
-        "label": "Power BI"
     },
     {
         "value": "Typing",
@@ -8404,32 +6197,12 @@
         "label": "Traductor de Danés"
     },
     {
-        "value": "Planificación de eventos",
-        "label": "Planificación de eventos"
-    },
-    {
         "value": "Húngaro",
         "label": "Húngaro"
     },
     {
-        "value": "Mechanical Design",
-        "label": "Mechanical Design"
-    },
-    {
-        "value": "PPC Marketing",
-        "label": "PPC Marketing"
-    },
-    {
         "value": "E/S Socket",
         "label": "E/S Socket"
-    },
-    {
-        "value": "Tableau",
-        "label": "Tableau"
-    },
-    {
-        "value": "Urdu",
-        "label": "Urdu"
     },
     {
         "value": "Ensamblador x86/x64",
@@ -8448,24 +6221,8 @@
         "label": "Artista literario"
     },
     {
-        "value": "Cine 4D",
-        "label": "Cine 4D"
-    },
-    {
-        "value": "Diseño arquitectónico",
-        "label": "Diseño arquitectónico"
-    },
-    {
-        "value": "Recaudación de fondos",
-        "label": "Recaudación de fondos"
-    },
-    {
         "value": "Griego",
         "label": "Griego"
-    },
-    {
-        "value": "Influencer Marketing",
-        "label": "Influencer Marketing"
     },
     {
         "value": "Moodle",
@@ -8476,10 +6233,6 @@
         "label": "RESTful"
     },
     {
-        "value": "Talent Acquisition",
-        "label": "Talent Acquisition"
-    },
-    {
         "value": "Video Game Coaching",
         "label": "Video Game Coaching"
     },
@@ -8488,32 +6241,12 @@
         "label": "3D CAD"
     },
     {
-        "value": "Appointment Setting",
-        "label": "Appointment Setting"
-    },
-    {
-        "value": "Brand Management",
-        "label": "Brand Management"
-    },
-    {
-        "value": "Corporate Law",
-        "label": "Corporate Law"
-    },
-    {
         "value": "eLearning",
         "label": "eLearning"
     },
     {
-        "value": "Funnel",
-        "label": "Funnel"
-    },
-    {
         "value": "Google Docs",
         "label": "Google Docs"
-    },
-    {
-        "value": "Fabricación",
-        "label": "Fabricación"
     },
     {
         "value": "pintura mural",
@@ -8522,18 +6255,6 @@
     {
         "value": "Office 365",
         "label": "Office 365"
-    },
-    {
-        "value": "Robotic Process Automation",
-        "label": "Robotic Process Automation"
-    },
-    {
-        "value": "Survey Research",
-        "label": "Survey Research"
-    },
-    {
-        "value": "Twilio",
-        "label": "Twilio"
     },
     {
         "value": "Artes visuales",
@@ -8548,16 +6269,8 @@
         "label": "Case Study Writing"
     },
     {
-        "value": "cPanel",
-        "label": "cPanel"
-    },
-    {
         "value": "Documentation",
         "label": "Documentation"
-    },
-    {
-        "value": "Ficción",
-        "label": "Ficción"
     },
     {
         "value": "HTTP",
@@ -8576,36 +6289,8 @@
         "label": "Podcast Editing"
     },
     {
-        "value": "Publicación",
-        "label": "Publicación"
-    },
-    {
-        "value": "STM32",
-        "label": "STM32"
-    },
-    {
         "value": "Training Development",
         "label": "Training Development"
-    },
-    {
-        "value": "Procesamiento en Word",
-        "label": "Procesamiento en Word"
-    },
-    {
-        "value": "Academic Research",
-        "label": "Academic Research"
-    },
-    {
-        "value": "Ansys",
-        "label": "Ansys"
-    },
-    {
-        "value": "Auditoría",
-        "label": "Auditoría"
-    },
-    {
-        "value": "Car Driving",
-        "label": "Car Driving"
     },
     {
         "value": "Comics",
@@ -8616,132 +6301,20 @@
         "label": "Database Management"
     },
     {
-        "value": "Dinámica",
-        "label": "Dinámica"
-    },
-    {
         "value": "Electronic Design",
         "label": "Electronic Design"
-    },
-    {
-        "value": "Facebook Verification",
-        "label": "Facebook Verification"
-    },
-    {
-        "value": "Planificación financiera",
-        "label": "Planificación financiera"
-    },
-    {
-        "value": "labores domésticas",
-        "label": "labores domésticas"
     },
     {
         "value": "Instagram API",
         "label": "Instagram API"
     },
     {
-        "value": "Diseño de etiquetas",
-        "label": "Diseño de etiquetas"
-    },
-    {
-        "value": "Programación lineal",
-        "label": "Programación lineal"
-    },
-    {
-        "value": "Ciencia de materiales",
-        "label": "Ciencia de materiales"
-    },
-    {
-        "value": "MYOB",
-        "label": "MYOB"
-    },
-    {
-        "value": "Operations Management",
-        "label": "Operations Management"
-    },
-    {
-        "value": "Product Development",
-        "label": "Product Development"
-    },
-    {
-        "value": "Quality and Reliability Testing",
-        "label": "Quality and Reliability Testing"
-    },
-    {
-        "value": "Salesforce Lightning",
-        "label": "Salesforce Lightning"
-    },
-    {
-        "value": "Strategic Planning",
-        "label": "Strategic Planning"
-    },
-    {
-        "value": "Tipografía",
-        "label": "Tipografía"
-    },
-    {
         "value": "Printing 3D",
         "label": "Printing 3D"
     },
     {
-        "value": "Acting",
-        "label": "Acting"
-    },
-    {
-        "value": "Amibroker Formula Language",
-        "label": "Amibroker Formula Language"
-    },
-    {
-        "value": "Audiobook",
-        "label": "Audiobook"
-    },
-    {
-        "value": "Building Engineering",
-        "label": "Building Engineering"
-    },
-    {
-        "value": "Carpintería",
-        "label": "Carpintería"
-    },
-    {
-        "value": "Cloud Monitoring",
-        "label": "Cloud Monitoring"
-    },
-    {
-        "value": "Construction Management",
-        "label": "Construction Management"
-    },
-    {
-        "value": "Customer Retention",
-        "label": "Customer Retention"
-    },
-    {
-        "value": "Editorial Writing",
-        "label": "Editorial Writing"
-    },
-    {
         "value": "Etherscan",
         "label": "Etherscan"
-    },
-    {
-        "value": "FinTech",
-        "label": "FinTech"
-    },
-    {
-        "value": "Geoespacial",
-        "label": "Geoespacial"
-    },
-    {
-        "value": "Soporte técnico",
-        "label": "Soporte técnico"
-    },
-    {
-        "value": "Leadership Development",
-        "label": "Leadership Development"
-    },
-    {
-        "value": "Medical Devices Sales",
-        "label": "Medical Devices Sales"
     },
     {
         "value": "MQTT",
@@ -8750,22 +6323,6 @@
     {
         "value": "OCR",
         "label": "OCR"
-    },
-    {
-        "value": "Patentes",
-        "label": "Patentes"
-    },
-    {
-        "value": "Physical Site Survey",
-        "label": "Physical Site Survey"
-    },
-    {
-        "value": "Podcasting",
-        "label": "Podcasting"
-    },
-    {
-        "value": "Product Marketing",
-        "label": "Product Marketing"
     },
     {
         "value": "Qt",
@@ -8784,108 +6341,32 @@
         "label": "SSL"
     },
     {
-        "value": "Tax Accounting",
-        "label": "Tax Accounting"
-    },
-    {
-        "value": "VideoHive",
-        "label": "VideoHive"
-    },
-    {
-        "value": "Website Localization",
-        "label": "Website Localization"
-    },
-    {
         "value": "Creador de modelos en 3D",
         "label": "Creador de modelos en 3D"
-    },
-    {
-        "value": "Ingeniería aeronáutica",
-        "label": "Ingeniería aeronáutica"
     },
     {
         "value": "Amazon ECS",
         "label": "Amazon ECS"
     },
     {
-        "value": "Ansible",
-        "label": "Ansible"
-    },
-    {
-        "value": "Application Performance Monitoring",
-        "label": "Application Performance Monitoring"
-    },
-    {
         "value": "Traductor de Bengalí",
         "label": "Traductor de Bengalí"
-    },
-    {
-        "value": "BuddyPress",
-        "label": "BuddyPress"
-    },
-    {
-        "value": "Card Design",
-        "label": "Card Design"
     },
     {
         "value": "SO Chrome",
         "label": "SO Chrome"
     },
     {
-        "value": "Comerciales de limpieza",
-        "label": "Comerciales de limpieza"
-    },
-    {
-        "value": "Content Development",
-        "label": "Content Development"
-    },
-    {
         "value": "cURL",
         "label": "cURL"
-    },
-    {
-        "value": "Data Wahrehousing",
-        "label": "Data Wahrehousing"
-    },
-    {
-        "value": "Dynamic 365",
-        "label": "Dynamic 365"
-    },
-    {
-        "value": "Personal para eventos",
-        "label": "Personal para eventos"
-    },
-    {
-        "value": "Format and Layout",
-        "label": "Format and Layout"
-    },
-    {
-        "value": "Fusion 360",
-        "label": "Fusion 360"
     },
     {
         "value": "Herramientas para Webmaster de Google",
         "label": "Herramientas para Webmaster de Google"
     },
     {
-        "value": "Health Planning",
-        "label": "Health Planning"
-    },
-    {
-        "value": "Inbound Marketing",
-        "label": "Inbound Marketing"
-    },
-    {
-        "value": "Journalism",
-        "label": "Journalism"
-    },
-    {
         "value": "Linear Regression",
         "label": "Linear Regression"
-    },
-    {
-        "value": "Medical Engineering",
-        "label": "Medical Engineering"
     },
     {
         "value": "Music Management",
@@ -8896,28 +6377,8 @@
         "label": "Oracle Database"
     },
     {
-        "value": "Creación de patrones",
-        "label": "Creación de patrones"
-    },
-    {
-        "value": "Playstation VR",
-        "label": "Playstation VR"
-    },
-    {
-        "value": "Desarrollo de propiedades",
-        "label": "Desarrollo de propiedades"
-    },
-    {
-        "value": "RUST Programming",
-        "label": "RUST Programming"
-    },
-    {
-        "value": "Secretarial",
-        "label": "Secretarial"
-    },
-    {
-        "value": "Shipping",
-        "label": "Shipping"
+        "value": "Rust",
+        "label": "Rust"
     },
     {
         "value": "Spark",
@@ -8932,20 +6393,12 @@
         "label": "Twitter API"
     },
     {
-        "value": "VideoScribe",
-        "label": "VideoScribe"
-    },
-    {
         "value": "Whiteboard Animation",
         "label": "Whiteboard Animation"
     },
     {
         "value": "YouTube Ads",
         "label": "YouTube Ads"
-    },
-    {
-        "value": "Abstract",
-        "label": "Abstract"
     },
     {
         "value": "Adobe Captivate",
@@ -8956,44 +6409,8 @@
         "label": "Traductor de afrikaans"
     },
     {
-        "value": "Analog / Mixed Signal / Digital",
-        "label": "Analog / Mixed Signal / Digital"
-    },
-    {
         "value": "App Publication",
         "label": "App Publication"
-    },
-    {
-        "value": "ArcGIS",
-        "label": "ArcGIS"
-    },
-    {
-        "value": "Astrofísica",
-        "label": "Astrofísica"
-    },
-    {
-        "value": "AutoHotkey",
-        "label": "AutoHotkey"
-    },
-    {
-        "value": "Instalación de blogs",
-        "label": "Instalación de blogs"
-    },
-    {
-        "value": "Book Marketing",
-        "label": "Book Marketing"
-    },
-    {
-        "value": "Bulk Products",
-        "label": "Bulk Products"
-    },
-    {
-        "value": "Care Management",
-        "label": "Care Management"
-    },
-    {
-        "value": "Chartered Secretary Services",
-        "label": "Chartered Secretary Services"
     },
     {
         "value": "Cloudflare",
@@ -9008,28 +6425,8 @@
         "label": "Core PHP"
     },
     {
-        "value": "Entrega",
-        "label": "Entrega"
-    },
-    {
         "value": "Drones",
         "label": "Drones"
-    },
-    {
-        "value": "Environmental Science",
-        "label": "Environmental Science"
-    },
-    {
-        "value": "Facebook Product Catalog",
-        "label": "Facebook Product Catalog"
-    },
-    {
-        "value": "Fitness",
-        "label": "Fitness"
-    },
-    {
-        "value": "Armado de muebles",
-        "label": "Armado de muebles"
     },
     {
         "value": "German Tutoring",
@@ -9048,232 +6445,40 @@
         "label": "Houdini"
     },
     {
-        "value": "IIS",
-        "label": "IIS"
-    },
-    {
         "value": "Informatica",
         "label": "Informatica"
-    },
-    {
-        "value": "Intellectual Property Law",
-        "label": "Intellectual Property Law"
-    },
-    {
-        "value": "International Shipping",
-        "label": "International Shipping"
     },
     {
         "value": "Ionic React",
         "label": "Ionic React"
     },
     {
-        "value": "Keycloak",
-        "label": "Keycloak"
-    },
-    {
         "value": "LiveCode",
         "label": "LiveCode"
-    },
-    {
-        "value": "Marathi",
-        "label": "Marathi"
-    },
-    {
-        "value": "Microsoft Project",
-        "label": "Microsoft Project"
-    },
-    {
-        "value": "Mobile Sales",
-        "label": "Mobile Sales"
     },
     {
         "value": "NoSQL",
         "label": "NoSQL"
     },
     {
-        "value": "Procesamiento de pedidos",
-        "label": "Procesamiento de pedidos"
-    },
-    {
         "value": "Pardot Development",
         "label": "Pardot Development"
-    },
-    {
-        "value": "Performance Management",
-        "label": "Performance Management"
-    },
-    {
-        "value": "Postfix",
-        "label": "Postfix"
-    },
-    {
-        "value": "Quality Engineering",
-        "label": "Quality Engineering"
-    },
-    {
-        "value": "Recruiting Sales",
-        "label": "Recruiting Sales"
-    },
-    {
-        "value": "Report Development",
-        "label": "Report Development"
-    },
-    {
-        "value": "Sales Management",
-        "label": "Sales Management"
-    },
-    {
-        "value": "SAP CPI",
-        "label": "SAP CPI"
-    },
-    {
-        "value": "Security Camera",
-        "label": "Security Camera"
-    },
-    {
-        "value": "ServiceNow",
-        "label": "ServiceNow"
-    },
-    {
-        "value": "Sound Engineering",
-        "label": "Sound Engineering"
-    },
-    {
-        "value": "SugarCRM",
-        "label": "SugarCRM"
-    },
-    {
-        "value": "System Analysis",
-        "label": "System Analysis"
-    },
-    {
-        "value": "Test Plan Writing",
-        "label": "Test Plan Writing"
-    },
-    {
-        "value": "Ubiquiti",
-        "label": "Ubiquiti"
-    },
-    {
-        "value": "Visa / inmigración",
-        "label": "Visa / inmigración"
     },
     {
         "value": "Web Page Writer",
         "label": "Web Page Writer"
     },
     {
-        "value": "Wireguard",
-        "label": "Wireguard"
-    },
-    {
-        "value": "Workday Payroll",
-        "label": "Workday Payroll"
-    },
-    {
         "value": "XHTML",
         "label": "XHTML"
-    },
-    {
-        "value": "ABBYY FineReader",
-        "label": "ABBYY FineReader"
     },
     {
         "value": "Adobe Acrobat",
         "label": "Adobe Acrobat"
     },
     {
-        "value": "Airtable",
-        "label": "Airtable"
-    },
-    {
-        "value": "Alibaba",
-        "label": "Alibaba"
-    },
-    {
-        "value": "Altium Designer",
-        "label": "Altium Designer"
-    },
-    {
-        "value": "Apigee",
-        "label": "Apigee"
-    },
-    {
-        "value": "Apple Logic Pro",
-        "label": "Apple Logic Pro"
-    },
-    {
-        "value": "Ariba",
-        "label": "Ariba"
-    },
-    {
-        "value": "Atlassian Confluence",
-        "label": "Atlassian Confluence"
-    },
-    {
-        "value": "Background Removal",
-        "label": "Background Removal"
-    },
-    {
-        "value": "Baño",
-        "label": "Baño"
-    },
-    {
         "value": "Análisis binario",
         "label": "Análisis binario"
-    },
-    {
-        "value": "Bower",
-        "label": "Bower"
-    },
-    {
-        "value": "Building Information Modeling",
-        "label": "Building Information Modeling"
-    },
-    {
-        "value": "Abastecimiento de compradores",
-        "label": "Abastecimiento de compradores"
-    },
-    {
-        "value": "Career Consulting",
-        "label": "Career Consulting"
-    },
-    {
-        "value": "CCTV",
-        "label": "CCTV"
-    },
-    {
-        "value": "Channel Account Management",
-        "label": "Channel Account Management"
-    },
-    {
-        "value": "Clojure",
-        "label": "Clojure"
-    },
-    {
-        "value": "Cold Fusion",
-        "label": "Cold Fusion"
-    },
-    {
-        "value": "Compliance and Safety Procedures Writer",
-        "label": "Compliance and Safety Procedures Writer"
-    },
-    {
-        "value": "Contact Center Services",
-        "label": "Contact Center Services"
-    },
-    {
-        "value": "Control System Design",
-        "label": "Control System Design"
-    },
-    {
-        "value": "Crestron",
-        "label": "Crestron"
-    },
-    {
-        "value": "Decoración",
-        "label": "Decoración"
     },
     {
         "value": "Digital ASIC Coding",
@@ -9284,40 +6489,8 @@
         "label": "DotNetNuke"
     },
     {
-        "value": "Electric Repair",
-        "label": "Electric Repair"
-    },
-    {
-        "value": "Energy Modelling",
-        "label": "Energy Modelling"
-    },
-    {
-        "value": "Epidemiology",
-        "label": "Epidemiology"
-    },
-    {
-        "value": "Expression Engine",
-        "label": "Expression Engine"
-    },
-    {
         "value": "Facebook Development",
         "label": "Facebook Development"
-    },
-    {
-        "value": "Trabajos de cerca",
-        "label": "Trabajos de cerca"
-    },
-    {
-        "value": "Final Cut Pro",
-        "label": "Final Cut Pro"
-    },
-    {
-        "value": "Floorplan Blueprinting",
-        "label": "Floorplan Blueprinting"
-    },
-    {
-        "value": "General Tax Advisory",
-        "label": "General Tax Advisory"
     },
     {
         "value": "GIF",
@@ -9328,34 +6501,6 @@
         "label": "Google Data Studio"
     },
     {
-        "value": "GTmetrix",
-        "label": "GTmetrix"
-    },
-    {
-        "value": "Heat Load Calculation",
-        "label": "Heat Load Calculation"
-    },
-    {
-        "value": "Automatización del hogar",
-        "label": "Automatización del hogar"
-    },
-    {
-        "value": "Hyperledger",
-        "label": "Hyperledger"
-    },
-    {
-        "value": "IMAP",
-        "label": "IMAP"
-    },
-    {
-        "value": "Seguro",
-        "label": "Seguro"
-    },
-    {
-        "value": "Diseño de invitaciones",
-        "label": "Diseño de invitaciones"
-    },
-    {
         "value": "Japanese Tutoring",
         "label": "Japanese Tutoring"
     },
@@ -9364,36 +6509,8 @@
         "label": "JUCE"
     },
     {
-        "value": "Kannada",
-        "label": "Kannada"
-    },
-    {
-        "value": "KNIME",
-        "label": "KNIME"
-    },
-    {
-        "value": "Last Mile Optimization",
-        "label": "Last Mile Optimization"
-    },
-    {
-        "value": "Legal Translation",
-        "label": "Legal Translation"
-    },
-    {
-        "value": "Lotus Notes",
-        "label": "Lotus Notes"
-    },
-    {
-        "value": "Manufacturing Strategy",
-        "label": "Manufacturing Strategy"
-    },
-    {
         "value": "Math Tutoring",
         "label": "Math Tutoring"
-    },
-    {
-        "value": "Microstation",
-        "label": "Microstation"
     },
     {
         "value": "MonetDB",
@@ -9404,60 +6521,12 @@
         "label": "Nanotecnología"
     },
     {
-        "value": "Non-Fiction Writing",
-        "label": "Non-Fiction Writing"
-    },
-    {
         "value": "OpenSSL",
         "label": "OpenSSL"
     },
     {
-        "value": "Gestión de cambio organizacional",
-        "label": "Gestión de cambio organizacional"
-    },
-    {
-        "value": "Parallels Automation",
-        "label": "Parallels Automation"
-    },
-    {
-        "value": "Patent Landscape",
-        "label": "Patent Landscape"
-    },
-    {
         "value": "PHP Slim",
         "label": "PHP Slim"
-    },
-    {
-        "value": "Plivo",
-        "label": "Plivo"
-    },
-    {
-        "value": "Political science",
-        "label": "Political science"
-    },
-    {
-        "value": "Power Generation",
-        "label": "Power Generation"
-    },
-    {
-        "value": "Impresión",
-        "label": "Impresión"
-    },
-    {
-        "value": "Project Planning",
-        "label": "Project Planning"
-    },
-    {
-        "value": "QuickBase",
-        "label": "QuickBase"
-    },
-    {
-        "value": "Regression Testing",
-        "label": "Regression Testing"
-    },
-    {
-        "value": "Resellers",
-        "label": "Resellers"
     },
     {
         "value": "RPG Development",
@@ -9468,54 +6537,6 @@
         "label": "Sass"
     },
     {
-        "value": "SendGrid",
-        "label": "SendGrid"
-    },
-    {
-        "value": "Signal Processing",
-        "label": "Signal Processing"
-    },
-    {
-        "value": "SmartDraw",
-        "label": "SmartDraw"
-    },
-    {
-        "value": "Solar",
-        "label": "Solar"
-    },
-    {
-        "value": "Redacción de discursos",
-        "label": "Redacción de discursos"
-    },
-    {
-        "value": "Statistical Modeling",
-        "label": "Statistical Modeling"
-    },
-    {
-        "value": "Taglines",
-        "label": "Taglines"
-    },
-    {
-        "value": "Tax Compliance and Outsourcing",
-        "label": "Tax Compliance and Outsourcing"
-    },
-    {
-        "value": "TeamViewer",
-        "label": "TeamViewer"
-    },
-    {
-        "value": "Technology Law",
-        "label": "Technology Law"
-    },
-    {
-        "value": "Thermodynamics",
-        "label": "Thermodynamics"
-    },
-    {
-        "value": "Twitch",
-        "label": "Twitch"
-    },
-    {
         "value": "Vectorworks",
         "label": "Vectorworks"
     },
@@ -9524,68 +6545,12 @@
         "label": "Virtualization"
     },
     {
-        "value": "Visualización",
-        "label": "Visualización"
-    },
-    {
-        "value": "Weebly",
-        "label": "Weebly"
-    },
-    {
-        "value": "Wireless Radio Frequency Engineering",
-        "label": "Wireless Radio Frequency Engineering"
-    },
-    {
         "value": "Xcodebuild",
         "label": "Xcodebuild"
     },
     {
-        "value": "Yandex",
-        "label": "Yandex"
-    },
-    {
-        "value": "Yoga",
-        "label": "Yoga"
-    },
-    {
-        "value": "A&E",
-        "label": "A&E"
-    },
-    {
-        "value": "A/B Testing",
-        "label": "A/B Testing"
-    },
-    {
-        "value": "A/V design",
-        "label": "A/V design"
-    },
-    {
-        "value": "A1 Assessor",
-        "label": "A1 Assessor"
-    },
-    {
         "value": "ABAP Web Dynpro",
         "label": "ABAP Web Dynpro"
-    },
-    {
-        "value": "AbleCommerce",
-        "label": "AbleCommerce"
-    },
-    {
-        "value": "Abnormal Psychology",
-        "label": "Abnormal Psychology"
-    },
-    {
-        "value": "AC Drives",
-        "label": "AC Drives"
-    },
-    {
-        "value": "ACARS",
-        "label": "ACARS"
-    },
-    {
-        "value": "Acoustical Engineering",
-        "label": "Acoustical Engineering"
     },
     {
         "value": "ADF / Oracle ADF",
@@ -9604,72 +6569,12 @@
         "label": "Adobe Muse"
     },
     {
-        "value": "Affectiva",
-        "label": "Affectiva"
-    },
-    {
-        "value": "Aire condicionado",
-        "label": "Aire condicionado"
-    },
-    {
-        "value": "Aircraft Sales",
-        "label": "Aircraft Sales"
-    },
-    {
-        "value": "Airline",
-        "label": "Airline"
-    },
-    {
         "value": "AJAX Toolkit",
         "label": "AJAX Toolkit"
     },
     {
-        "value": "ALBPM",
-        "label": "ALBPM"
-    },
-    {
-        "value": "Alexa Modification",
-        "label": "Alexa Modification"
-    },
-    {
-        "value": "Alias",
-        "label": "Alias"
-    },
-    {
-        "value": "Altera Quartus",
-        "label": "Altera Quartus"
-    },
-    {
-        "value": "Alto Flute",
-        "label": "Alto Flute"
-    },
-    {
         "value": "Amazon CloudFront",
         "label": "Amazon CloudFront"
-    },
-    {
-        "value": "Analytics Sales",
-        "label": "Analytics Sales"
-    },
-    {
-        "value": "Annual Report Design",
-        "label": "Annual Report Design"
-    },
-    {
-        "value": "ANOVA",
-        "label": "ANOVA"
-    },
-    {
-        "value": "Servicios de antena",
-        "label": "Servicios de antena"
-    },
-    {
-        "value": "Antiques",
-        "label": "Antiques"
-    },
-    {
-        "value": "App Localization",
-        "label": "App Localization"
     },
     {
         "value": "Apple Homekit",
@@ -9680,112 +6585,20 @@
         "label": "Apple UIKit"
     },
     {
-        "value": "Arc",
-        "label": "Arc"
-    },
-    {
-        "value": "ARKit",
-        "label": "ARKit"
-    },
-    {
-        "value": "Artist & Repertoire Administration",
-        "label": "Artist & Repertoire Administration"
-    },
-    {
         "value": "ASM",
         "label": "ASM"
-    },
-    {
-        "value": "Atmel",
-        "label": "Atmel"
-    },
-    {
-        "value": "Autotask",
-        "label": "Autotask"
-    },
-    {
-        "value": "Toldos",
-        "label": "Toldos"
     },
     {
         "value": "AWS Translate",
         "label": "AWS Translate"
     },
     {
-        "value": "Backtesting",
-        "label": "Backtesting"
-    },
-    {
-        "value": "Pisos de bambú",
-        "label": "Pisos de bambú"
-    },
-    {
-        "value": "Basecamp",
-        "label": "Basecamp"
-    },
-    {
-        "value": "Bicycle Courier",
-        "label": "Bicycle Courier"
-    },
-    {
-        "value": "Bill of Materials (BOM) Optimization",
-        "label": "Bill of Materials (BOM) Optimization"
-    },
-    {
-        "value": "Biometrics",
-        "label": "Biometrics"
-    },
-    {
-        "value": "Biztalk",
-        "label": "Biztalk"
-    },
-    {
-        "value": "Bluebeam",
-        "label": "Bluebeam"
-    },
-    {
-        "value": "Boonex Dolphin",
-        "label": "Boonex Dolphin"
-    },
-    {
-        "value": "Breton",
-        "label": "Breton"
-    },
-    {
-        "value": "Building Certification",
-        "label": "Building Certification"
-    },
-    {
-        "value": "Control de llamadas XML",
-        "label": "Control de llamadas XML"
-    },
-    {
-        "value": "Car Courier",
-        "label": "Car Courier"
-    },
-    {
-        "value": "Carthage",
-        "label": "Carthage"
-    },
-    {
-        "value": "Cassandra",
-        "label": "Cassandra"
-    },
-    {
         "value": "Cel Animation",
         "label": "Cel Animation"
     },
     {
-        "value": "Cellular Service",
-        "label": "Cellular Service"
-    },
-    {
         "value": "Chart.js",
         "label": "Chart.js"
-    },
-    {
-        "value": "Chordiant",
-        "label": "Chordiant"
     },
     {
         "value": "CircuitStudio",
@@ -9796,48 +6609,8 @@
         "label": "Clip Studio Paint"
     },
     {
-        "value": "Cloud Finance",
-        "label": "Cloud Finance"
-    },
-    {
         "value": "Cloud Service",
         "label": "Cloud Service"
-    },
-    {
-        "value": "CocoaPods",
-        "label": "CocoaPods"
-    },
-    {
-        "value": "Collage Making",
-        "label": "Collage Making"
-    },
-    {
-        "value": "Cumplimiento",
-        "label": "Cumplimiento"
-    },
-    {
-        "value": "CompTIA",
-        "label": "CompTIA"
-    },
-    {
-        "value": "Conflict Resolution",
-        "label": "Conflict Resolution"
-    },
-    {
-        "value": "Controller Area Network (CAN)",
-        "label": "Controller Area Network (CAN)"
-    },
-    {
-        "value": "Core Systems Transformation",
-        "label": "Core Systems Transformation"
-    },
-    {
-        "value": "Corteza",
-        "label": "Corteza"
-    },
-    {
-        "value": "CRE Loaded",
-        "label": "CRE Loaded"
     },
     {
         "value": "Cross Browser",
@@ -9856,56 +6629,16 @@
         "label": "Traductor Dali"
     },
     {
-        "value": "Data Protection",
-        "label": "Data Protection"
-    },
-    {
         "value": "DDR3 (PCIe, board design/fpga)",
         "label": "DDR3 (PCIe, board design/fpga)"
-    },
-    {
-        "value": "Demolición",
-        "label": "Demolición"
-    },
-    {
-        "value": "Diet",
-        "label": "Diet"
     },
     {
         "value": "Dinka Translator",
         "label": "Dinka Translator"
     },
     {
-        "value": "DO-254 Certification",
-        "label": "DO-254 Certification"
-    },
-    {
         "value": "DOS",
         "label": "DOS"
-    },
-    {
-        "value": "Drip",
-        "label": "Drip"
-    },
-    {
-        "value": "Dynatrace",
-        "label": "Dynatrace"
-    },
-    {
-        "value": "EC Pay Workday",
-        "label": "EC Pay Workday"
-    },
-    {
-        "value": "Editorial Design",
-        "label": "Editorial Design"
-    },
-    {
-        "value": "Elm",
-        "label": "Elm"
-    },
-    {
-        "value": "Employee Experience",
-        "label": "Employee Experience"
     },
     {
         "value": "Epic Systems",
@@ -9914,14 +6647,6 @@
     {
         "value": "ES8 Javascript",
         "label": "ES8 Javascript"
-    },
-    {
-        "value": "Evernote",
-        "label": "Evernote"
-    },
-    {
-        "value": "Executive Reward",
-        "label": "Executive Reward"
     },
     {
         "value": "Facade Design",
@@ -9940,22 +6665,6 @@
         "label": "FL Studio"
     },
     {
-        "value": "Flashmob",
-        "label": "Flashmob"
-    },
-    {
-        "value": "Revestimientos de piso",
-        "label": "Revestimientos de piso"
-    },
-    {
-        "value": "Food Delivery",
-        "label": "Food Delivery"
-    },
-    {
-        "value": "FoxyCart",
-        "label": "FoxyCart"
-    },
-    {
         "value": "FreeSwitch",
         "label": "FreeSwitch"
     },
@@ -9964,52 +6673,8 @@
         "label": "Game Trailer"
     },
     {
-        "value": "Conexión de gas",
-        "label": "Conexión de gas"
-    },
-    {
-        "value": "Generative Design",
-        "label": "Generative Design"
-    },
-    {
-        "value": "Geometry",
-        "label": "Geometry"
-    },
-    {
-        "value": "Vidrio / espejo y cristalería",
-        "label": "Vidrio / espejo y cristalería"
-    },
-    {
         "value": "Google Web Toolkit",
         "label": "Google Web Toolkit"
-    },
-    {
-        "value": "Gravity Forms",
-        "label": "Gravity Forms"
-    },
-    {
-        "value": "GrooveFunnels",
-        "label": "GrooveFunnels"
-    },
-    {
-        "value": "Gujrati",
-        "label": "Gujrati"
-    },
-    {
-        "value": "Haulier",
-        "label": "Haulier"
-    },
-    {
-        "value": "Heavy Haulage",
-        "label": "Heavy Haulage"
-    },
-    {
-        "value": "HetNet Access Point Installation",
-        "label": "HetNet Access Point Installation"
-    },
-    {
-        "value": "Hidden Wireless Network Detection",
-        "label": "Hidden Wireless Network Detection"
     },
     {
         "value": "HomeKit",
@@ -10018,10 +6683,6 @@
     {
         "value": "HP Openview",
         "label": "HP Openview"
-    },
-    {
-        "value": "Hybris",
-        "label": "Hybris"
     },
     {
         "value": "IBM BPM",
@@ -10036,50 +6697,6 @@
         "label": "Icelandic"
     },
     {
-        "value": "Import/Export",
-        "label": "Import/Export"
-    },
-    {
-        "value": "Infor",
-        "label": "Infor"
-    },
-    {
-        "value": "Intrinsic Safety Applications",
-        "label": "Intrinsic Safety Applications"
-    },
-    {
-        "value": "ISO/IEC 17025 Calibration",
-        "label": "ISO/IEC 17025 Calibration"
-    },
-    {
-        "value": "IT Operating Model",
-        "label": "IT Operating Model"
-    },
-    {
-        "value": "Jabber",
-        "label": "Jabber"
-    },
-    {
-        "value": "Jasmine Javascript",
-        "label": "Jasmine Javascript"
-    },
-    {
-        "value": "JD Edwards CNC",
-        "label": "JD Edwards CNC"
-    },
-    {
-        "value": "Joint Commission International",
-        "label": "Joint Commission International"
-    },
-    {
-        "value": "Karelian",
-        "label": "Karelian"
-    },
-    {
-        "value": "Kinect",
-        "label": "Kinect"
-    },
-    {
         "value": "Latin",
         "label": "Latin"
     },
@@ -10092,40 +6709,12 @@
         "label": "LibreOffice"
     },
     {
-        "value": "Life Science Tax Services",
-        "label": "Life Science Tax Services"
-    },
-    {
-        "value": "Gestión de pedidos con Linnworks",
-        "label": "Gestión de pedidos con Linnworks"
-    },
-    {
         "value": "Lituano",
         "label": "Lituano"
     },
     {
-        "value": "Cerrajero",
-        "label": "Cerrajero"
-    },
-    {
-        "value": "Lottie",
-        "label": "Lottie"
-    },
-    {
         "value": "Macedonio",
         "label": "Macedonio"
-    },
-    {
-        "value": "Machinery up to 25T",
-        "label": "Machinery up to 25T"
-    },
-    {
-        "value": "Malayalam",
-        "label": "Malayalam"
-    },
-    {
-        "value": "Management Consulting",
-        "label": "Management Consulting"
     },
     {
         "value": "MCAT Tutoring",
@@ -10136,48 +6725,16 @@
         "label": "MEMs"
     },
     {
-        "value": "Metro",
-        "label": "Metro"
-    },
-    {
         "value": "Microsoft Visio",
         "label": "Microsoft Visio"
-    },
-    {
-        "value": "Minitab",
-        "label": "Minitab"
-    },
-    {
-        "value": "Moho",
-        "label": "Moho"
-    },
-    {
-        "value": "Moz",
-        "label": "Moz"
     },
     {
         "value": "Music Transcription",
         "label": "Music Transcription"
     },
     {
-        "value": "National Building Specification",
-        "label": "National Building Specification"
-    },
-    {
         "value": "Netlify",
         "label": "Netlify"
-    },
-    {
-        "value": "Nintex Forms",
-        "label": "Nintex Forms"
-    },
-    {
-        "value": "OEM Account Management",
-        "label": "OEM Account Management"
-    },
-    {
-        "value": "Open Journal Systems",
-        "label": "Open Journal Systems"
     },
     {
         "value": "OpenSceneGraph",
@@ -10192,34 +6749,6 @@
         "label": "Outreach.io"
     },
     {
-        "value": "Papiamento",
-        "label": "Papiamento"
-    },
-    {
-        "value": "Passive Site Survey",
-        "label": "Passive Site Survey"
-    },
-    {
-        "value": "Patent Validity Search",
-        "label": "Patent Validity Search"
-    },
-    {
-        "value": "Payroll Sales",
-        "label": "Payroll Sales"
-    },
-    {
-        "value": "PencilBlue CMS",
-        "label": "PencilBlue CMS"
-    },
-    {
-        "value": "Periscope",
-        "label": "Periscope"
-    },
-    {
-        "value": "Control de plagas",
-        "label": "Control de plagas"
-    },
-    {
         "value": "phpFox",
         "label": "phpFox"
     },
@@ -10228,228 +6757,32 @@
         "label": "Physics Tutoring"
     },
     {
-        "value": "Plomería",
-        "label": "Plomería"
-    },
-    {
-        "value": "Portable Building",
-        "label": "Portable Building"
-    },
-    {
-        "value": "Power Converters",
-        "label": "Power Converters"
-    },
-    {
-        "value": "Predictive Site Survey",
-        "label": "Predictive Site Survey"
-    },
-    {
-        "value": "Process Validation",
-        "label": "Process Validation"
-    },
-    {
-        "value": "Property Insurance",
-        "label": "Property Insurance"
-    },
-    {
         "value": "Protractor Javascript",
         "label": "Protractor Javascript"
-    },
-    {
-        "value": "Public Sector and Taxation",
-        "label": "Public Sector and Taxation"
     },
     {
         "value": "PyCaret",
         "label": "PyCaret"
     },
     {
-        "value": "QOPI",
-        "label": "QOPI"
-    },
-    {
-        "value": "QuarkXPress",
-        "label": "QuarkXPress"
-    },
-    {
-        "value": "Racket",
-        "label": "Racket"
-    },
-    {
-        "value": "Rail Freight",
-        "label": "Rail Freight"
-    },
-    {
-        "value": "RapidWeaver",
-        "label": "RapidWeaver"
-    },
-    {
-        "value": "Real Estate Tax",
-        "label": "Real Estate Tax"
-    },
-    {
-        "value": "Redmine",
-        "label": "Redmine"
-    },
-    {
         "value": "Expresiones regulares",
         "label": "Expresiones regulares"
-    },
-    {
-        "value": "Rezence",
-        "label": "Rezence"
-    },
-    {
-        "value": "Roadnet",
-        "label": "Roadnet"
-    },
-    {
-        "value": "Roslyn",
-        "label": "Roslyn"
     },
     {
         "value": "RxJS",
         "label": "RxJS"
     },
     {
-        "value": "Sami",
-        "label": "Sami"
-    },
-    {
-        "value": "SAP Business Planning and Consolidation",
-        "label": "SAP Business Planning and Consolidation"
-    },
-    {
-        "value": "SAP Transformation",
-        "label": "SAP Transformation"
-    },
-    {
-        "value": "Schematics",
-        "label": "Schematics"
-    },
-    {
         "value": "Scikit Learn",
         "label": "Scikit Learn"
-    },
-    {
-        "value": "Sculpture",
-        "label": "Sculpture"
-    },
-    {
-        "value": "Seamless Printing",
-        "label": "Seamless Printing"
-    },
-    {
-        "value": "Share Schemes",
-        "label": "Share Schemes"
-    },
-    {
-        "value": "Signal Propagation Assessment",
-        "label": "Signal Propagation Assessment"
-    },
-    {
-        "value": "SIP",
-        "label": "SIP"
-    },
-    {
-        "value": "SMART City",
-        "label": "SMART City"
     },
     {
         "value": "Solaris",
         "label": "Solaris"
     },
     {
-        "value": "Sports Design",
-        "label": "Sports Design"
-    },
-    {
-        "value": "Statistics Tutoring",
-        "label": "Statistics Tutoring"
-    },
-    {
-        "value": "Surveillance",
-        "label": "Surveillance"
-    },
-    {
-        "value": "Symbian",
-        "label": "Symbian"
-    },
-    {
-        "value": "Tax Technology",
-        "label": "Tax Technology"
-    },
-    {
         "value": "Technical Translation",
         "label": "Technical Translation"
-    },
-    {
-        "value": "Terra",
-        "label": "Terra"
-    },
-    {
-        "value": "Textile Design",
-        "label": "Textile Design"
-    },
-    {
-        "value": "TikZ",
-        "label": "TikZ"
-    },
-    {
-        "value": "Titanium",
-        "label": "Titanium"
-    },
-    {
-        "value": "Total Reward",
-        "label": "Total Reward"
-    },
-    {
-        "value": "Trailers to be towed",
-        "label": "Trailers to be towed"
-    },
-    {
-        "value": "TRON",
-        "label": "TRON"
-    },
-    {
-        "value": "Truffle",
-        "label": "Truffle"
-    },
-    {
-        "value": "Typeform",
-        "label": "Typeform"
-    },
-    {
-        "value": "Unit4 Business World",
-        "label": "Unit4 Business World"
-    },
-    {
-        "value": "Value Added Tax",
-        "label": "Value Added Tax"
-    },
-    {
-        "value": "vBulleting",
-        "label": "vBulleting"
-    },
-    {
-        "value": "VertexFX",
-        "label": "VertexFX"
-    },
-    {
-        "value": "Virtual Assistant Solutions (Alexa, Google, Siri, Home Kit, Cortana)",
-        "label": "Virtual Assistant Solutions (Alexa, Google, Siri, Home Kit, Cortana)"
-    },
-    {
-        "value": "Volusion",
-        "label": "Volusion"
-    },
-    {
-        "value": "Vymo",
-        "label": "Vymo"
-    },
-    {
-        "value": "Wave Accounting",
-        "label": "Wave Accounting"
     },
     {
         "value": "webMethods",
@@ -10464,35 +6797,7 @@
         "label": "WinJS"
     },
     {
-        "value": "Wireless Charging",
-        "label": "Wireless Charging"
-    },
-    {
-        "value": "Wireless Site Survey",
-        "label": "Wireless Site Survey"
-    },
-    {
-        "value": "Talleres",
-        "label": "Talleres"
-    },
-    {
-        "value": "Xara",
-        "label": "Xara"
-    },
-    {
-        "value": "XPages",
-        "label": "XPages"
-    },
-    {
         "value": "Traductor de yiddish",
         "label": "Traductor de yiddish"
-    },
-    {
-        "value": "Zen Cart",
-        "label": "Zen Cart"
-    },
-    {
-        "value": "Zwave",
-        "label": "Zwave"
     }
 ]

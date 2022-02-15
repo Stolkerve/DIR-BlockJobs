@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 
 import tokensData from "../../assets/tokensData.json"
+import categoriesData from "../../assets/categoriesData.json"
 
 export default function ServicesFilter({mains, setServices}) {
+    const [categoriesService, setCategoriesService] = useState(null)
+
+    const filterCategories = (inputValue) => {
+        return categoriesData.filter((i) =>
+          i.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+      };
+      
+    const promiseOptions = (inputValue) =>
+    new Promise((resolve) => {
+        setTimeout(() => {
+        resolve(filterCategories(inputValue));
+        }, 500);
+    });
+
 
 
     return (
-        <div className="sticky top-4 border-2 shadow-md borde rounded-lg px-6 py-4 mt-4 mr-6 w-[220px] w-max-[220px] max-h-[400px] overflow-y-scroll">
+        <div className="sticky top-4 border-2 shadow-md borde rounded-lg px-6 py-4 mt-4 mr-6 w-[260px] w-max-[260px] max-h-[400px] overflow-y-scroll">
             <div className="text-center font-semibold text-lg">Filtros</div>
             <div className="border rounded-lg my-4 border-[#27C0EF] w-full"></div>
             <div className="mx-1">
@@ -64,7 +81,7 @@ export default function ServicesFilter({mains, setServices}) {
             <div className="mx-1">
                 <div className="mb-1">Categoria</div>
                 <div>
-                    <Select />
+                <AsyncSelect cacheOptions defaultOptions isMulti value={categoriesService} onChange={(value) => { setCategoriesService(value) }} loadOptions={promiseOptions}/>
                 </div>
             </div>
 
