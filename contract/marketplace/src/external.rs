@@ -8,7 +8,21 @@ trait FungibleTokenReceiver {
 
 #[near_bindgen]
 impl FungibleTokenReceiver for Marketplace {
-    fn ft_on_transfer(&mut self, _sender_id: AccountId, _amount: U128, _msg: String) -> PromiseOrValue<U128> {
+    fn ft_on_transfer(&mut self, sender_id: AccountId, amount: U128, msg: String) -> PromiseOrValue<U128> {
+        let ft_contract = env::predecessor_account_id();
+        // Verificacion de que el token este dentro de los soportados por Marketplace y 
+        // que la fn no sea llamada por cualquier acccount. 
+        assert!(self.tokens.contains(&ft_contract), "Token not soported");
+        if ft_contract == "usdc.fakes.testnet".to_string() {
+            let balance = self.usdc_balances.get(&sender_id).unwrap_or(0);
+            self.usdc_balances.insert(&sender_id, &(balance+amount.0));
+        }
+        else if ft_contract == "ft.blockjobs.testnet".to_string() {
+            let balance = self.jobs_balances.get(&sender_id).unwrap_or(0);
+            self.jobs_balances.insert(&sender_id, &(balance+amount.0));
+        }
+
+        env::log(&msg.as_bytes());
         PromiseOrValue::Value(U128(0))
     }
 }
@@ -102,7 +116,7 @@ impl Marketplace {
 #[ext_contract(ext_token)]
 pub trait Token {
     fn mint(receiver: ValidAccountId, quantity: U128);
-    fn transfer_tokens(to: AccountId, amount: Balance);
+    fn transfer_ft(to: AccountId, amount: Balance);
 }
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
@@ -112,11 +126,12 @@ pub trait Mediator {
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
     fn on_new_dispute(service_id: u64);
-    fn on_transfer_tokens(service_id: u64);
+    fn on_transfer_ft(service_id: u64);
     fn on_buy_service(service_id: u64) -> Service;
     fn on_return_service(service_id: u64);
 }
 #[ext_contract(ext_contract)]
 trait ExtContract {
     fn ft_transfer(&mut self, receiver_id: AccountId, amount: U128, memo: Option<String>);
+    fn ft_transfer_call(&mut self, receiver_id: ValidAccountId, amount: U128, memo: Option<String>, msg: String) -> PromiseOrValue<U128>;
 }

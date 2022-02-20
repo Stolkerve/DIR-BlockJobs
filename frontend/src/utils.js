@@ -81,7 +81,7 @@ export async function initContract() {
     changeMethods: [
       "mint",
       "mint_test",
-      "transfer_tokens",
+      "transfer_ft",
       "block_tokens",
       "withdraw_tokens",
     ],

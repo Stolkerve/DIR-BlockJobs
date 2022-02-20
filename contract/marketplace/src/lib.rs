@@ -12,14 +12,14 @@ use std::convert::TryFrom;
 use crate::user::*;
 use crate::internal::*;
 use crate::external::*;
-pub use event::Event;
+pub use event::NearEvent;
 mod internal; mod user; mod external; mod event;
 
 near_sdk::setup_alloc!();
 
 const NO_DEPOSIT: Balance = 0;
-const BASE_GAS: Gas = 90_000_000_000_000;
-const GAS_FT_TRANSFER: Gas = 70_000_000_000_000;
+const BASE_GAS: Gas = 30_000_000_000_000;
+const GAS_FT_TRANSFER: Gas = 30_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
@@ -68,8 +68,11 @@ pub struct Marketplace {
     pub contract_owner: AccountId,
     pub contract_me: AccountId,
     pub contract_ft: AccountId,
-    // Tokens soportados
+    // Tokens soportados.
     pub tokens: UnorderedSet<AccountId>,
+    // Balance disponible de tokens de los usuarios.
+    pub usdc_balances: LookupMap<AccountId, Balance>,
+    pub jobs_balances: LookupMap<AccountId, Balance>,
     // Storage en bytes por cada cuenta.
     pub extra_storage_in_bytes_per_service: StorageUsage,
 }
@@ -95,11 +98,13 @@ impl Marketplace {
             total_services: 0,
             services_by_account: LookupMap::new(b"a".to_vec()),
             service_by_id: UnorderedMap::new(b"b".to_vec()),
-            users: UnorderedMap::new(b"u".to_vec()),
+            users: UnorderedMap::new(b"c".to_vec()),
             contract_owner: owner_id.clone().into(),
             contract_me: mediator.clone().into(),
             contract_ft: ft.clone().into(),
-            tokens: UnorderedSet::new(b"t".to_vec()),
+            tokens: UnorderedSet::new(b"d".to_vec()),
+            usdc_balances: LookupMap::new(b"e".to_vec()),
+            jobs_balances: LookupMap::new(b"f".to_vec()),
             extra_storage_in_bytes_per_service: 0,
         };
         // Agregar NEAR por default.
@@ -123,10 +128,8 @@ impl Marketplace {
     }
 
     /// Agregar nuevo token soportado.
-    /// 
     pub fn add_token(&mut self, token: ValidAccountId) -> ValidAccountId {
         self.assert_admin();
-
         self.tokens.insert(token.as_ref());
         token
     }
@@ -181,10 +184,10 @@ impl Marketplace {
             }
 
             services_set.insert(&self.total_services);
-            self.total_services += 1;
             service.id = self.total_services;
-
-            Event::log_service_mint(
+            self.total_services += 1;
+            
+            NearEvent::log_service_mint(
                 service.id.clone(),
                 service.actual_owner.clone().to_string(),
                 service.metadata.title.clone(),
@@ -197,14 +200,13 @@ impl Marketplace {
 
         self.services_by_account.insert(&sender, &services_set);
 
-        // Manejo de storage
+        // Manejo del storage.
         let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
         // env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
         let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
         // env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund(required_storage_in_bytes);
-
         service
     }
 
@@ -213,12 +215,12 @@ impl Marketplace {
     /// Solo ejecutable por empleadores.
     #[payable]
     pub fn buy_service(&mut self, service_id: u64) {
-        // Verificar que el servicio exista
+        // Verificar que el servicio exista.
         self.assert_service_exists(&service_id);
 
         let mut service = self.get_service_by_id(service_id.clone());
         
-        // Verificar que este en venta
+        // Verificar que este en venta.
         if !service.on_sale {
             env::panic(b"The indicated service is not on sale")
         }
@@ -253,9 +255,20 @@ impl Marketplace {
 
             self.service_by_id.insert(&service_id, &service);
         } else {
-            if !self.tokens.contains(&token) {
-                env::panic(format!("Token {} not supported by this market", token).as_bytes(),);
+            let token = service.metadata.token;
+
+            if token == "usdc.fakes.testnet".to_string() {
+                let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
+                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
             }
+            else if token == "ft.blockjobs.testnet".to_string() {
+                let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
+                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
+            } 
+            else {
+                env::panic(b"Token not soported");
+            }        
+
             // Realizar el pago en el token indicado.
             ext_contract::ft_transfer(
                 self.contract_me.clone(),
@@ -268,7 +281,7 @@ impl Marketplace {
             );
         };
 
-        Event::log_service_buy(
+        NearEvent::log_service_buy(
             service.id.clone(),
             sender.clone().to_string()
         );
@@ -356,7 +369,7 @@ impl Marketplace {
             BASE_GAS,
         ));
 
-        Event::log_service_reclaim(
+        NearEvent::log_service_reclaim(
             service.id.clone(),
             sender_id.clone().to_string()
         );
@@ -401,7 +414,7 @@ impl Marketplace {
             BASE_GAS,
         ));
 
-        Event::log_service_return(
+        NearEvent::log_service_return(
             service.id.clone(),
             service.creator_id.clone().to_string()
         );
@@ -451,7 +464,7 @@ impl Marketplace {
             deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
         }
 
-        Event::log_service_update_metadata(
+        NearEvent::log_service_update_metadata(
             service.id.clone(),
             service.metadata.title.clone(),
             service.metadata.description.clone(),
@@ -489,7 +502,7 @@ impl Marketplace {
         service.on_sale = on_sale;
         self.service_by_id.insert(&service_id, &service);
 
-        Event::log_service_update_on_sale(
+        NearEvent::log_service_update_on_sale(
             service_id.clone(),
             on_sale.clone()
         );
@@ -551,7 +564,7 @@ impl Marketplace {
 
         let rol: String = roles[0].to_string();
 
-        Event::log_user_new(
+        NearEvent::log_user_new(
             new_user.account_id.clone().to_string(),
             rol,
             new_user.personal_data.clone(),
@@ -630,7 +643,7 @@ impl Marketplace {
             deposit_refund_to(required_storage_in_bytes, account_id);
         }
 
-        Event::log_user_update_data(
+        NearEvent::log_user_update_data(
             user.account_id.clone(),
             data.clone()
         );
@@ -662,7 +675,7 @@ impl Marketplace {
         self.users.insert(&account_id.clone().into(), &user);
         let rol: String = role.to_string();
 
-        Event::log_user_update_roles(
+        NearEvent::log_user_update_roles(
             account_id.clone().to_string(),
             rol
         );

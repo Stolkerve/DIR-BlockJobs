@@ -6,7 +6,7 @@ near view $FT get_minter '{}' --accountId $FT
 
 near call $FT mint '{"receiver": "'$FT'"}' --accountId $ME
 
-near call $FT transfer_tokens '{"to": "'$ID'", "amount": 10000}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$ID'", "amount": 10000}' --accountId $FT
 near call $FT block_tokens '{"amount": 10000}' --accountId $ID --depositYocto 1
 
 near call $FT increase_allowance '{"account": "'$ID'"}' --accountId $ME
