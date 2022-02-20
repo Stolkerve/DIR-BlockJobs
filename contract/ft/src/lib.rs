@@ -128,7 +128,7 @@ impl Token {
         true
     }
 
-    pub fn ft_transfer_tokens(&mut self, to: AccountId, amount: Balance) -> Balance {
+    pub fn transfer_ft(&mut self, to: AccountId, amount: Balance) -> Balance {
         let sender = env::predecessor_account_id();
 
         // self.token.internal_register_account(&to);

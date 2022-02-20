@@ -27,6 +27,7 @@ pub struct Sale {
     pending_tokens: Balance,
     is_finished: bool,
     admin: AccountId,
+    whitelist: Vec<AccountId>,
 }
 
 #[near_bindgen]
@@ -87,6 +88,17 @@ impl Sale {
         };
     }
 
+
+    /// Retirar los NEARs obtenidos de la preventa una vez finalizada.
+    /// 
+    pub fn airdrop(&self, beneficiary: AccountId) -> Balance {
+        assert!(env::block_timestamp > self.deploy_time+ONE_DAY*30, "The whitelist isn't finished");
+        assert!(env::signer_account_id() == env::current_account_id(), "You haven't permission to withdraw");
+
+        Promise::new(beneficiary).transfer(env::account_balance());
+
+        env::account_balance()
+    }
 
     /// Verificar que haya finalizado el tiempo de preventa.
     /// 
