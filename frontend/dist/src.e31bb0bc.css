@@ -1559,14 +1559,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   top: 1rem;
 }
 
-.-right-10 {
-  right: -2.5rem;
-}
-
-.-top-6 {
-  top: -1.5rem;
-}
-
 .z-50 {
   z-index: 50;
 }
@@ -1628,6 +1620,16 @@ Ensure the default browser behavior of the `hidden` attribute.
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.mx-0\.5 {
+  margin-left: 0.125rem;
+  margin-right: 0.125rem;
+}
+
+.mx-0 {
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
 .my-6 {
@@ -1802,10 +1804,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .max-h-\[400px\] {
   max-height: 400px;
-}
-
-.max-h-\[50px\] {
-  max-height: 50px;
 }
 
 .min-h-screen {
@@ -2447,6 +2445,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .text-3xl {

@@ -21,6 +21,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
     const [priceService, setPriceService] = useState(service ? service.metadata.price : 0)
     const [durationService, setDurationService] = useState(service ? service.duration : 0)
     const [amountOfServices, setAmountOfServicesService] = useState(0)
+    const [paidmentMethod, setPaidmentMethod] = useState({value: "", label: ""})
 
     const filterCategories = (inputValue) => {
         return categoriesData.filter((i) =>
@@ -143,11 +144,11 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                 ></textarea>
 
                                 <label className="text-gray-700 text-sm font-semibold">Categorias</label>
-                                <AsyncSelect className="max-h-[50px]" cacheOptions defaultOptions isMulti value={categoriesService} onChange={(value) => { setCategoriesService(value) }} loadOptions={promiseOptions}/>
+                                <AsyncSelect className="" cacheOptions defaultOptions isMulti value={categoriesService} onChange={(value) => { setCategoriesService(value) }} loadOptions={promiseOptions}/>
 
                                 <div className="mt-2">
                                     <label className="text-gray-700 text-sm font-semibold mt-2">Metodo de pago</label>
-                                    <Select className="w-auto" options={tokensData}/>
+                                    <Select className="w-auto" value={paidmentMethod} onChange={(value) => { setPaidmentMethod(value) }} options={tokensData}/>
                                 </div>
 
                                 <div className="mt-2">
@@ -172,7 +173,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                             [
                                                 { title: "Duracion (dias)", value: durationService, action: handleOnChangeDuration, counter: handleCounter, value: durationService, setter: setDurationService },
                                                 { title: "Cantidad", value: amountOfServices, action: handleOnChangeAmount, counter: handleCounter, value: amountOfServices, setter: setAmountOfServicesService },
-                                                { title: "Precio (NEARS)", value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
+                                                { title: `Precio (${paidmentMethod.value})`, value: priceService, action: handleOnChangePrice, counter: handleCounter, value: priceService, setter: setPriceService },
                                             ].map((v, i) => {
                                                 return (
                                                     <div className="h-auto w-32 mr-4" key={i}>
@@ -264,10 +265,10 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                     ok: descriptionService.length > 0,
                                                     msg: "Falta la descripcion"
                                                 },
-                                                // {
-                                                //     ok: iconServiceFile != null,
-                                                //     msg: "Falta el icono"
-                                                // },
+                                                {
+                                                    ok: paidmentMethod.value.length > 0,
+                                                    msg: "Falta el metodo de pago"
+                                                },
                                                 {
                                                     ok: priceService > 0,
                                                     msg: "Falta el precio"
@@ -285,6 +286,7 @@ export default function CreateServiceDialog({ isOpen, closeModal, openModal, ser
                                                 icon: service ? service.metadata.icon : "",
                                                 price: priceService,
                                                 categories: JSON.stringify(categoriesService.map((v) => v.value)),
+                                                token: paidmentMethod.value.toLowerCase()
                                             }
                                             try {
                                                 let finalValidatorMsg = ""

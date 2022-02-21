@@ -3,6 +3,21 @@ import React from "react";
 import { ImCross, ImCheckmark } from "react-icons/im"
 import { useNavigate } from "react-router-dom";
 
+const tokenIcons = [
+    {
+        "value": "near",
+        "path": require("../../assets/logo-black.svg")
+    },
+    {
+        "value": "dai",
+        "path": require("../../assets/daii.svg")
+    },
+    {
+        "value": "jobs",
+        "path": require("../../assets/jobs_test.svg")
+    }
+]
+
 export default function ServicesCard({ service }) {
     const navigate = useNavigate()
     return (
@@ -27,45 +42,63 @@ export default function ServicesCard({ service }) {
 
             </div>
 
-            <div className="font-light text-sm flex items-center mt-1 whitespace-pre-wrap">
-                <div className="flex whitespace-pre-wrap">
+            <div className="font-light text-sm mt-1 whitespace-pre-wrap">
+                <div>
                     <div className="mr-2">
                         <span className="font-semibold">Creador: </span>{service.creator_id}
                     </div>
-                    <div className="mr-2"><span className="font-semibold">Dueño: </span>{service.actual_owner}</div>
+                    <div className="mr-2">
+                        <span className="font-semibold">Dueño: </span>{service.actual_owner}
+                    </div>
+                </div>
+                <div className="flex items-center whitespace-pre-wrap">
 
                     <div className="mr-2 font-semibold">Duration:
                         <span className="font-light"> {service.duration} Days</span>
                     </div>
 
-                    <div className="flex items-center mr-2 font-semibold">Sold:
-                        <span className="font-light mx-1">
+                    <div className="mr-2 flex items-center font-semibold">Sold:
+                        <div className=" font-light mx-1">
                             {
                                 service.sold ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
                             }
-                        </span>
+                        </div>
                     </div>
 
                     <div className="flex items-center mr-2 font-semibold">On Sale:
-                        <span className="font-light mx-1">
+                        <div className="font-light mx-1">
                             {
                                 service.on_sale ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
                             }
-                        </span>
+                        </div>
                     </div>
 
                     <div className="flex items-center mr-2 font-semibold">On Dispute:
-                        <span className="font-light mx-1">
+                        <div className="font-light mx-1">
                             {
                                 service.on_dispute ? (<ImCheckmark color="green" />) : (<ImCross color="red" />)
                             }
-                        </span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className=" text-sm flex items-center">
-                {service.metadata.price}
-                <img className="w-[26px]" src={require("../../assets/logo-black.svg")}></img>
+            <div className="flex justify-between mt-4">
+                <div className=" text-sm flex items-center">
+                    {service.metadata.price}
+                    <img className="w-[26px] ml-1" src={ (tokenIcons.find((v) => {return v.value === service.metadata.token})).path }></img>
+                </div>
+                <div></div>
+                <div className="flex flex-row flex-wrap">
+                    {
+                        service.metadata.categories.map((v, i) => {
+                            return (
+                                <div key={i} className="mx-0.5 px-2 py-1 rounded-xl bg-[#27C0EF] text-white font-light text-xs transition ease-in-out hover:scale-[1.02]">
+                                    {v}
+                                </div>
+                            )
+                        })
+                    }
+                </div>
             </div>
         </div>
     )

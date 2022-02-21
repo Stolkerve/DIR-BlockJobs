@@ -40,10 +40,10 @@ echo "{${NEWLINE}${TAP}\"MARKETPLACE_CONTRACT\": \"$MA_ID\",${NEWLINE}${TAP}\"ME
 cd ../../
 
 echo "inicializando el contrato de FT"
-near call $FT_ID new_default_meta '{"owner_id": "'$FT_ID'", "initial_supply": "100001"}' --accountId $FT_ID
+near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000", "sales_contract": "'$FT'"}' --accountId $FT
 
 echo "inicializando el contrato de Marketplace"
-near call $MA_ID new '{"owner_id": "'$MA_ID'", "mediator": "'$ME_ID'", "ft": "'$FT_ID'"}' --accountId $MA_ID --amount 0.03
+near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --accountId $MA --amount 0.03
 
 echo "inicializando el contrato Mediator"
-near call $ME_ID new '{"marketplace_id": "'$MA_ID'", "token_id": "'$FT_ID'"}' --accountId $ME_ID
+near call $ME new '{"marketplace_id": "'$MA'", "token_id": "'$FT'"}' --accountId $ME

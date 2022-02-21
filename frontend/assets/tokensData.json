@@ -4,11 +4,11 @@
         "label": "NEAR"
     },
     {
-        "value": "DAI",
-        "label": "DAI"
+        "value": "usdc.fakes.testnet",
+        "label": "USDC"
     },
     {
-        "value": "JOBS",
+        "value": "ft.blockjobs.testnet",
         "label": "JOBS"
     }
 ]

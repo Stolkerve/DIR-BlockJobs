@@ -16,10 +16,11 @@ export default function MyServices() {
 
     useEffect(async () => {
         const _services = await getUserServices()
-        console.log(_services)
-        if (_services) {
-            setServices(await getUserServices())
+        for (let index = 0; index < _services.length; index++) {
+            _services[index].metadata.categories = JSON.parse(_services[index].metadata.categories);
         }
+        console.log(_services)
+        setServices(_services)
 
         setLoading(false)
     }, [])

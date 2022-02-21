@@ -12,6 +12,9 @@ export default function Services() {
 
     useEffect(async () => {
         let s = await getServices(0, 15)
+        for (let index = 0; index < s.length; index++) {
+            s[index].metadata.categories = JSON.parse(s[index].metadata.categories);
+        }
         setLoading(false)
         console.log(s)
         setServices(s)
@@ -23,7 +26,7 @@ export default function Services() {
                 {
                     loading ? (
                         <div className="shadow-md border-2 rounded-lg px-6 py-4 w-full mt-4">
-                            <div className="text-xl font-bold text-gray-800">Mis servicios</div>
+                            <div className="text-xl font-bold text-gray-800"></div>
                             {
                                 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((v, i) => {
                                     return (

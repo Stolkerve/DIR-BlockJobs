@@ -27,7 +27,7 @@ workspace.code-workspace
 **/.cache
 
 /frontend/.env
-/frontend/dist
+frontend/dist
 
 npm-debug.log*
 yarn-debug.log*

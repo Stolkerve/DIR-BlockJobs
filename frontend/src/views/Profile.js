@@ -18,7 +18,6 @@ export default function Profile() {
 	const params = useParams();
 
 	useEffect(async () => {
-
 		let userNearId = null
 		if (params.id) {
 			userNearId = params.id
@@ -26,9 +25,9 @@ export default function Profile() {
 		else {
 			userNearId = window.accountId
 		}
-
 		console.log(userNearId)
-		let user = await getUser(window.accountId)
+
+		let user = await getUser(userNearId)
 		if (user) {
 			user.personal_data = JSON.parse(user.personal_data)
 			setUser(user)
@@ -156,7 +155,7 @@ export default function Profile() {
 				) : (
 					<div>
 						<div className="relative">
-							<div className="absolute -right-10 -top-6 hover:cursor-pointer rounded-full p-2 bg-[#04AADD] flex items-center justify-center transition ease-in-out hover:scale-110 duration-300">
+							<div className="absolute right-0 top-0 hover:cursor-pointer rounded-full p-2 bg-[#04AADD] flex items-center justify-center transition ease-in-out hover:scale-110 duration-300">
 								<FaEdit className="" size={"23px"} color='#ffffff' onClick={openModal} />
 							</div>
 							<UserProfile user={user} />

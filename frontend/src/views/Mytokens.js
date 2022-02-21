@@ -34,7 +34,7 @@ export default function MyTokens() {
                     <div className="text-2xl font-bold text-gray-800 mb-2 text-center">Tokens </div>
                     <div className="text-lg font-bold text-gray-800">
                         <div class="grid grid-cols-2 grid-flow-row auto-rows-min">
-                            <img className="my-2 w-[32px]" src={require("../../assets/dai-2.svg")}></img>
+                            <img className="my-2 w-[32px]" src={require("../../assets/jobs_test.svg")}></img>
                             <div className="self-center">
                                 {
                                     loading ? (
