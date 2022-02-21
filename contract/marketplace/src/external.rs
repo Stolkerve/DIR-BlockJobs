@@ -15,11 +15,11 @@ impl FungibleTokenReceiver for Marketplace {
         assert!(self.tokens.contains(&ft_contract), "Token not soported");
         if ft_contract == "usdc.fakes.testnet".to_string() {
             let balance = self.usdc_balances.get(&sender_id).unwrap_or(0);
-            self.usdc_balances.insert(&sender_id, &(balance+amount.0));
+            self.usdc_balances.insert(&sender_id, &(balance+amount.0*FT_DECIMALS));
         }
         else if ft_contract == "ft.blockjobs.testnet".to_string() {
             let balance = self.jobs_balances.get(&sender_id).unwrap_or(0);
-            self.jobs_balances.insert(&sender_id, &(balance+amount.0));
+            self.jobs_balances.insert(&sender_id, &(balance+amount.0*FT_DECIMALS));
         }
 
         env::log(&msg.as_bytes());
@@ -109,6 +109,23 @@ impl Marketplace {
         };
     }
     
+    /// Callback por reclamo de un servicio por parte del profesional.
+    /// 
+    pub fn on_withdraw_ft(&mut self, amount: U128) -> Balance {
+        if env::predecessor_account_id() != env::current_account_id() {
+            env::panic(b"Only the contract can call its function")
+        }
+        assert_eq!(env::promise_results_count(), 1, "Contract expected a result on the callback");
+        
+        match env::promise_result(0) {
+            PromiseResult::Successful(_data) => {
+
+                return amount.into();
+            }
+            PromiseResult::Failed => env::panic(b"Callback faild"),
+            PromiseResult::NotReady => env::panic(b"Callback faild"),
+        };
+    }
 
 }
 

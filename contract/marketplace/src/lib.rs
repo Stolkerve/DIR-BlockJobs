@@ -259,11 +259,11 @@ impl Marketplace {
 
             if token == "usdc.fakes.testnet".to_string() {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price*FT_DECIMALS, "Insufficient balance");
             }
             else if token == "ft.blockjobs.testnet".to_string() {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price*FT_DECIMALS, "Insufficient balance");
             } 
             else {
                 env::panic(b"Token not soported");
@@ -682,6 +682,47 @@ impl Marketplace {
         user
     }
 
+
+    /// Hacer withdraw de los FT por parte del usuario.
+    /// 
+    pub fn withdraw_ft(&mut self, amount: U128, token: AccountId) -> Balance {
+        let sender = env::predecessor_account_id();
+        if token == "usdc.fakes.testnet".to_string() {
+            let actual_balance = self.usdc_balances.get(&sender).unwrap_or(0);
+            assert!(actual_balance >= amount.into(), "Insufficient balance");
+
+            let new_balance = actual_balance - amount.0;
+            self.usdc_balances.insert(&sender, &new_balance);
+
+            ext_contract::ft_transfer(
+                sender.clone(),
+                amount.clone(),
+                None,
+                &token, ONE_YOCTO, GAS_FT_TRANSFER
+            );
+            return new_balance;
+        } else {
+            let actual_balance = self.jobs_balances.get(&sender).unwrap_or(0);
+            assert!(actual_balance >= amount.into(), "Insufficient balance");
+
+            let new_balance = actual_balance - amount.0;
+            self.jobs_balances.insert(&sender, &new_balance);
+
+            ext_contract::ft_transfer(
+                sender.clone(),
+                amount.clone(),
+                None,
+                &token, ONE_YOCTO, GAS_FT_TRANSFER
+            );
+            return new_balance;
+        }
+
+        // .then(ext_self::on_withdraw_ft(
+        //     amount,
+        //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
+        // );
+
+    }
 
     /*******************************/
     /****** CALLBACK FUNCTIONS *****/

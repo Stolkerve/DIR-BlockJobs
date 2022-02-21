@@ -38,7 +38,8 @@ near view $MA get_user_service_id '{"account_id": "'$ID'"}' --accountId $MA
 
 near view $MA get_total_services '{}' --accountId $MA
 
-near view $MA get_services '{"from_index":, "limit": }'
+near view $MA get_services '{"from_index":, "limit": }' --accountId $MA
 
+near call $MA get_ft_balance '{"token": "jobs"}' --accountId $ID2
 
 near view exchange.ref-dev.testnet get_pool '{"pool_id":347}' --accountId stolkerve4.testnet
