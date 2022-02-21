@@ -224,6 +224,16 @@ impl Marketplace {
         self.tokens.to_vec()
     }
 
+    pub fn get_ft_balance(&self, token: String) -> Balance {
+        let sender = env::predecessor_account_id();
+        if token == "usdc".to_string() {
+            return self.usdc_balances.get(&sender).unwrap_or(0);
+        }
+        else {
+            return self.jobs_balances.get(&sender).unwrap_or(0);
+        }
+    }
+
     // pub(crate) fn internal_remove_service_from_owner(
     //     &mut self,
     //     account_id: &AccountId,
