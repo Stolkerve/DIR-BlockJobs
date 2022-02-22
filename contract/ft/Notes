@@ -23,7 +23,7 @@ near view $FT get_total_supply '{}' --accountId $FT
 near view $FT get_minter '{}' --accountId $FT
 
 near view $FT get_balance_of '{"account": "'$FT'"}' --accountId $FT
-near view $FT get_balance_of '{"account": "'$ID'"}' --accountId $FT
+near view $FT get_balance_of '{"account": "'$ID2'"}' --accountId $FT
 near view $FT get_allowance_of '{"account": "'$ID'"}' --accountId $FT
 
 near view $FT get_pending_to_mint '{}' --accountId $FT
