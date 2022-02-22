@@ -74,11 +74,7 @@ near call $FT transfer_ft '{"to": "'$ME'", "amount": 100}' --accountId $FT
 
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
-# near call $FT transfer_ft '{"to": "'$ME'", "amount": 1}' --accountId $FT
-# near call $FT transfer_ft '{"to": "'$ID2'", "amount": 10000}' --accountId $FT
-
 # near call $FT block_tokens '{"amount": 10000}' --accountId $ME --depositYocto 1
-# near call $FT transfer_ft '{"to": "'$MA'", "amount": 10000}' --accountId $FT
 # near call $FT block_tokens '{"amount": 10000}' --accountId $MA --depositYocto 1
 
 # near call $ME pre_vote '{"dispute_id": 0}' --accountId $MA --gas 300000000000000

@@ -15,11 +15,11 @@ impl FungibleTokenReceiver for Marketplace {
         assert!(self.tokens.contains(&ft_contract), "Token not soported");
         if ft_contract == "usdc.fakes.testnet".to_string() {
             let balance = self.usdc_balances.get(&sender_id).unwrap_or(0);
-            self.usdc_balances.insert(&sender_id, &(balance+amount.0*FT_DECIMALS));
+            self.usdc_balances.insert(&sender_id, &(balance+amount.0));
         }
         else if ft_contract == "ft.blockjobs.testnet".to_string() {
             let balance = self.jobs_balances.get(&sender_id).unwrap_or(0);
-            self.jobs_balances.insert(&sender_id, &(balance+amount.0*FT_DECIMALS));
+            self.jobs_balances.insert(&sender_id, &(balance+amount.0));
         }
 
         env::log(&msg.as_bytes());
@@ -34,7 +34,7 @@ impl Marketplace {
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
                 let mut service = self.get_service_by_id(service_id.clone());
-                let sender = env::predecessor_account_id();
+                let sender = env::signer_account_id();
                 let buyer = self.get_user(string_to_valid_account_id(&sender).clone());
 
                 // Establecer como servicio vendido y no en venta.
@@ -51,6 +51,15 @@ impl Marketplace {
 
                 self.service_by_id.insert(&service_id, &service);
 
+                if service.metadata.token == "usdc.fakes.testnet".to_string() {
+                    let actual_balance = self.usdc_balances.get(&sender).unwrap_or(0);
+                    let new_balance = actual_balance - service.metadata.price;
+                    self.usdc_balances.insert(&sender, &new_balance);
+                } else {
+                    let actual_balance = self.jobs_balances.get(&sender).unwrap_or(0);
+                    let new_balance = actual_balance - service.metadata.price;
+                    self.jobs_balances.insert(&sender, &new_balance);
+                }
                 return service;
             }
             PromiseResult::Failed => env::panic(b"Callback faild"),

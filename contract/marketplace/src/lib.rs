@@ -23,7 +23,6 @@ const GAS_FT_TRANSFER: Gas = 30_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
-const FT_DECIMALS: Balance = 1_000_000_000_000_000_000;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -259,11 +258,11 @@ impl Marketplace {
 
             if token == "usdc.fakes.testnet".to_string() {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price*FT_DECIMALS, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
             }
             else if token == "ft.blockjobs.testnet".to_string() {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price*FT_DECIMALS, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
             } 
             else {
                 env::panic(b"Token not soported");
@@ -272,7 +271,7 @@ impl Marketplace {
             // Realizar el pago en el token indicado.
             ext_contract::ft_transfer(
                 self.contract_me.clone(),
-                (service.metadata.price*FT_DECIMALS).into(),
+                (service.metadata.price).into(),
                 None,
                 &token, ONE_YOCTO, GAS_FT_TRANSFER
             ).then(ext_self::on_buy_service(
