@@ -12,8 +12,9 @@ near call $MA set_user_role '{"account_id": "'$ID'", "role": "Employeer", "remov
 #debe fallar
 near call $MA set_user_role '{"account_id": "'$ID'", "role": "Admin", "remove": false}' --accountId $ID
 
-near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "programing"}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
+near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 2000000000000000000, "categories": "none", "token": "'$FT'"}, "quantity": 1, "duration": 20}' --accountId $ID --amount 0.029
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 300000000000000
+near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
 
 near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 1 --gas 300000000000000
 

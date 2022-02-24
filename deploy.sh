@@ -43,7 +43,7 @@ ID2=proofs333.testnet
 # ID2=stolkerve2.testnet
 
 echo "inicializando el contrato de FT"
-near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000", "sales_contract": "'$FT'"}' --accountId $FT
+near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000000000000000000", "sales_contract": "'$FT'"}' --accountId $FT
 
 echo "inicializando el contrato de Marketplace"
 near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --accountId $MA --amount 0.03
@@ -68,9 +68,9 @@ near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "
 # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 10000000000000
 # near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 0.2 --gas 100000000000000
 
-near call $FT transfer_ft '{"to": "'$ID2'", "amount": 10000}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$MA'", "amount": 100}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$ME'", "amount": 100}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$ID2'", "amount": 10000000000000000000000}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$MA'", "amount": 100000000000000000000}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$ME'", "amount": 100000000000000000000}' --accountId $FT
 
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
@@ -87,4 +87,4 @@ near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 
 # near call $ME update_dispute_status '{"dispute_id": 0}' --accountId $ME --gas 300000000000000
 
 
-
+// 000000000000000000
