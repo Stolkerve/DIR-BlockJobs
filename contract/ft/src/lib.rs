@@ -102,14 +102,14 @@ impl Token {
         self.pending_to_mint = 0;
     }
 
-    /// Mintear nuevos tokens, limitado por pending_amount.
-    /// No se puede mintear por sobre esa cantidad.
-    /// 
-    pub fn mint_test(&mut self, receiver: ValidAccountId) {
-        self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
+    // /// Mintear nuevos tokens, limitado por pending_amount.
+    // /// No se puede mintear por sobre esa cantidad.
+    // /// 
+    // pub fn mint_test(&mut self, receiver: ValidAccountId) {
+    //     self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
 
-        self.pending_to_mint = 0;
-    }
+    //     self.pending_to_mint = 0;
+    // }
 
     /// Cambiar la cuenta con permisos para mintear.
     /// Solo puede haber un Minter.
@@ -270,12 +270,12 @@ impl Token {
         }
     }
 
-    /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
-    /// Solo ejecutable por y desde desde Mediator.
-    /// 
-    pub fn validate_tokens_test(&self, _account_id: AccountId) -> bool {
-        true
-    }
+    // /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
+    // /// Solo ejecutable por y desde desde Mediator.
+    // /// 
+    // pub fn validate_tokens_test(&self, _account_id: AccountId) -> bool {
+    //     true
+    // }
 
     // #[payable]
     pub fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) -> Balance {    

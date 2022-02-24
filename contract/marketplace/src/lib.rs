@@ -374,14 +374,14 @@ impl Marketplace {
         );
     }
 
-    #[payable]
-    pub fn reclaim_service_test(&mut self, service_id: u64) {
-        self.assert_service_exists(&service_id);
-        let service = self.get_service_by_id(service_id.clone());
-        let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
-        env::log(sender_id.to_string().as_bytes());
-        let _res = ext_mediator::pay_service(env::signer_account_id(), service.metadata.price, &self.contract_me, NO_DEPOSIT, BASE_GAS,).then(ext_self::on_return_service(service_id, &env::current_account_id(), NO_DEPOSIT, BASE_GAS,));
-    }
+    // #[payable]
+    // pub fn reclaim_service_test(&mut self, service_id: u64) {
+    //     self.assert_service_exists(&service_id);
+    //     let service = self.get_service_by_id(service_id.clone());
+    //     let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
+    //     env::log(sender_id.to_string().as_bytes());
+    //     let _res = ext_mediator::pay_service(env::signer_account_id(), service.metadata.price, &self.contract_me, NO_DEPOSIT, BASE_GAS,).then(ext_self::on_return_service(service_id, &env::current_account_id(), NO_DEPOSIT, BASE_GAS,));
+    // }
 
 
     /// Retornar un servicio al creador.
@@ -743,9 +743,9 @@ impl Marketplace {
         true
     }
     
-    pub fn validate_user_test(&self, _account_id: AccountId) -> bool {
-        true
-    }
+    // pub fn validate_user_test(&self, _account_id: AccountId) -> bool {
+    //     true
+    // }
 
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.

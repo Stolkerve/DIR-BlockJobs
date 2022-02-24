@@ -202,7 +202,7 @@ impl Mediator {
         if dispute.dispute_status != DisputeStatus::Open {
             env::panic(b"The time to join as a jury member is over");
         }
-        let _res = ext_marketplace::validate_user_test(
+        let _res = ext_marketplace::validate_user(
             env::signer_account_id(),
             &self.marketplace_contract,
             NO_DEPOSIT,
@@ -271,7 +271,7 @@ impl Mediator {
             vote.clone()
         );
 
-        let _res = ext_ft::validate_tokens_test(
+        let _res = ext_ft::validate_tokens(
             sender.clone(),
             &self.token_contract,
             NO_DEPOSIT,
@@ -615,13 +615,13 @@ impl Mediator {
 
 #[ext_contract(ext_marketplace)]
 pub trait Marketplace {
-    fn validate_user_test(account_id: AccountId);
+    fn validate_user(account_id: AccountId);
     fn return_service_by_mediator(service_id: u64);
     fn ban_user_by_mediator(user_id: AccountId);
 }
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
-    fn validate_tokens_test(account_id: AccountId);
+    fn validate_tokens(account_id: AccountId);
     // fn increase_allowance(account: AccountId);
     // fn decrease_allowance(account: AccountId);
     fn applicant_winner(votes: HashSet<Vote>);
