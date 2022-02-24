@@ -128,14 +128,14 @@ impl Token {
         true
     }
 
-    pub fn transfer_ft(&mut self, to: AccountId, amount: Balance) -> Balance {
+    pub fn transfer_ft(&mut self, to: AccountId, amount: U128) -> U128 {
         let sender = env::predecessor_account_id();
 
         // self.token.internal_register_account(&to);
         if !self.token.accounts.contains_key(&to) {
             self.token.accounts.insert(&to, &0);
         }
-        self.token.internal_transfer(&sender, &to, amount*DECIMALS, None);
+        self.token.internal_transfer(&sender, &to, amount.into(), None);
 
         amount
     }
