@@ -9,8 +9,8 @@ const tokenIcons = [
         "path": require("../../assets/logo-black.svg")
     },
     {
-        "value": "dai",
-        "path": require("../../assets/daii.svg")
+        "value": "usdc",
+        "path": require("../../assets/usd-coin-usdc-logo.svg")
     },
     {
         "value": "jobs",

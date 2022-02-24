@@ -1,165 +1,213 @@
 import { utils } from "near-api-js";
 import React, { useEffect, useState } from "react";
-import BuyJobsCoinDialog from "../components/BuyJobsCoinDialog";
 
-import SkeletonLoaderService from "../components/SkeletonLoaderService"
-import { getBalanceOf } from "../utils";
+import { FaWallet } from "react-icons/fa"
+
+import BuyJobsCoinDialog from "../components/BuyJobsCoinDialog";
+import { ftTransferCallJOBS, ftTransferCallUSDC, getFTBalanceOf, getJOBSBalanceOf, getUSDCBalanceOf, withdrawFT } from "../utils";
 
 export default function MyTokens() {
-    const [loading, setLoading] = useState(true)
-    const [jobsCoinBalance, setJobsCoinBalance] = useState(0)
-    const [nearBalance, setNearBalance] = useState(0)
-    let [isOpen, setIsOpen] = useState(false)
+	const [loading, setLoading] = useState(true)
+	const [USDCBalance, setUSDCBalance] = useState(0)
+	const [USDCWalletBalance, setUSDWalletCBalance] = useState(0)
+	const [JOBSWalletBalance, setJOBSWalletCBalance] = useState(0)
+	const [JOBSBalance, setJOBSBalance] = useState(0)
+	const [nearBalance, setNearBalance] = useState(0)
+	let [isOpen, setIsOpen] = useState(false)
 
-    useEffect(async () => {
-        const b = (await getBalanceOf(window.accountId)).toLocaleString().replaceAll(".", "");
-        setJobsCoinBalance(utils.format.formatNearAmount(b, 4))
-        setNearBalance(utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available, 4))
-        setLoading(false)
-    }, [])
+	useEffect(async () => {
+		console.log((0.1 * (10 ** 18)).toLocaleString().replaceAll(".", ""))
 
-    function closeModal() {
-        setIsOpen(false)
-    }
+		// let balanceOfJOBS = await getFTBalanceOf(window.accountId, "ft.blockjobs.testnet");
+		// if (balanceOfJOBS != 0) {
+		//     balanceOfJOBS = balanceOfJOBS.toLocaleString().replaceAll(".", "")
+		//     balanceOfJOBS = utils.format.formatNearAmount(balanceOfJOBS, 4)
+		// }
+		// let balanceOfUSDC = await getFTBalanceOf(window.accountId, "usdc.fakes.testnet");
+		// if (balanceOfUSDC != 0) {
+		//     balanceOfUSDC.toLocaleString().replaceAll(".", "")
+		//     balanceOfUSDC = utils.format.formatNearAmount(balanceOfUSDC, 4)
+		// }
 
-    function openModal() {
-        setIsOpen(true)
-    }
+		let jobsBal = await getJOBSBalanceOf(window.accountId)
+		jobsBal = jobsBal.toLocaleString().replaceAll(".", "")
+		jobsBal = utils.format.formatNearAmount(jobsBal, 4);
+		console.log(jobsBal)
+		setJOBSWalletCBalance(jobsBal)
+		setUSDWalletCBalance(await getUSDCBalanceOf(window.accountId));
+		// setUSDCBalance(balanceOfUSDC)
+		// setJOBSBalance(balanceOfJOBS)
+		setNearBalance(utils.format.formatNearAmount((await window.walletConnection.account().getAccountBalance()).available, 4))
 
-    return (
-        <div className="m-8 w-full">
-            <div className="flex justify-center">
+		setLoading(false)
+	}, [])
 
-                <div className="shadow-md border-2 rounded-md whitespace-pre-wrap p-4 w-fit">
-                    <div className="text-2xl font-bold text-gray-800 mb-2 text-center">Tokens </div>
-                    <div className="text-lg font-bold text-gray-800">
-                        <div class="grid grid-cols-2 grid-flow-row auto-rows-min">
-                            <img className="my-2 w-[32px]" src={require("../../assets/jobs_test.svg")}></img>
-                            <div className="self-center">
-                                {
-                                    loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                    ) : (
-                                        <div>{jobsCoinBalance}</div>
-                                    )
-                                }
-                            </div>
-                            <img className="my-2 w-[32px]" src={require("../../assets/logo-black.svg")}></img>
-                            <div className="self-center">
-                                {
-                                    loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                    ) : (
-                                        <div>{nearBalance}</div>
-                                    )
-                                }
-                            </div>
-                            <img className="my-2 w-[32px]" src={require("../../assets/daii.svg")}></img>
-                            <div className="self-center">
-                                {
-                                    loading ? (
-                                        <svg className="spinner-normal ml-2" viewBox="0 0 50 50">
-                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4"></circle>
-                                        </svg>
-                                    ) : (
-                                        <div>{0}</div>
-                                    )
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
+	function closeModal() {
+		setIsOpen(false)
+	}
 
-                <div className="mx-4"></div>
+	function openModal() {
+		setIsOpen(true)
+	}
 
-                <div>
-                    <div className="shadow-md border-2 rounded-md whitespace-pre-wrap p-4 w-fit">
-                        <div className="text-2xl font-bold text-gray-800 mb-2 text-center">JobsCoin</div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    openModal()
-                                }}
-                            >
-                                Compra
-                            </button>
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    window.open("https://testnet.ref.finance/", "_blank")
-                                }}
-                            >
-                                Trade
-                            </button>
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    window.open("https://wallet.testnet.near.org/send-money", "_blank")
-                                }}
-                            >
-                                Transferir
-                            </button>
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    window.open("https://wallet.testnet.near.org/receive-money", "_blank")
-                                }}
-                            >
-                                Recibir
-                            </button>
-                        </div>
-                    </div>
-                </div>
+	return (
+		<div className="m-8 w-full">
+			{
+				loading ? (
+					<div></div>
+				) : (
 
-                <div className="mx-4"></div>
+					<div className="mx-auto">
+						<table class="table-auto">
+							<thead>
+								<tr>
+									<th className="text-left">Tokens</th>
+									{/* <th className="text-left">
+								<div className="flex flex-row items-center ml-8">
+									<FaWallet className=" mr-2"/>
+									NEAR
+								</div>
+							</th> */}
+									<th className="text-left mr-8">
+										<div className="flex flex-row items-center ml-8">
+											<FaWallet className=" mx-2" />
+											NEAR
+										</div>
+									</th>
+									<th className="text-left mr-8">
+										<div className="flex flex-row items-center ml-8">
+											<FaWallet className=" mx-2" />
+											BlockJobs
+										</div>
+									</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
 
-                <div>
-                    <div className="shadow-md border-2 rounded-md whitespace-pre-wrap p-4 w-fit">
-                        <div className="text-2xl font-bold text-gray-800 mb-2 text-center">Wallets</div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    window.open("https://wallet.testnet.near.org/", "_blank")
-                                }}
-                            >
-                                NEAR wallet
-                            </button>
+								<tr>
+									<td>
+										<div className="flex flex-row items-center">
+											<img className="my-2 w-[40px]" src={require("../../assets/jobs_test.svg")}></img>
+											<div className="font-semibold ml-2">JOBS</div>
+										</div>
+									</td>
+									<td className="text-right">
+										<div>
+											{JOBSWalletBalance != 0 ? JOBSWalletBalance : "-"}
+										</div>
+									</td>
+									<td className="text-right">
+										<div>
+											{JOBSBalance != 0 ? JOBSBalance : "-"}
+										</div>
+									</td>
+									<td className="flex pl-8">
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												openModal()
+											}}
+										>
+											Compra
+										</button>
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												window.open("https://testnet.ref.finance/", "_blank")
+											}}
+										>
+											Trade
+										</button>
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												ftTransferCallJOBS((0.05 * (10 ** 18)).toLocaleString().replaceAll(".", ""))
+											}}
+										>
+											Depositar
+										</button>
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												withdrawFT((1 * (10 ** 18)), "jobs")
+											}}
+										>
+											Withdraw
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div className="flex flex-row items-center">
+											<img className="my-2 w-[40px]" src={require("../../assets/usd-coin-usdc-logo.svg")}></img>
+											<div className="font-semibold ml-2">USDC</div>
+										</div>
+									</td>
+									<td className="text-right">
+										<div>
+											{USDCWalletBalance != 0 ? USDCWalletBalance : "-"}
+										</div>
+									</td>
+									<td className="text-right">
+										<div>
+											{USDCBalance != 0 ? USDCBalance : "-"}
+										</div>
+									</td>
+									<td className="flex pl-8">
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												ftTransferCallUSDC((0.1 * (10 ** 18)).toLocaleString().replaceAll(".", ""))
+											}}
+										>
+											Depositar
+										</button>
+										<button
+											className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
+											onClick={() => {
+												withdrawFT(0.1 * (10 ** 18).toLocaleString().replaceAll(".", ""), "jobs")
+											}}
+										>
+											Withdraw
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div className="flex flex-row items-center">
+											<img className="my-2 w-[40px]" src={require("../../assets/logo-black.svg")}></img>
+											<div className="font-semibold ml-2">NEAR</div>
+										</div>
+									</td>
+									<td className="text-right">
+										<div>
+											{nearBalance}
+										</div>
+									</td>
+									<td className="text-right">-</td>
+								</tr>
+							</tbody>
 
-                            <button
-                                className="uppercase py-2 px-4 rounded-lg border-transparent text-white text-md mr-4 bg-[#27C0EF] shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80"
-                                onClick={() => {
-                                    window.open("")
-                                }}
-                            >
-                                DAI wallet
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div className="mt-8">
-                <div className="shadow-md border-2 rounded-md mr-4 whitespace-pre-wrap p-4">
-                    <div className="text-2xl font-bold text-gray-800 mb-2 text-center">Transacciones</div>
-                    {
-                        [0, 1, 2, 3, 4, 5].map((v, i) => {
-                            return (
-                                <div key={i} className="my-6">
-                                    <SkeletonLoaderService />
-                                </div>
-                            )
-                        })
-                    }
-                </div>
-            </div>
-            <BuyJobsCoinDialog closeModal={closeModal} isOpen={isOpen} openModal={openModal} />
-        </div>
-    )
+						</table>
+						<BuyJobsCoinDialog closeModal={closeModal} isOpen={isOpen} openModal={openModal} />
+					</div>
+				)
+			}
+			{/* <div className="mt-8">
+				<div className="shadow-md border-2 rounded-md mr-4 whitespace-pre-wrap p-4">
+					<div className="text-2xl font-bold text-gray-800 mb-2 text-center">Transacciones</div>
+					{
+						[0, 1, 2, 3, 4, 5].map((v, i) => {
+							return (
+								<div key={i} className="my-6">
+									<SkeletonLoaderService />
+								</div>
+							)
+						})
+					}
+				</div>
+			</div> */}
+		</div>
+	)
 }

@@ -8,7 +8,6 @@ const marketplaceConfig = getConfig(process.env.NODE_ENV || "development", contr
 const mediatorConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.MEDIATOR_CONTRACT)
 const ftConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.FT_CONTRACT)
 const salesConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.SALES_CONTRACT)
-const refConfig = getConfig(process.env.NODE_ENV || "development", contractsAccounts.REF_CONTRACT)
 
 // Initialize contract & set global variables
 export async function initContract() {
@@ -25,7 +24,7 @@ export async function initContract() {
   window.accountId = window.walletConnection.getAccountId()
 
   // Initializing our contract APIs by contract name and configuration
-  window.contract = await new Contract(window.walletConnection.account(), marketplaceConfig.contractName, {
+  window.marketplaceContract = await new Contract(window.walletConnection.account(), marketplaceConfig.contractName, {
     viewMethods: [
       "get_user",
       "get_users_by_role",
@@ -35,6 +34,8 @@ export async function initContract() {
       "get_user_service_id",
       "get_total_services",
       "get_services",
+      "get_ft_balance",
+      "get_ft_balance_of"
     ],
     changeMethods: [
       "add_user",
@@ -48,11 +49,12 @@ export async function initContract() {
       "update_service",
       "update_service_on_sale",
       "return_service_by_admin",
+      "withdraw_ft"
     ],
     sender: marketplaceConfig.contractName
   })
 
-  window.contract2 = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
+  window.mediatorContract = await new Contract(window.walletConnection.account(), mediatorConfig.contractName, {
     viewMethods: [
       "get_dispute",
       "get_disputes",
@@ -68,7 +70,7 @@ export async function initContract() {
     sender: mediatorConfig.contractName
   })
 
-  window.contract3 = await new Contract(window.walletConnection.account(), ftConfig.contractName, {
+  window.ftContract = await new Contract(window.walletConnection.account(), ftConfig.contractName, {
     viewMethods: [
       "get_total_supply",
       "get_balance_of",
@@ -78,15 +80,13 @@ export async function initContract() {
       "verify_blocked_amount",
     ],
     changeMethods: [
-      "mint",
-      "transfer_ft",
-      "block_tokens",
-      "withdraw_tokens",
+      "ft_transfer_call"
+
     ],
     sender: ftConfig.contractName
   })
 
-  window.contract4 = await new Contract(window.walletConnection.account(), salesConfig.contractName, {
+  window.salesContract = await new Contract(window.walletConnection.account(), salesConfig.contractName, {
     viewMethods: [
       "verify_sale_finished"
     ],
@@ -96,15 +96,19 @@ export async function initContract() {
     ],
     sender: salesConfig.contractName
   })
+
+  window.usdcFT = await new Contract(window.walletConnection.account(), "usdc.fakes.testnet", {
+    viewMethods: [
+      "ft_balance_of"
+    ],
+    changeMethods: [
+      "ft_transfer_call"
+    ],
+    sender: "usdc.fakes.testnet"
+  })
+
   //BJT_PER_NEAR = 1000
 
-  window.contract5 = await new Contract(window.walletConnection.account(), refConfig.contractName, {
-    viewMethods: [
-      "get_return",
-    ],
-    changeMethods: [],
-    sender: refConfig.contractName
-  })
 
   // nft storage
   window.nftStorageClient = new NFTStorage({ token: String(process.env.NFT_STORAGE_API_KEY) })
@@ -133,7 +137,7 @@ function getErrMsg(e) {
 
 export async function mintService(serviceMetadata, amountOfServices, durationService, amt) {
   try {
-    return await window.contract.mint_service({ metadata: serviceMetadata, quantity: amountOfServices, duration: durationService }, "300000000000000", amt);
+    return await window.marketplaceContract.mint_service({ metadata: serviceMetadata, quantity: amountOfServices, duration: durationService }, "300000000000000", amt);
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -142,9 +146,21 @@ export async function mintService(serviceMetadata, amountOfServices, durationSer
   }
 }
 
+export async function withdrawFT(amount, token) {
+  try {
+    await window.marketplaceContract.withdraw_ft({amount: amount, token: token})
+    return true
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return false
+  }
+}
+
 export async function buyService(serviceId, deposit) {
   try {
-    await window.contract.buy_service({service_id: serviceId}, "300000000000000", deposit)
+    await window.marketplaceContract.buy_service({service_id: serviceId}, "300000000000000", deposit)
     return true
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
@@ -156,7 +172,7 @@ export async function buyService(serviceId, deposit) {
 
 export async function updateService(serviceId, serviceMetadata, durationService, amt) {
   try {
-    await window.contract.update_service({service_id: serviceId, metadata: serviceMetadata, duration: durationService}, "300000000000000", amt)
+    await window.marketplaceContract.update_service({service_id: serviceId, metadata: serviceMetadata, duration: durationService}, "300000000000000", amt)
     return true
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
@@ -169,7 +185,7 @@ export async function updateService(serviceId, serviceMetadata, durationService,
 export async function reclaimService() {
   // let fee = utils.format.parseNearAmount("0.1");
   try {
-    await window.contract.reclaim_service({service_id: serviceId}, "300000000000000")
+    await window.marketplaceContract.reclaim_service({service_id: serviceId}, "300000000000000")
     return true
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
@@ -181,7 +197,7 @@ export async function reclaimService() {
 
 export async function getUserServices(serviceId) {
   try {
-    return await window.contract.get_user_services({account_id: window.accountId, only_on_sale: false})
+    return await window.marketplaceContract.get_user_services({account_id: window.accountId, only_on_sale: false})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -192,7 +208,7 @@ export async function getUserServices(serviceId) {
 
 export async function getServiceById(id) {
   try {
-    return await window.contract.get_service_by_id({service_id: id})
+    return await window.marketplaceContract.get_service_by_id({service_id: id})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -203,7 +219,7 @@ export async function getServiceById(id) {
 
 export async function getServices(index, limit) {
   try {
-    return await window.contract.get_services({from_index: index, limit: limit})
+    return await window.marketplaceContract.get_services({from_index: index, limit: limit})
       
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
@@ -218,7 +234,7 @@ export async function getServices(index, limit) {
 export async function addUser(roles, personalData) {
   let amt = utils.format.parseNearAmount("0.1");
   try {
-    return await window.contract.add_user({ roles: roles, personal_data: personalData }, "300000000000000", amt);
+    return await window.marketplaceContract.add_user({ roles: roles, personal_data: personalData }, "300000000000000", amt);
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -230,7 +246,7 @@ export async function addUser(roles, personalData) {
 export async function updateUserData(roles, data) {
   let amt = utils.format.parseNearAmount("0.1");
   try {
-    return await window.contract.update_user_data({roles: roles, data: data}, "300000000000000", amt)
+    return await window.marketplaceContract.update_user_data({roles: roles, data: data}, "300000000000000", amt)
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -241,7 +257,7 @@ export async function updateUserData(roles, data) {
 
 export async function getUser(accountId) {
   try {
-    return await window.contract.get_user({ account_id: accountId})
+    return await window.marketplaceContract.get_user({ account_id: accountId})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -253,7 +269,7 @@ export async function getUser(accountId) {
 export async function reclaimDispute(serviceId, proves) {
   try {
     let amt = utils.format.parseNearAmount("0.1");
-    return await window.contract.reclaim_dispute({ service_id: serviceId, proves: proves}, "300000000000000", amt)
+    return await window.marketplaceContract.reclaim_dispute({ service_id: serviceId, proves: proves}, "300000000000000", amt)
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -264,7 +280,7 @@ export async function reclaimDispute(serviceId, proves) {
 export async function addAccusedProves(disputeId, proves) {
   try {
     // let amt = utils.format.parseNearAmount("0.1");
-    return await window.contract2.add_accused_proves({ dispute_id: disputeId, accused_proves: proves}, "300000000000000")
+    return await window.mediatorContract.add_accused_proves({ dispute_id: disputeId, accused_proves: proves}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -275,7 +291,7 @@ export async function addAccusedProves(disputeId, proves) {
 
 export async function updateDisputeStatus(disputeId) {
   try {
-    return await window.contract2.update_dispute_status({dispute_id: disputeId}, "300000000000000")
+    return await window.mediatorContract.update_dispute_status({dispute_id: disputeId}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -286,7 +302,7 @@ export async function updateDisputeStatus(disputeId) {
 
 export async function preVote(disputeId) {
   try {
-    return await window.contract2.pre_vote({dispute_id: disputeId}, "300000000000000")
+    return await window.mediatorContract.pre_vote({dispute_id: disputeId}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -297,7 +313,7 @@ export async function preVote(disputeId) {
 
 export async function vote(disputeId, vote) {
   try {
-    return await window.contract2.vote({dispute_id: disputeId, vote: vote}, "300000000000000")
+    return await window.mediatorContract.vote({dispute_id: disputeId, vote: vote}, "300000000000000")
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -308,7 +324,7 @@ export async function vote(disputeId, vote) {
 
 export async function getDisputes(fromIndex, limit) {
   try {
-    return await window.contract2.get_disputes({ from_index: fromIndex, limit: limit})
+    return await window.mediatorContract.get_disputes({ from_index: fromIndex, limit: limit})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -319,7 +335,7 @@ export async function getDisputes(fromIndex, limit) {
 
 export async function getDispute(disputeId) {
   try {
-    return await window.contract2.get_dispute({dispute_id: disputeId})
+    return await window.mediatorContract.get_dispute({dispute_id: disputeId})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -330,7 +346,7 @@ export async function getDispute(disputeId) {
 
 export async function getMaxJurors() {
   try {
-    return await window.contract2.get_max_jurors()
+    return await window.mediatorContract.get_max_jurors()
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -339,9 +355,10 @@ export async function getMaxJurors() {
   }
 }
 
-export async function getBalanceOf(account) {
+
+export async function getJOBSBalanceOf(account) {
   try {
-    return await window.contract3.get_balance_of({account: account})
+    return await window.ftContract.get_balance_of({account: account})
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)
@@ -349,11 +366,56 @@ export async function getBalanceOf(account) {
     return null
   }
 }
+
+export async function getFTBalanceOf(account, token) {
+  try {
+    return await window.marketplaceContract.get_ft_balance({token: token})
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function getUSDCBalanceOf(account) {
+  try {
+    return await window.usdcFT.ft_balance_of({account_id: account})
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function ftTransferCallUSDC(amount) {
+  try {
+    return await window.marketplaceContract.ft_transfer_call({receiver_id: marketplaceConfig.contractName, amount: amount, msg: "empty"}, "300000000000000", "1")
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
+export async function ftTransferCallJOBS(amount) {
+  try {
+    return await window.ftContract.ft_transfer_call({receiver_id: marketplaceConfig.contractName, amount: amount, msg: "empty"}, "300000000000000", "1")
+  } catch(e) {
+    let finalErrorMsg = getErrMsg(e)
+    toast.error(finalErrorMsg)
+    console.log(e)
+    return null
+  }
+}
+
 
 export async function buyFT(amount) {
   try {
     let amt = utils.format.parseNearAmount(String(amount));
-    return await window.contract4.buy_ft({}, "300000000000000", amt)
+    return await window.salesContract.buy_ft({}, "300000000000000", amt)
   } catch(e) {
     let finalErrorMsg = getErrMsg(e)
     toast.error(finalErrorMsg)

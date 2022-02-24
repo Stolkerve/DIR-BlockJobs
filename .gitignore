@@ -7,7 +7,7 @@
 
 # build
 /out
-/dist
+frontend/dist
 
 
 # testing

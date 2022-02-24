@@ -12,11 +12,14 @@ export default function Services() {
 
     useEffect(async () => {
         let s = await getServices(0, 15)
-        for (let index = 0; index < s.length; index++) {
-            s[index].metadata.categories = JSON.parse(s[index].metadata.categories);
+        console.log(s)
+        if (s.length > 0) {
+
+            for (let index = 0; index < s.length; index++) {
+                s[index].metadata.categories = JSON.parse(s[index].metadata.categories);
+            }
         }
         setLoading(false)
-        console.log(s)
         setServices(s)
     }, [])
     // const final = Number(e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1'))
