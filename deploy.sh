@@ -68,9 +68,9 @@ near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "
 # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 10000000000000
 # near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 0.2 --gas 100000000000000
 
-near call $FT transfer_ft '{"to": "'$ID2'", "amount": 10000000000000000000000}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$MA'", "amount": 100000000000000000000}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$ME'", "amount": 100000000000000000000}' --accountId $FT
+near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
+near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT --depositYocto 1
+near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT --depositYocto 1
 
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
