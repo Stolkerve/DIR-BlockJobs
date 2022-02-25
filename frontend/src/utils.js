@@ -130,7 +130,8 @@ export function login() {
 
 function getErrMsg(e) {
   let finalErrorMsg = String(e.message.match("\".*\""))
-  return finalErrorMsg.substring(1, finalErrorMsg.length - 1) 
+  finalErrorMsg.substring(1, finalErrorMsg.length - 1)
+  return finalErrorMsg.replace(/["']/g, "");
 }
 
 /* Services relate */

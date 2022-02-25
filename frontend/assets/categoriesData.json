@@ -1,5 +1,9 @@
 [
     {
+        "value": "NEAR",
+        "label": "NEAR"
+    },
+    {
         "value": "PHP",
         "label": "PHP"
     },
@@ -8,40 +12,40 @@
         "label": "Photoshop"
     },
     {
-        "value": "Diseño de logotipos",
-        "label": "Diseño de logotipos"
+        "value": "Logo Design",
+        "label": "Logo Design"
     },
     {
-        "value": "Redacción de artículos",
-        "label": "Redacción de artículos"
+        "value": "Article writing",
+        "label": "Writing articles"
     },
     {
-        "value": "Redacción de contenidos",
-        "label": "Redacción de contenidos"
+        "value": "Content Writing",
+        "label": "Content Writing"
     },
     {
-        "value": "Renderización 3D",
-        "label": "Renderización 3D"
+        "value": "3D Rendering",
+        "label": "3D Rendering"
     },
     {
-        "value": "Animación 3D",
-        "label": "Animación 3D"
+        "value": "3D Animation",
+        "label": "3D Animation"
     },
     {
-        "value": "Marketing de Facebook",
-        "label": "Marketing de Facebook"
+        "value": "Facebook Marketing",
+        "label": "Facebook Marketing"
     },
     {
-        "value": "Animación",
-        "label": "Animación"
+        "value": "Animation",
+        "label": "Animation"
     },
     {
         "value": "English (US) Translator",
         "label": "English (US) Translator"
     },
     {
-        "value": "Edición de video",
-        "label": "Edición de video"
+        "value": "Video Editing",
+        "label": "Video Editing"
     },
     {
         "value": "HTML5",
@@ -56,16 +60,16 @@
         "label": "English (UK) Translator"
     },
     {
-        "value": "Diseño 3D",
-        "label": "Diseño 3D"
+        "value": "3D Design",
+        "label": "3D Design"
     },
     {
         "value": "AngularJS",
         "label": "AngularJS"
     },
     {
-        "value": "Videografía",
-        "label": "Videografía"
+        "value": "Videography",
+        "label": "Videography"
     },
     {
         "value": "3ds Max",
@@ -80,11 +84,11 @@
         "label": "Solidity"
     },
     {
-        "value": "Interfaz de usuario / AI",
-        "label": "Interfaz de usuario / AI"
+        "value": "UI / AI",
+        "label": "UI / AI"
     },
     {
-        "value": "Web Development",
+        "value": "WebDevelopment",
         "label": "Web Development"
     },
     {
@@ -92,8 +96,8 @@
         "label": ".NET"
     },
     {
-        "value": "Contabilidad",
-        "label": "Contabilidad"
+        "value": "Accounting",
+        "label": "Accounting"
     },
     {
         "value": "UX / User Experience",
@@ -112,8 +116,8 @@
         "label": "WooCommerce"
     },
     {
-        "value": "Microcontrolador",
-        "label": "Microcontrolador"
+        "value": "Microcontroller",
+        "label": "Microcontroller"
     },
     {
         "value": "Solidworks",
@@ -124,52 +128,52 @@
         "label": "iOS Development"
     },
     {
-        "value": "Mathlab y Mathematica",
-        "label": "Mathlab y Mathematica"
+        "value": "Mathlab and Mathematica",
+        "label": "Mathlab and Mathematica"
     },
     {
-        "value": "Marketing masivo",
-        "label": "Marketing masivo"
+        "value": "Mass marketing",
+        "label": "Mass Marketing"
     },
     {
-        "value": "Alemán",
-        "label": "Alemán"
+        "value": "German",
+        "label": "German"
     },
     {
-        "value": "Servicios al cliente",
-        "label": "Servicios al cliente"
+        "value": "Customer Services",
+        "label": "Customer Services"
     },
     {
         "value": "Digital Marketing",
         "label": "Digital Marketing"
     },
     {
-        "value": "Estudios de mercado",
-        "label": "Estudios de mercado"
+        "value": "Market research",
+        "label": "Market research"
     },
     {
-        "value": "Música",
-        "label": "Música"
+        "value": "Music",
+        "label": "Music"
     },
     {
-        "value": "Gestión de páginas web",
-        "label": "Gestión de páginas web"
+        "value": "Web page management",
+        "label": "Web page management"
     },
     {
-        "value": "Administración de bases de datos",
-        "label": "Administración de bases de datos"
+        "value": "Database Administration",
+        "label": "Database Administration"
     },
     {
         "value": "Swift",
         "label": "Swift"
     },
     {
-        "value": "Libros electrónicos",
-        "label": "Libros electrónicos"
+        "value": "Ebooks",
+        "label": "Electronic books"
     },
     {
-        "value": "Express JS",
-        "label": "Express JS"
+        "value": "ExpressJS",
+        "label": "ExpressJS"
     },
     {
         "value": "Magento",
@@ -180,15 +184,15 @@
         "label": "Full Stack Development"
     },
     {
-        "value": "Desarrollo",
-        "label": "Desarrollo"
+        "value": "Development",
+        "label": "Development"
     },
     {
         "value": "Codeigniter",
         "label": "Codeigniter"
     },
     {
-        "value": "Android App Development",
+        "value": "Android AppDevelopment",
         "label": "Android App Development"
     },
     {
@@ -200,8 +204,8 @@
         "label": "Content Creation"
     },
     {
-        "value": "Desarrollador de aplicaciones",
-        "label": "Desarrollador de aplicaciones"
+        "value": "Application Developer",
+        "label": "Application Developer"
     },
     {
         "value": "2D Animation",
@@ -216,16 +220,16 @@
         "label": "Pine Script"
     },
     {
-        "value": "Español (España)",
-        "label": "Español (España)"
+        "value": "Spanish (Spain)",
+        "label": "Spanish (Spain)"
     },
     {
         "value": "MongoDB",
         "label": "MongoDB"
     },
     {
-        "value": "Programación",
-        "label": "Programación"
+        "value": "Schedule",
+        "label": "Programming"
     },
     {
         "value": "Prestashop",
@@ -240,8 +244,8 @@
         "label": "Windows Desktop"
     },
     {
-        "value": "Diseño de íconos",
-        "label": "Diseño de íconos"
+        "value": "Icon Design",
+        "label": "Icon Design"
     },
     {
         "value": "Payment Gateway Integration",
@@ -252,32 +256,32 @@
         "label": "Trading"
     },
     {
-        "value": "Seguridad en Internet",
-        "label": "Seguridad en Internet"
+        "value": "Internet Security",
+        "label": "Internet Security"
     },
     {
-        "value": "Transcripción",
-        "label": "Transcripción"
+        "value": "Transcript",
+        "label": "Transcript"
     },
     {
-        "value": "inteligencia artificial",
-        "label": "inteligencia artificial"
+        "value": "artificial intelligence",
+        "label": "artificial intelligence"
     },
     {
-        "value": "Gráficos en movimiento",
-        "label": "Gráficos en movimiento"
+        "value": "Motion Graphics",
+        "label": "Motion Graphics"
     },
     {
-        "value": "Diseño publicitario",
-        "label": "Diseño publicitario"
+        "value": "Advertising Design",
+        "label": "Advertising Design"
     },
     {
         "value": "DevOps",
         "label": "DevOps"
     },
     {
-        "value": "API de Google Maps",
-        "label": "API de Google Maps"
+        "value": "Google Maps API",
+        "label": "Google Maps API"
     },
     {
         "value": "Product Photography",
@@ -292,8 +296,8 @@
         "label": "Ruby on Rails"
     },
     {
-        "value": "Criptografía",
-        "label": "Criptografía"
+        "value": "Cryptography",
+        "label": "Cryptography"
     },
     {
         "value": "Redux.js",
@@ -312,7 +316,7 @@
         "label": "JSON"
     },
     {
-        "value": "Spring Boot",
+        "value": "SpringBoot",
         "label": "Spring Boot"
     },
     {
@@ -332,20 +336,20 @@
         "label": "MATLAB"
     },
     {
-        "value": "Chino Simplificado (China)",
-        "label": "Chino Simplificado (China)"
+        "value": "Simplified Chinese (China)",
+        "label": "Simplified Chinese (China)"
     },
     {
-        "value": "Artesanía",
-        "label": "Artesanía"
+        "value": "Craft",
+        "label": "Crafts"
     },
     {
-        "value": "Pintura",
-        "label": "Pintura"
+        "value": "Paint",
+        "label": "Painting"
     },
     {
-        "value": "Difusión de video",
-        "label": "Difusión de video"
+        "value": "Video Broadcast",
+        "label": "Video Broadcast"
     },
     {
         "value": "Facebook Pixel",
@@ -364,16 +368,16 @@
         "label": "Character Illustration"
     },
     {
-        "value": "Tailandés",
-        "label": "Tailandés"
+        "value": "Thai",
+        "label": "Thai"
     },
     {
         "value": "Elasticsearch",
         "label": "Elasticsearch"
     },
     {
-        "value": "Indonesio",
-        "label": "Indonesio"
+        "value": "Indonesian",
+        "label": "Indonesian"
     },
     {
         "value": "Microsoft Exchange",
@@ -384,8 +388,8 @@
         "label": "Film Production"
     },
     {
-        "value": "Física",
-        "label": "Física"
+        "value": "Physics",
+        "label": "Physics"
     },
     {
         "value": "Server",
@@ -416,7 +420,7 @@
         "label": "Adobe Lightroom"
     },
     {
-        "value": "Brand Marketing",
+        "value": "BrandMarketing",
         "label": "Brand Marketing"
     },
     {
@@ -436,7 +440,7 @@
         "label": "Xero"
     },
     {
-        "value": "Desktop Application",
+        "value": "DesktopApplication",
         "label": "Desktop Application"
     },
     {
@@ -445,7 +449,7 @@
     },
     {
         "value": "Instagram Verification",
-        "label": "Instagram Verification"
+        "label": "Instagram verification"
     },
     {
         "value": "Microsoft Azure",
@@ -472,20 +476,20 @@
         "label": "ASP"
     },
     {
-        "value": "Realidad aumentada",
-        "label": "Realidad aumentada"
+        "value": "Augmented reality",
+        "label": "Augmented reality"
     },
     {
-        "value": "Diseño conceptual",
-        "label": "Diseño conceptual"
+        "value": "Concept design",
+        "label": "Concept Design"
     },
     {
-        "value": "Traductor Alemán",
-        "label": "Traductor Alemán"
+        "value": "German Translator",
+        "label": "German Translator"
     },
     {
-        "value": "Consolas de juegos",
-        "label": "Consolas de juegos"
+        "value": "Game Consoles",
+        "label": "Game Consoles"
     },
     {
         "value": "Learning Management Systems (LMS)",
@@ -500,8 +504,8 @@
         "label": "Retail Sales"
     },
     {
-        "value": "Tiktok Ads",
-        "label": "Tiktok Ads"
+        "value": "TikTok Ads",
+        "label": "TikTok Ads"
     },
     {
         "value": "VPS",
@@ -520,7 +524,7 @@
         "label": "Children's Book Illustration"
     },
     {
-        "value": "Crowdfunding",
+        "value": "crowdfunding",
         "label": "Crowdfunding"
     },
     {
@@ -540,8 +544,8 @@
         "label": "Tailwind CSS"
     },
     {
-        "value": "Ucraniano",
-        "label": "Ucraniano"
+        "value": "Ukrainian",
+        "label": "Ukrainian"
     },
     {
         "value": "Zbrush",
@@ -557,14 +561,14 @@
     },
     {
         "value": "Data Cleansing",
-        "label": "Data Cleansing"
+        "label": "Data Cleaning"
     },
     {
         "value": "Essay Writing",
         "label": "Essay Writing"
     },
     {
-        "value": "Network Security",
+        "value": "NetworkSecurity",
         "label": "Network Security"
     },
     {
@@ -580,7 +584,7 @@
         "label": "ADO.NET"
     },
     {
-        "value": "Apple Xcode",
+        "value": "AppleXcode",
         "label": "Apple Xcode"
     },
     {
@@ -588,8 +592,8 @@
         "label": "Bash Scripting"
     },
     {
-        "value": "Gráficos generados por ordenador",
-        "label": "Gráficos generados por ordenador"
+        "value": "Computer Generated Graphics",
+        "label": "Computer Generated Graphics"
     },
     {
         "value": "Eclipse",
@@ -604,8 +608,8 @@
         "label": "Hubspot"
     },
     {
-        "value": "Intérprete",
-        "label": "Intérprete"
+        "value": "Interpreter",
+        "label": "Performer"
     },
     {
         "value": "Reverse Engineering",
@@ -620,16 +624,16 @@
         "label": "API Testing"
     },
     {
-        "value": "Traductor de Búlgaro",
-        "label": "Traductor de Búlgaro"
+        "value": "Bulgarian Translator",
+        "label": "Bulgarian Translator"
     },
     {
         "value": "Charts",
         "label": "Charts"
     },
     {
-        "value": "Anuncios",
-        "label": "Anuncios"
+        "value": "Ads",
+        "label": "Ads"
     },
     {
         "value": "Data Management",
@@ -680,8 +684,8 @@
         "label": "Sketch"
     },
     {
-        "value": "Diseño de cartas y sobres",
-        "label": "Diseño de cartas y sobres"
+        "value": "Card and pack design",
+        "label": "Design of letters and envelopes"
     },
     {
         "value": "Technical Documentation",
@@ -712,8 +716,8 @@
         "label": "Binance"
     },
     {
-        "value": "Construcción",
-        "label": "Construcción"
+        "value": "Build",
+        "label": "Construction"
     },
     {
         "value": "Cardano",
@@ -740,7 +744,7 @@
         "label": "Debugging"
     },
     {
-        "value": "Dynatrace Software Monitoring",
+        "value": "DynatraceSoftwareMonitoring",
         "label": "Dynatrace Software Monitoring"
     },
     {
@@ -748,20 +752,20 @@
         "label": "Firefox"
     },
     {
-        "value": "Software de foros",
-        "label": "Software de foros"
+        "value": "Forum Software",
+        "label": "Forum Software"
     },
     {
-        "value": "Gamificación",
-        "label": "Gamificación"
+        "value": "Gamification",
+        "label": "Gamification"
     },
     {
         "value": "Logo Animation",
         "label": "Logo Animation"
     },
     {
-        "value": "Vietnamita",
-        "label": "Vietnamita"
+        "value": "Vietnamese",
+        "label": "Vietnamese"
     },
     {
         "value": "WiFi",
@@ -780,8 +784,8 @@
         "label": "Alchemist"
     },
     {
-        "value": "SDK de Android Wear",
-        "label": "SDK de Android Wear"
+        "value": "Android Wear SDK",
+        "label": "Android Wear SDK"
     },
     {
         "value": "App Usability Analysis",
@@ -820,8 +824,8 @@
         "label": "Digital Electronics"
     },
     {
-        "value": "Electron JS",
-        "label": "Electron JS"
+        "value": "ElectronJS",
+        "label": "ElectronJS"
     },
     {
         "value": "GIF Animation",
@@ -912,12 +916,12 @@
         "label": "Biomedical Engineering"
     },
     {
-        "value": "Calculus",
+        "value": "Calculas",
         "label": "Calculus"
     },
     {
-        "value": "Chromium",
-        "label": "Chromium"
+        "value": "Chrome",
+        "label": "Chrome"
     },
     {
         "value": "Cocoa",
@@ -933,19 +937,19 @@
     },
     {
         "value": "Container Transport",
-        "label": "Container Transport"
+        "label": "Container Transportation"
     },
     {
         "value": "Copyright",
         "label": "Copyright"
     },
     {
-        "value": "Crystal Reports",
+        "value": "CrystalReports",
         "label": "Crystal Reports"
     },
     {
-        "value": "Diseño",
-        "label": "Diseño"
+        "value": "Design",
+        "label": "Design"
     },
     {
         "value": "Digital Forensics",
@@ -968,7 +972,7 @@
         "label": "ePub"
     },
     {
-        "value": "Ext JS",
+        "value": "ExtJS",
         "label": "Ext JS"
     },
     {
@@ -992,7 +996,7 @@
         "label": "Hedge Fund Management"
     },
     {
-        "value": "Hubspot Marketing",
+        "value": "HubspotMarketing",
         "label": "Hubspot Marketing"
     },
     {
@@ -1008,8 +1012,8 @@
         "label": "Isometric Animation"
     },
     {
-        "value": "Joyería",
-        "label": "Joyería"
+        "value": "Jewelry",
+        "label": "Jewelry"
     },
     {
         "value": "Julia Language",
@@ -1024,8 +1028,8 @@
         "label": "Korean Tutoring"
     },
     {
-        "value": "Letón",
-        "label": "Letón"
+        "value": "Latvian",
+        "label": "Latvian"
     },
     {
         "value": "Lighting Design",
@@ -1092,20 +1096,20 @@
         "label": "Power Redesign"
     },
     {
-        "value": "Adquisición",
-        "label": "Adquisición"
+        "value": "Acquisition",
+        "label": "Acquisition"
     },
     {
         "value": "Prolog",
         "label": "Prolog"
     },
     {
-        "value": "Radio Frequency",
+        "value": "RadioFrequency",
         "label": "Radio Frequency"
     },
     {
-        "value": "Detección remota",
-        "label": "Detección remota"
+        "value": "Remote Discovery",
+        "label": "Remote Detection"
     },
     {
         "value": "RFP Writing",
@@ -1216,8 +1220,8 @@
         "label": "Anthropology"
     },
     {
-        "value": "iBooks Author de Apple",
-        "label": "iBooks Author de Apple"
+        "value": "Apple iBooks Author",
+        "label": "Apple iBooks Author"
     },
     {
         "value": "Apple Watch",
@@ -1232,8 +1236,8 @@
         "label": "Armadillo"
     },
     {
-        "value": "AS400 y iSeries",
-        "label": "AS400 y iSeries"
+        "value": "AS400 and iSeries",
+        "label": "AS400 and iSeries"
     },
     {
         "value": "Asphalt Contractor",
@@ -1264,15 +1268,15 @@
         "label": "Bare Metal"
     },
     {
-        "value": "Traductor de Basque",
-        "label": "Traductor de Basque"
+        "value": "Basque translator",
+        "label": "Basque translator"
     },
     {
         "value": "BigCommerce",
         "label": "BigCommerce"
     },
     {
-        "value": "Binary Search",
+        "value": "BinarySearch",
         "label": "Binary Search"
     },
     {
@@ -1292,8 +1296,8 @@
         "label": "Boost"
     },
     {
-        "value": "Ingeniería de radiodifusión",
-        "label": "Ingeniería de radiodifusión"
+        "value": "Broadcast Engineering",
+        "label": "Broadcast Engineering"
     },
     {
         "value": "Building Surveying",
@@ -1304,12 +1308,12 @@
         "label": "Camtasia"
     },
     {
-        "value": "Car Washing",
-        "label": "Car Washing"
+        "value": "Carwash",
+        "label": "Carwash"
     },
     {
-        "value": "Lavando autos",
-        "label": "Lavando autos"
+        "value": "Wash cars",
+        "label": "Car wash"
     },
     {
         "value": "Casting",
@@ -1320,20 +1324,20 @@
         "label": "Celery"
     },
     {
-        "value": "Agentes de unión de cemento",
-        "label": "Agentes de unión de cemento"
+        "value": "Cement Bonding Agents",
+        "label": "Cement Bonding Agents"
     },
     {
-        "value": "Jefe de gestión de configuración",
-        "label": "Jefe de gestión de configuración"
+        "value": "Head Configuration Manager",
+        "label": "Head of Configuration Management"
     },
     {
         "value": "CircleCI",
         "label": "CircleCI"
     },
     {
-        "value": "Citadela",
-        "label": "Citadela"
+        "value": "Citadel",
+        "label": "Citadel"
     },
     {
         "value": "CLIPS",
@@ -1348,7 +1352,7 @@
         "label": "Clover"
     },
     {
-        "value": "Coffee Delivery",
+        "value": "CoffeeDelivery",
         "label": "Coffee Delivery"
     },
     {
@@ -1368,8 +1372,8 @@
         "label": "Construct 3"
     },
     {
-        "value": "Cocina y Recetas",
-        "label": "Cocina y Recetas"
+        "value": "Cooking and Recipes",
+        "label": "Cooking and Recipes"
     },
     {
         "value": "Corel Painter",
@@ -1452,8 +1456,8 @@
         "label": "Espruino"
     },
     {
-        "value": "Excavación",
-        "label": "Excavación"
+        "value": "Excavation",
+        "label": "Excavation"
     },
     {
         "value": "FLANN",
@@ -1476,12 +1480,12 @@
         "label": "Game Translation"
     },
     {
-        "value": "Genealogía",
-        "label": "Genealogía"
+        "value": "Genealogy",
+        "label": "Genealogy"
     },
     {
-        "value": "Genetic Algebra Modelling System",
-        "label": "Genetic Algebra Modelling System"
+        "value": "Genetic Algebra Modeling System",
+        "label": "Genetic Algebra Modeling System"
     },
     {
         "value": "Georgian",
@@ -1492,7 +1496,7 @@
         "label": "Global Mobility"
     },
     {
-        "value": "GoPro",
+        "value": "GoPror",
         "label": "GoPro"
     },
     {
@@ -1516,8 +1520,8 @@
         "label": "Heavy Haulage Trucking"
     },
     {
-        "value": "Hewlett Packard",
-        "label": "Hewlett Packard"
+        "value": "Hewlett-Packard",
+        "label": "Hewlett-Packard"
     },
     {
         "value": "Highcharts",
@@ -1525,7 +1529,7 @@
     },
     {
         "value": "HootSuite",
-        "label": "HootSuite"
+        "label": "Hoot Suite"
     },
     {
         "value": "HP-UX",
@@ -1552,8 +1556,8 @@
         "label": "IMX6"
     },
     {
-        "value": "Informatica MDM",
-        "label": "Informatica MDM"
+        "value": "MDM Computing",
+        "label": "MDM Computing"
     },
     {
         "value": "Invision",
@@ -1620,8 +1624,8 @@
         "label": "Logistics Company"
     },
     {
-        "value": "Low Code",
-        "label": "Low Code"
+        "value": "LowCode",
+        "label": "LowCode"
     },
     {
         "value": "Machinery 25T to 50T",
@@ -1632,8 +1636,8 @@
         "label": "Magic Leap"
     },
     {
-        "value": "Maltés",
-        "label": "Maltés"
+        "value": "Maltese",
+        "label": "Maltese"
     },
     {
         "value": "Manuscripts",
@@ -1644,8 +1648,8 @@
         "label": "Mergers and Acquisitions"
     },
     {
-        "value": "Micros RES",
-        "label": "Micros RES"
+        "value": "Micro RES",
+        "label": "Micro RES"
     },
     {
         "value": "MicroStrategy",
@@ -1689,7 +1693,7 @@
     },
     {
         "value": "Open VMX",
-        "label": "Open VMX"
+        "label": "OpenVMX"
     },
     {
         "value": "Oracle OBIA",
@@ -1708,8 +1712,8 @@
         "label": "Patent Design Search"
     },
     {
-        "value": "Búsqueda de patrones",
-        "label": "Búsqueda de patrones"
+        "value": "Pattern search",
+        "label": "Pattern search"
     },
     {
         "value": "Paytrace",
@@ -1720,12 +1724,12 @@
         "label": "Pentaho"
     },
     {
-        "value": "Desarrollo personal",
-        "label": "Desarrollo personal"
+        "value": "Personal development",
+        "label": "Personal development"
     },
     {
-        "value": "Cuidado de mascotas",
-        "label": "Cuidado de mascotas"
+        "value": "Pet care",
+        "label": "Pet Sitting"
     },
     {
         "value": "PhpNuke",
@@ -1740,8 +1744,8 @@
         "label": "PnP BTS configuration"
     },
     {
-        "value": "Posproducción",
-        "label": "Posproducción"
+        "value": "Post-production",
+        "label": "Post-production"
     },
     {
         "value": "Power Supply",
@@ -1780,18 +1784,17 @@
         "label": "Scheme"
     },
     {
-        "value": "SciPy",
-        "label": "SciPy"
+        "value": "Scipy",
+        "label": "Scipy"
     },
     {
-        "value": "Escultura",
-        "label": "Escultura"
+        "value": "Sculpture",
+        "label": "Sculpture"
     },
     {
-        "value": "Sigrity",
+        "value": "Signity",
         "label": "Sigrity"
     },
-
     {
         "value": "SoC Design",
         "label": "SoC Design"
@@ -1805,24 +1808,24 @@
         "label": "Spring Data"
     },
     {
-        "value": "API de Steam",
-        "label": "API de Steam"
+        "value": "Steam API",
+        "label": "Steam API"
     },
     {
         "value": "Svelte",
         "label": "Svelte"
     },
     {
-        "value": "API de TaoBao",
-        "label": "API de TaoBao"
+        "value": "TaoBao API",
+        "label": "TaoBao API"
     },
     {
         "value": "Tealium",
         "label": "Tealium"
     },
     {
-        "value": "Estructuras Tekla",
-        "label": "Estructuras Tekla"
+        "value": "Tekla Structures",
+        "label": "Tekla Structures"
     },
     {
         "value": "Test",
@@ -1861,8 +1864,8 @@
         "label": "Zend"
     },
     {
-        "value": "Diseño gráfico",
-        "label": "Diseño gráfico"
+        "value": "Graphic Design",
+        "label": "Graphic design"
     },
     {
         "value": "JavaScript",
@@ -1885,24 +1888,24 @@
         "label": "Marketing"
     },
     {
-        "value": "Marketing en redes sociales",
-        "label": "Marketing en redes sociales"
+        "value": "Social Media Marketing",
+        "label": "Social Media Marketing"
     },
     {
-        "value": "Edición",
-        "label": "Edición"
+        "value": "Edition",
+        "label": "Edition"
     },
     {
-        "value": "Redacción de investigaciones",
-        "label": "Redacción de investigaciones"
+        "value": "Research Writing",
+        "label": "Research Writing"
     },
     {
-        "value": "Procesamiento de datos",
-        "label": "Procesamiento de datos"
+        "value": "Data Processing",
+        "label": "Data Processing"
     },
     {
-        "value": "Redacción por encargo",
-        "label": "Redacción por encargo"
+        "value": "Commissioned writing",
+        "label": "Commissioned Writing"
     },
     {
         "value": "Node.js",
@@ -1913,20 +1916,20 @@
         "label": "Laravel"
     },
     {
-        "value": "Escritura técnica",
-        "label": "Escritura técnica"
+        "value": "Technical writing",
+        "label": "Technical writing"
     },
     {
-        "value": "Arquitectura",
-        "label": "Arquitectura"
+        "value": "Architecture",
+        "label": "Architecture"
     },
     {
-        "value": "Extracción de datos web",
-        "label": "Extracción de datos web"
+        "value": "Web Data Extraction",
+        "label": "Web Data Extraction"
     },
     {
-        "value": "Redacción de informes",
-        "label": "Redacción de informes"
+        "value": "Report writing",
+        "label": "Report Writing"
     },
     {
         "value": "Flutter",
@@ -1937,44 +1940,44 @@
         "label": "Google Adwords"
     },
     {
-        "value": "Servicios de audio",
-        "label": "Servicios de audio"
+        "value": "Audio Services",
+        "label": "Audio Services"
     },
     {
         "value": "Machine Learning (ML)",
         "label": "Machine Learning (ML)"
     },
     {
-        "value": "Redes sociales",
-        "label": "Redes sociales"
+        "value": "Social networks",
+        "label": "Social networks"
     },
     {
-        "value": "Verificación de software",
-        "label": "Verificación de software"
+        "value": "Software Verification",
+        "label": "Software Verification"
     },
     {
-        "value": "Plantilla para Shopify",
-        "label": "Plantilla para Shopify"
+        "value": "Template for Shopify",
+        "label": "Shopify Template"
     },
     {
         "value": "Telemarketing",
         "label": "Telemarketing"
     },
     {
-        "value": "Producción de audio",
-        "label": "Producción de audio"
+        "value": "Audio Production",
+        "label": "Audio Production"
     },
     {
-        "value": "Fotografía",
-        "label": "Fotografía"
+        "value": "Photography",
+        "label": "Photography"
     },
     {
-        "value": "Finanzas",
-        "label": "Finanzas"
+        "value": "Finance",
+        "label": "Finance"
     },
     {
-        "value": "Matemáticas",
-        "label": "Matemáticas"
+        "value": "Math",
+        "label": "Mathematics"
     },
     {
         "value": "Google Plus",
@@ -1993,40 +1996,40 @@
         "label": "jQuery / Prototype"
     },
     {
-        "value": "Redacción de libros",
-        "label": "Redacción de libros"
+        "value": "Book Writing",
+        "label": "Book Writing"
     },
     {
-        "value": "Estadísticas",
-        "label": "Estadísticas"
+        "value": "Statistics",
+        "label": "Statistics"
     },
     {
-        "value": "Desarrollo de software",
-        "label": "Desarrollo de software"
+        "value": "Software Development",
+        "label": "Software Development"
     },
     {
         "value": "Bootstrap",
         "label": "Bootstrap"
     },
     {
-        "value": "Investigación legal",
-        "label": "Investigación legal"
+        "value": "Legal Research",
+        "label": "Legal Research"
     },
     {
-        "value": "Administración de redes",
-        "label": "Administración de redes"
+        "value": "Network Management",
+        "label": "Network Administration"
     },
     {
-        "value": "NoSQL Couch y Mongo",
-        "label": "NoSQL Couch y Mongo"
+        "value": "NoSQL Couch and Mongo",
+        "label": "NoSQL Couch and Mongo"
     },
     {
         "value": "Microsoft Office",
         "label": "Microsoft Office"
     },
     {
-        "value": "Ingeniería estructural",
-        "label": "Ingeniería estructural"
+        "value": "Structural engineering",
+        "label": "Structural engineering"
     },
     {
         "value": "Adobe InDesign",
@@ -2037,7 +2040,7 @@
         "label": "Hindi"
     },
     {
-        "value": "Instagram Marketing",
+        "value": "InstagramMarketing",
         "label": "Instagram Marketing"
     },
     {
@@ -2049,12 +2052,12 @@
         "label": "Deep Learning"
     },
     {
-        "value": "Camisetas",
-        "label": "Camisetas"
+        "value": "T-shirts",
+        "label": "T-shirts"
     },
     {
-        "value": "Comunicaciones",
-        "label": "Comunicaciones"
+        "value": "Communications",
+        "label": "Communications"
     },
     {
         "value": "Adobe Flash",
@@ -2069,20 +2072,20 @@
         "label": "Blender"
     },
     {
-        "value": "Portugués (Brasil)",
-        "label": "Portugués (Brasil)"
+        "value": "Portuguese (Brazil)",
+        "label": "Portuguese (Brazil)"
     },
     {
-        "value": "Currículums",
-        "label": "Currículums"
+        "value": "Resumes",
+        "label": "Resumes"
     },
     {
-        "value": "Automatización de pruebas",
-        "label": "Automatización de pruebas"
+        "value": "Test Automation",
+        "label": "Test Automation"
     },
     {
-        "value": "SO Mac",
-        "label": "SO Mac"
+        "value": "Mac OS",
+        "label": "Mac OS"
     },
     {
         "value": "Apache",
@@ -2097,8 +2100,8 @@
         "label": "Data Scraping"
     },
     {
-        "value": "Visual Basic para aplicaciones",
-        "label": "Visual Basic para aplicaciones"
+        "value": "Visual Basic for Applications",
+        "label": "Visual Basic for Applications"
     },
     {
         "value": "Kotlin",
@@ -2109,8 +2112,8 @@
         "label": "React.js Framework"
     },
     {
-        "value": "Portugués",
-        "label": "Portugués"
+        "value": "Portuguese",
+        "label": "Portuguese"
     },
     {
         "value": "AWS Lambda",
@@ -2121,20 +2124,20 @@
         "label": "English Teaching"
     },
     {
-        "value": "Japonés",
-        "label": "Japonés"
+        "value": "Japanese",
+        "label": "Japanese"
     },
     {
-        "value": "Facebook Ads",
+        "value": "FacebookAds",
         "label": "Facebook Ads"
     },
     {
-        "value": "Shell Script",
-        "label": "Shell Script"
+        "value": "ShellScript",
+        "label": "ShellScript"
     },
     {
-        "value": "Desarrollo de base de datos",
-        "label": "Desarrollo de base de datos"
+        "value": "Database development",
+        "label": "Database development"
     },
     {
         "value": "Rust",
@@ -2161,12 +2164,12 @@
         "label": "Dart"
     },
     {
-        "value": "Coreano",
-        "label": "Coreano"
+        "value": "Korean",
+        "label": "Korean"
     },
     {
-        "value": "Estadísticas SPSS",
-        "label": "Estadísticas SPSS"
+        "value": "SPSS Statistics",
+        "label": "SPSS Statistics"
     },
     {
         "value": "DApps",
@@ -2185,7 +2188,7 @@
         "label": "Content Marketing"
     },
     {
-        "value": "Photo Anywhere",
+        "value": "PhotoAnywhere",
         "label": "Photo Anywhere"
     },
     {
@@ -2197,12 +2200,12 @@
         "label": "Voice Over"
     },
     {
-        "value": "Oficina general",
-        "label": "Oficina general"
+        "value": "Headquarters",
+        "label": "General Office"
     },
     {
-        "value": "Testing de aplicaciones móviles",
-        "label": "Testing de aplicaciones móviles"
+        "value": "Mobile Application Testing",
+        "label": "Mobile app testing"
     },
     {
         "value": "Shopify Development",
@@ -2221,8 +2224,8 @@
         "label": "Chatbot"
     },
     {
-        "value": "Abastecimiento de productos",
-        "label": "Abastecimiento de productos"
+        "value": "Product Sourcing",
+        "label": "Product Sourcing"
     },
     {
         "value": "WordPress Design",
@@ -2245,16 +2248,16 @@
         "label": "Video Conferencing"
     },
     {
-        "value": "Realidad Virtual",
-        "label": "Realidad Virtual"
+        "value": "Virtual Reality",
+        "label": "Virtual Reality"
     },
     {
         "value": "Angular 6",
         "label": "Angular 6"
     },
     {
-        "value": "Diseño digital",
-        "label": "Diseño digital"
+        "value": "Digital Design",
+        "label": "Digital design"
     },
     {
         "value": "Internet of Things (IoT)",
@@ -2265,8 +2268,8 @@
         "label": "Pytorch"
     },
     {
-        "value": "Esloveno",
-        "label": "Esloveno"
+        "value": "Slovenian",
+        "label": "Slovenian"
     },
     {
         "value": "Amazon Listings Optimization",
@@ -2285,8 +2288,8 @@
         "label": "SEO Auditing"
     },
     {
-        "value": "Video Post-editing",
-        "label": "Video Post-editing"
+        "value": "Video Post Editing",
+        "label": "Video Post Editing"
     },
     {
         "value": "Adobe Photoshop",
@@ -2305,8 +2308,8 @@
         "label": "Magento 2"
     },
     {
-        "value": "API de PayPal",
-        "label": "API de PayPal"
+        "value": "PayPal API",
+        "label": "PayPal API"
     },
     {
         "value": "Simulation",
@@ -2325,24 +2328,24 @@
         "label": "Bubble Developer"
     },
     {
-        "value": "Traductor de Finlandés",
-        "label": "Traductor de Finlandés"
+        "value": "Finnish Translator",
+        "label": "Finnish Translator"
     },
     {
         "value": "MQL4",
         "label": "MQL4"
     },
     {
-        "value": "Programación de proyectos",
-        "label": "Programación de proyectos"
+        "value": "Project Schedule",
+        "label": "Project Scheduling"
     },
     {
-        "value": "Strapi",
-        "label": "Strapi"
+        "value": "Strapy",
+        "label": "Strappy"
     },
     {
-        "value": "Derecho fiscal",
-        "label": "Derecho fiscal"
+        "value": "Tax law",
+        "label": "Tax law"
     },
     {
         "value": "Assembler",
@@ -2369,20 +2372,20 @@
         "label": "Microsoft Outlook"
     },
     {
-        "value": "Investigación científica",
-        "label": "Investigación científica"
+        "value": "Scientific research",
+        "label": "Scientific Research"
     },
     {
         "value": "Big Data",
         "label": "Big Data"
     },
     {
-        "value": "Traductor de Checo",
-        "label": "Traductor de Checo"
+        "value": "Czech Translator",
+        "label": "Czech Translator"
     },
     {
-        "value": "Mercados financieros",
-        "label": "Mercados financieros"
+        "value": "Financial markets",
+        "label": "Financial markets"
     },
     {
         "value": "Geographical Information System (GIS)",
@@ -2409,8 +2412,8 @@
         "label": "Telegram Moderation"
     },
     {
-        "value": "Diseño UML",
-        "label": "Diseño UML"
+        "value": "UML Design",
+        "label": "UML Design"
     },
     {
         "value": "2D Game Art",
@@ -2429,12 +2432,12 @@
         "label": "Data Integration"
     },
     {
-        "value": "Estimation",
-        "label": "Estimation"
+        "value": "Estimate",
+        "label": "Estimate"
     },
     {
         "value": "Music Video",
-        "label": "Music Video"
+        "label": "Music Videos"
     },
     {
         "value": "OpenVPN",
@@ -2457,8 +2460,8 @@
         "label": "Website Analytics"
     },
     {
-        "value": "Video 360 grados",
-        "label": "Video 360 grados"
+        "value": "360 degree video",
+        "label": "360 degree video"
     },
     {
         "value": "Analytics",
@@ -2469,20 +2472,20 @@
         "label": "Architectural Engineering"
     },
     {
-        "value": "Biotecnología",
-        "label": "Biotecnología"
+        "value": "Biotechnology",
+        "label": "Biotechnology"
     },
     {
         "value": "Cloud",
         "label": "Cloud"
     },
     {
-        "value": "Docker Compose",
+        "value": "DockerCompose",
         "label": "Docker Compose"
     },
     {
-        "value": "Economía",
-        "label": "Economía"
+        "value": "Economy",
+        "label": "Economy"
     },
     {
         "value": "Encryption",
@@ -2509,16 +2512,16 @@
         "label": "Perl"
     },
     {
-        "value": "Derecho patrimonial",
-        "label": "Derecho patrimonial"
+        "value": "Property right",
+        "label": "Property law"
     },
     {
-        "value": "Desarrollo ágil",
-        "label": "Desarrollo ágil"
+        "value": "Agile development",
+        "label": "Agile development"
     },
     {
         "value": "Bing Ads",
-        "label": "Bing Ads"
+        "label": "BingAds"
     },
     {
         "value": "Chemistry Tutoring",
@@ -2533,8 +2536,8 @@
         "label": "Digital Product Design"
     },
     {
-        "value": "Software integrado",
-        "label": "Software integrado"
+        "value": "Integrated Software",
+        "label": "Integrated Software"
     },
     {
         "value": "Financial Accounting",
@@ -2545,8 +2548,8 @@
         "label": "Game Art"
     },
     {
-        "value": "Cloud Storage de Google",
-        "label": "Cloud Storage de Google"
+        "value": "Google Cloud Storage",
+        "label": "Google Cloud Storage"
     },
     {
         "value": "IT Project Management",
@@ -2561,15 +2564,15 @@
         "label": "Microsoft PowerBI"
     },
     {
-        "value": "Noruego",
-        "label": "Noruego"
+        "value": "Norwegian",
+        "label": "Norwegian"
     },
     {
         "value": "Optical Engineering",
         "label": "Optical Engineering"
     },
     {
-        "value": "PEGA PRPC",
+        "value": "PASTE PRPC",
         "label": "PEGA PRPC"
     },
     {
@@ -2577,8 +2580,8 @@
         "label": "Plesk"
     },
     {
-        "value": "Comunicados de prensa",
-        "label": "Comunicados de prensa"
+        "value": "Press Releases",
+        "label": "Press Releases"
     },
     {
         "value": "Public Health",
@@ -2601,8 +2604,8 @@
         "label": "Storyboard"
     },
     {
-        "value": "Telugú",
-        "label": "Telugú"
+        "value": "Telugu",
+        "label": "Telugu"
     },
     {
         "value": "vTiger",
@@ -2633,12 +2636,12 @@
         "label": "Cloud Networking"
     },
     {
-        "value": "Supervisión de obras",
-        "label": "Supervisión de obras"
+        "value": "Works supervision",
+        "label": "Works supervision"
     },
     {
-        "value": "Traductor Croata",
-        "label": "Traductor Croata"
+        "value": "Croatian Translator",
+        "label": "Croatian Translator"
     },
     {
         "value": "CV Design",
@@ -2661,8 +2664,8 @@
         "label": "FPGA Coding"
     },
     {
-        "value": "Geolocalización",
-        "label": "Geolocalización"
+        "value": "Geolocation",
+        "label": "Geolocation"
     },
     {
         "value": "Hardware Security Module",
@@ -2677,8 +2680,8 @@
         "label": "Invoicing"
     },
     {
-        "value": "Cocina",
-        "label": "Cocina"
+        "value": "Kitchen",
+        "label": "Kitchen"
     },
     {
         "value": "Machine Vision / Video Analytics",
@@ -2689,8 +2692,8 @@
         "label": "MetaTrader 4"
     },
     {
-        "value": "SDK de Oculus Mobile",
-        "label": "SDK de Oculus Mobile"
+        "value": "Oculus Mobile SDK",
+        "label": "Oculus Mobile SDK"
     },
     {
         "value": "OSCommerce",
@@ -2705,12 +2708,12 @@
         "label": "PowerApps"
     },
     {
-        "value": "Push Notification",
+        "value": "PushNotification",
         "label": "Push Notification"
     },
     {
-        "value": "Redacción de guiones",
-        "label": "Redacción de guiones"
+        "value": "Script Writing",
+        "label": "Script Writing"
     },
     {
         "value": "Segment",
@@ -2725,24 +2728,24 @@
         "label": "Startup Consulting"
     },
     {
-        "value": "Plantillas",
-        "label": "Plantillas"
+        "value": "Templates",
+        "label": "Templates"
     },
     {
-        "value": "Marketing viral",
-        "label": "Marketing viral"
+        "value": "Viral Marketing",
+        "label": "Viral Marketing"
     },
     {
         "value": "WordPress Multilingual",
         "label": "WordPress Multilingual"
     },
     {
-        "value": "3D Drafting",
+        "value": "3DDrafting",
         "label": "3D Drafting"
     },
     {
         "value": "Alpine JS",
-        "label": "Alpine JS"
+        "label": "AlpineJS"
     },
     {
         "value": "Answering Telephones",
@@ -2774,15 +2777,15 @@
     },
     {
         "value": "Business Central",
-        "label": "Business Central"
+        "label": "Business Center"
     },
     {
         "value": "Catering Services",
         "label": "Catering Services"
     },
     {
-        "value": "Cloud Data",
-        "label": "Cloud Data"
+        "value": "CloudData",
+        "label": "CloudData"
     },
     {
         "value": "Color Grading",
@@ -2801,8 +2804,8 @@
         "label": "Digital Signal Processing"
     },
     {
-        "value": "Formularios electrónicos",
-        "label": "Formularios electrónicos"
+        "value": "Electronic forms",
+        "label": "Electronic forms"
     },
     {
         "value": "ETL",
@@ -2817,8 +2820,8 @@
         "label": "Fortran"
     },
     {
-        "value": "Jardinería",
-        "label": "Jardinería"
+        "value": "Gardening",
+        "label": "Gardening"
     },
     {
         "value": "GitLab",
@@ -2829,8 +2832,8 @@
         "label": "Grails"
     },
     {
-        "value": "Hebreo",
-        "label": "Hebreo"
+        "value": "Hebrew",
+        "label": "Hebrew"
     },
     {
         "value": "Hyperledger Fabric",
@@ -2869,8 +2872,8 @@
         "label": "Metatrader 5"
     },
     {
-        "value": "Ingeniería de minas",
-        "label": "Ingeniería de minas"
+        "value": "Mining Engineering",
+        "label": "Mining Engineering"
     },
     {
         "value": "Motion Design",
@@ -2881,16 +2884,16 @@
         "label": "OAuth"
     },
     {
-        "value": "Diseño de paquetes",
-        "label": "Diseño de paquetes"
+        "value": "Package Design",
+        "label": "Package Design"
     },
     {
         "value": "PCI Compliance",
         "label": "PCI Compliance"
     },
     {
-        "value": "Poesía",
-        "label": "Poesía"
+        "value": "Poetry",
+        "label": "Poetry"
     },
     {
         "value": "QR Code Making",
@@ -2901,8 +2904,8 @@
         "label": "Real Estate Management"
     },
     {
-        "value": "Diseño de energía renovable",
-        "label": "Diseño de energía renovable"
+        "value": "Renewable Energy Design",
+        "label": "Renewable Energy Design"
     },
     {
         "value": "Risk Assessment",
@@ -2913,12 +2916,12 @@
         "label": "Salesforce Marketing Cloud"
     },
     {
-        "value": "Instalación de scripts",
-        "label": "Instalación de scripts"
+        "value": "Script Install",
+        "label": "Script Installation"
     },
     {
-        "value": "Serbio",
-        "label": "Serbio"
+        "value": "Serbian",
+        "label": "Serbian"
     },
     {
         "value": "Social Engine",
@@ -2941,8 +2944,8 @@
         "label": "Trademark"
     },
     {
-        "value": "Vectorización",
-        "label": "Vectorización"
+        "value": "Vectorization",
+        "label": "Vectorization"
     },
     {
         "value": "Voice Assistance Devices",
@@ -3013,12 +3016,12 @@
         "label": "CV Library"
     },
     {
-        "value": "Development Operations",
+        "value": "DevelopmentOperations",
         "label": "Development Operations"
     },
     {
         "value": "DOM",
-        "label": "DOM"
+        "label": "SUN"
     },
     {
         "value": "Edge Computing",
@@ -3069,8 +3072,8 @@
         "label": "Handy Sketch Pad"
     },
     {
-        "value": "Historia",
-        "label": "Historia"
+        "value": "History",
+        "label": "History"
     },
     {
         "value": "Hugo",
@@ -3082,7 +3085,7 @@
     },
     {
         "value": "Informatica Powercenter ETL",
-        "label": "Informatica Powercenter ETL"
+        "label": "Computer Powercenter ETL"
     },
     {
         "value": "Investigation",
@@ -3133,8 +3136,8 @@
         "label": "Mobile Welding"
     },
     {
-        "value": "Negociación hipotecaria",
-        "label": "Negociación hipotecaria"
+        "value": "Mortgage negotiation",
+        "label": "Mortgage negotiation"
     },
     {
         "value": "Netbeans",
@@ -3161,8 +3164,8 @@
         "label": "Performance Tuning"
     },
     {
-        "value": "PICK bases de datos multivalor",
-        "label": "PICK bases de datos multivalor"
+        "value": "PICK multivalued databases",
+        "label": "PICK multivalued databases"
     },
     {
         "value": "Podcast Writing",
@@ -3173,8 +3176,8 @@
         "label": "Portfolio Management"
     },
     {
-        "value": "Pre-producción",
-        "label": "Pre-producción"
+        "value": "Pre-production",
+        "label": "Pre-production"
     },
     {
         "value": "Product Consulting",
@@ -3221,7 +3224,7 @@
         "label": "Sourcing"
     },
     {
-        "value": "Spring Security",
+        "value": "SpringSecurity",
         "label": "Spring Security"
     },
     {
@@ -3229,8 +3232,8 @@
         "label": "SurveyMonkey"
     },
     {
-        "value": "Diseño de tatuajes",
-        "label": "Diseño de tatuajes"
+        "value": "Tattoo design",
+        "label": "Tattoo design"
     },
     {
         "value": "Technology",
@@ -3245,8 +3248,8 @@
         "label": "Town Planning"
     },
     {
-        "value": "Señalización para vehículos",
-        "label": "Señalización para vehículos"
+        "value": "Signage for vehicles",
+        "label": "Signage for vehicles"
     },
     {
         "value": "Visual Foxpro",
@@ -3254,7 +3257,7 @@
     },
     {
         "value": "Vulkan",
-        "label": "Vulkan"
+        "label": "Vulcan"
     },
     {
         "value": "Wireless Network Risk Analysis & Reduction",
@@ -3333,8 +3336,8 @@
         "label": "Adobe Robohelp"
     },
     {
-        "value": "Agora",
-        "label": "Agora"
+        "value": "Now",
+        "label": "Now"
     },
     {
         "value": "Aircraft Performance",
@@ -3358,7 +3361,7 @@
     },
     {
         "value": "Algogrand",
-        "label": "Algogrand"
+        "label": "Algo Grand"
     },
     {
         "value": "Alienbrain",
@@ -3393,7 +3396,7 @@
         "label": "Anti Money Laundering"
     },
     {
-        "value": "Apache Ant",
+        "value": "ApacheAnt",
         "label": "Apache Ant"
     },
     {
@@ -3438,7 +3441,7 @@
     },
     {
         "value": "Backbase",
-        "label": "Backbase"
+        "label": "Background"
     },
     {
         "value": "Baking",
@@ -3465,8 +3468,8 @@
         "label": "BitMEX"
     },
     {
-        "value": "Diseño de blogs",
-        "label": "Diseño de blogs"
+        "value": "Blog Design",
+        "label": "Blog Design"
     },
     {
         "value": "Board Support Package (BSP)",
@@ -3485,7 +3488,7 @@
         "label": "Bukkit"
     },
     {
-        "value": "CAN Bus",
+        "value": "CANBus",
         "label": "CAN Bus"
     },
     {
@@ -3497,8 +3500,8 @@
         "label": "CasperJS"
     },
     {
-        "value": "Traductor de Catalán",
-        "label": "Traductor de Catalán"
+        "value": "Catalan Translator",
+        "label": "Catalan Translator"
     },
     {
         "value": "Cellular Design",
@@ -3569,11 +3572,11 @@
         "label": "Customer Retention Marketing"
     },
     {
-        "value": "Data Modeling",
-        "label": "Data Modeling"
+        "value": "Data Modelling",
+        "label": "Data Modelling"
     },
     {
-        "value": "DataLife Engine",
+        "value": "DataLifeEngine",
         "label": "DataLife Engine"
     },
     {
@@ -3609,8 +3612,8 @@
         "label": "Ergo"
     },
     {
-        "value": "Traductor estonio",
-        "label": "Traductor estonio"
+        "value": "Estonian Translator",
+        "label": "Estonian translator"
     },
     {
         "value": "Executive Coaching",
@@ -3633,15 +3636,15 @@
         "label": "Fire Fighting"
     },
     {
-        "value": "Flash 3D",
-        "label": "Flash 3D"
+        "value": "3D Flash",
+        "label": "3D Flash"
     },
     {
         "value": "Flex",
         "label": "Flex"
     },
     {
-        "value": "Flower Delivery",
+        "value": "FlowerDelivery",
         "label": "Flower Delivery"
     },
     {
@@ -3658,15 +3661,15 @@
     },
     {
         "value": "GameSalad",
-        "label": "GameSalad"
+        "label": "Game Salad"
     },
     {
-        "value": "General Full Load",
+        "value": "Overall Full Load",
         "label": "General Full Load"
     },
     {
-        "value": "Ingeniería genética",
-        "label": "Ingeniería genética"
+        "value": "Genetic engineering",
+        "label": "Genetic Engineering"
     },
     {
         "value": "GeoServer",
@@ -3713,7 +3716,7 @@
         "label": "Horticulture"
     },
     {
-        "value": "HR Sales",
+        "value": "HRSales",
         "label": "HR Sales"
     },
     {
@@ -3737,8 +3740,8 @@
         "label": "Indiegogo"
     },
     {
-        "value": "Instalación",
-        "label": "Instalación"
+        "value": "Installation",
+        "label": "Installation"
     },
     {
         "value": "IP Cores",
@@ -3773,7 +3776,7 @@
         "label": "Lisp"
     },
     {
-        "value": "Live Survey",
+        "value": "LiveSurvey",
         "label": "Live Survey"
     },
     {
@@ -3781,7 +3784,7 @@
         "label": "Managed Analytics"
     },
     {
-        "value": "Marketo",
+        "value": "Market",
         "label": "Marketo"
     },
     {
@@ -3789,7 +3792,7 @@
         "label": "Media Sales"
     },
     {
-        "value": "Messenger Marketing",
+        "value": "MessengerMarketing",
         "label": "Messenger Marketing"
     },
     {
@@ -3809,7 +3812,7 @@
         "label": "NgRx"
     },
     {
-        "value": "Office Add-ins",
+        "value": "Office Addins",
         "label": "Office Add-ins"
     },
     {
@@ -3829,8 +3832,8 @@
         "label": "Pallet or Skid"
     },
     {
-        "value": "Procesamiento paralelo",
-        "label": "Procesamiento paralelo"
+        "value": "Parallel Processing",
+        "label": "Parallel Processing"
     },
     {
         "value": "PC Programming",
@@ -3841,16 +3844,16 @@
         "label": "PeopleSoft"
     },
     {
-        "value": "Ingeniería del petróleo",
-        "label": "Ingeniería del petróleo"
+        "value": "Petroleum Engineering",
+        "label": "Petroleum engineering"
     },
     {
         "value": "PHPrunner",
         "label": "PHPrunner"
     },
     {
-        "value": "Canalización",
-        "label": "Canalización"
+        "value": "Pipeline",
+        "label": "Pipeline"
     },
     {
         "value": "Polarion",
@@ -3865,7 +3868,7 @@
         "label": "Powtoon"
     },
     {
-        "value": "Private Client",
+        "value": "PrivateClient",
         "label": "Private Client"
     },
     {
@@ -3881,8 +3884,8 @@
         "label": "Psychological Assessment"
     },
     {
-        "value": "Punjabí",
-        "label": "Punjabí"
+        "value": "Punjabi",
+        "label": "Punjabi"
     },
     {
         "value": "Qlik",
@@ -3937,12 +3940,12 @@
         "label": "Safety Consulting"
     },
     {
-        "value": "SDK de Samsung Accessory",
-        "label": "SDK de Samsung Accessory"
+        "value": "Samsung Accessory SDK",
+        "label": "Samsung Accessory SDK"
     },
     {
-        "value": "SAP Pay",
-        "label": "SAP Pay"
+        "value": "SAPPay",
+        "label": "SAPPay"
     },
     {
         "value": "SAT Tutoring",
@@ -3973,8 +3976,8 @@
         "label": "Silverlight"
     },
     {
-        "value": "Eslovaco",
-        "label": "Eslovaco"
+        "value": "Slovak",
+        "label": "Slovak"
     },
     {
         "value": "Sprout",
@@ -4017,8 +4020,8 @@
         "label": "Traditional Animation"
     },
     {
-        "value": "Redacción sobre viajes",
-        "label": "Redacción sobre viajes"
+        "value": "Travel Writing",
+        "label": "Travel Writing"
     },
     {
         "value": "Trucking",
@@ -4037,8 +4040,8 @@
         "label": "V-Play"
     },
     {
-        "value": "Vapor",
-        "label": "Vapor"
+        "value": "Steam",
+        "label": "Steam"
     },
     {
         "value": "Vector Tracing",
@@ -4065,8 +4068,8 @@
         "label": "Web Animation"
     },
     {
-        "value": "Galés",
-        "label": "Galés"
+        "value": "Welsh",
+        "label": "Welsh"
     },
     {
         "value": "Windows Mobile",
@@ -4105,16 +4108,16 @@
         "label": "Zigbee"
     },
     {
-        "value": "Diseño de sitios web",
-        "label": "Diseño de sitios web"
+        "value": "Website Design",
+        "label": "Website Design"
     },
     {
-        "value": "Desarrollo de apps móviles",
-        "label": "Desarrollo de apps móviles"
+        "value": "Mobile app development",
+        "label": "Mobile app development"
     },
     {
-        "value": "Arquitectura de software",
-        "label": "Arquitectura de software"
+        "value": "Software architecture",
+        "label": "Software Architecture"
     },
     {
         "value": "CSS",
@@ -4141,44 +4144,44 @@
         "label": "PDF"
     },
     {
-        "value": "Ilustración",
-        "label": "Ilustración"
+        "value": "Illustration",
+        "label": "Illustration"
     },
     {
-        "value": "Programación en C#",
-        "label": "Programación en C#"
+        "value": "Programming in C#",
+        "label": "Programming in C#"
     },
     {
         "value": "React.js",
         "label": "React.js"
     },
     {
-        "value": "Comercio electrónico",
-        "label": "Comercio electrónico"
+        "value": "E-commerce",
+        "label": "E-commerce"
     },
     {
-        "value": "Reescritura de artículos",
-        "label": "Reescritura de artículos"
+        "value": "Article Rewrite",
+        "label": "Article Rewrite"
     },
     {
         "value": "AutoCAD",
         "label": "AutoCAD"
     },
     {
-        "value": "Publicidad",
-        "label": "Publicidad"
+        "value": "Advertising",
+        "label": "Advertising"
     },
     {
-        "value": "Investigación",
-        "label": "Investigación"
+        "value": "Research",
+        "label": "Research"
     },
     {
-        "value": "Desarrollo de juegos",
-        "label": "Desarrollo de juegos"
+        "value": "Game Development",
+        "label": "Game Development"
     },
     {
-        "value": "Ingeniería eléctrica",
-        "label": "Ingeniería eléctrica"
+        "value": "Electrical engineering",
+        "label": "Electrical engineering"
     },
     {
         "value": "Unity 3D",
@@ -4189,104 +4192,104 @@
         "label": "Twitter"
     },
     {
-        "value": "Empleo local",
-        "label": "Empleo local"
+        "value": "Local Employment",
+        "label": "Local Employment"
     },
     {
-        "value": "Caricaturas y dibujos animados",
-        "label": "Caricaturas y dibujos animados"
+        "value": "Caricatures and cartoons",
+        "label": "Caricatures and Cartoons"
     },
     {
-        "value": "Electrónica",
-        "label": "Electrónica"
+        "value": "Electronics",
+        "label": "Electronics"
     },
     {
-        "value": "React Native",
+        "value": "ReactNative",
         "label": "React Native"
     },
     {
-        "value": "Revisión de textos",
-        "label": "Revisión de textos"
+        "value": "Text review",
+        "label": "Text review"
     },
     {
-        "value": "Ingeniería mecánica",
-        "label": "Ingeniería mecánica"
+        "value": "Mechanical Engineering",
+        "label": "Mechanical Engineering"
     },
     {
         "value": "Blog",
         "label": "Blog"
     },
     {
-        "value": "Diseño de juegos",
-        "label": "Diseño de juegos"
+        "value": "Game Design",
+        "label": "Game Design"
     },
     {
-        "value": "Extracción de datos",
-        "label": "Extracción de datos"
+        "value": "Data Extraction",
+        "label": "Data Extraction"
     },
     {
         "value": "Email Marketing",
         "label": "Email Marketing"
     },
     {
-        "value": "Español",
-        "label": "Español"
+        "value": "Spanish",
+        "label": "Spanish"
     },
     {
         "value": "Legal",
         "label": "Legal"
     },
     {
-        "value": "Visual Basic",
-        "label": "Visual Basic"
+        "value": "VisualBasic",
+        "label": "VisualBasic"
     },
     {
-        "value": "Algoritmos",
-        "label": "Algoritmos"
+        "value": "Algorithms",
+        "label": "Algorithms"
     },
     {
-        "value": "Diseño del hogar",
-        "label": "Diseño del hogar"
+        "value": "Home Design",
+        "label": "Home Design"
     },
     {
-        "value": "Traductor de Árabe",
-        "label": "Traductor de Árabe"
+        "value": "Arabic Translator",
+        "label": "Arabic Translator"
     },
     {
         "value": "Youtube",
         "label": "Youtube"
     },
     {
-        "value": "Servidor de Microsoft SQL",
-        "label": "Servidor de Microsoft SQL"
+        "value": "Microsoft SQL Server",
+        "label": "Microsoft SQL Server"
     },
     {
-        "value": "Ingeniería civil",
-        "label": "Ingeniería civil"
+        "value": "Civil engineering",
+        "label": "Civil Engineering"
     },
     {
-        "value": "Verificación de páginas web",
-        "label": "Verificación de páginas web"
+        "value": "Web page verification",
+        "label": "Verification of web pages"
     },
     {
-        "value": "Contratos",
-        "label": "Contratos"
+        "value": "Contracts",
+        "label": "Contracts"
     },
     {
         "value": "Social Media Management",
         "label": "Social Media Management"
     },
     {
-        "value": "Programación de bases de datos",
-        "label": "Programación de bases de datos"
+        "value": "Database Programming",
+        "label": "Database Programming"
     },
     {
-        "value": "PSD a HTML",
-        "label": "PSD a HTML"
+        "value": "PSD to HTML",
+        "label": "PSD to HTML"
     },
     {
-        "value": "Marketing de motores de búsqueda",
-        "label": "Marketing de motores de búsqueda"
+        "value": "Search Engine Marketing",
+        "label": "Search Engine Marketing"
     },
     {
         "value": "Arduino",
@@ -4297,8 +4300,8 @@
         "label": "Google Firebase"
     },
     {
-        "value": "Diseño PCB",
-        "label": "Diseño PCB"
+        "value": "PCB Layout",
+        "label": "PCB Layout"
     },
     {
         "value": "Backend Development",
@@ -4313,15 +4316,15 @@
         "label": "Next.js"
     },
     {
-        "value": "Soluciones en la nube",
-        "label": "Soluciones en la nube"
+        "value": "Cloud solutions",
+        "label": "Cloud Solutions"
     },
     {
         "value": "Ubuntu",
         "label": "Ubuntu"
     },
     {
-        "value": "Frontend Development",
+        "value": "Front End Development",
         "label": "Frontend Development"
     },
     {
@@ -4333,8 +4336,8 @@
         "label": "Website Build"
     },
     {
-        "value": "Italiano",
-        "label": "Italiano"
+        "value": "Italian",
+        "label": "Italian"
     },
     {
         "value": "Angular",
@@ -4345,12 +4348,12 @@
         "label": "RESTful API"
     },
     {
-        "value": "Diseño de circuitos",
-        "label": "Diseño de circuitos"
+        "value": "Circuit Design",
+        "label": "Circuit Design"
     },
     {
-        "value": "Traductor de Francés",
-        "label": "Traductor de Francés"
+        "value": "French Translator",
+        "label": "French Translator"
     },
     {
         "value": "SEO Writing",
@@ -4373,15 +4376,15 @@
         "label": "Oracle"
     },
     {
-        "value": "Data Collection",
+        "value": "DataCollection",
         "label": "Data Collection"
     },
     {
-        "value": "Gestión",
-        "label": "Gestión"
+        "value": "Management",
+        "label": "Management"
     },
     {
-        "value": "Windows Server",
+        "value": "WindowsServer",
         "label": "Windows Server"
     },
     {
@@ -4417,8 +4420,8 @@
         "label": "TikTok"
     },
     {
-        "value": "Educación y tutoría",
-        "label": "Educación y tutoría"
+        "value": "Education & Mentoring",
+        "label": "Education and Mentoring"
     },
     {
         "value": "SAP",
@@ -4429,8 +4432,8 @@
         "label": "Administrative Support"
     },
     {
-        "value": "Ciencia de datos",
-        "label": "Ciencia de datos"
+        "value": "Data Science",
+        "label": "Data Science"
     },
     {
         "value": "Google Chrome",
@@ -4449,23 +4452,23 @@
         "label": "Data Analytics"
     },
     {
-        "value": "Páginas de aterrizaje",
-        "label": "Páginas de aterrizaje"
+        "value": "Landing Pages",
+        "label": "Landing Pages"
     },
     {
         "value": "Website Optimization",
         "label": "Website Optimization"
     },
     {
-        "value": "Francés (Canadá)",
-        "label": "Francés (Canadá)"
+        "value": "French (Canada)",
+        "label": "French (Canada)"
     },
     {
-        "value": "Diseño de carteles",
-        "label": "Diseño de carteles"
+        "value": "Poster design",
+        "label": "Poster design"
     },
     {
-        "value": "Adobe XD",
+        "value": "AdobeXD",
         "label": "Adobe XD"
     },
     {
@@ -4481,7 +4484,7 @@
         "label": "Sharepoint"
     },
     {
-        "value": "Copy Editing",
+        "value": "Copy Editingg",
         "label": "Copy Editing"
     },
     {
@@ -4489,36 +4492,36 @@
         "label": "Google Search"
     },
     {
-        "value": "Lenguaje de Programación R",
-        "label": "Lenguaje de Programación R"
+        "value": "R Programming Language",
+        "label": "R Programming Language"
     },
     {
         "value": "Sketching",
         "label": "Sketching"
     },
     {
-        "value": "Chino Tradicional (Hong Kong)",
-        "label": "Chino Tradicional (Hong Kong)"
+        "value": "Traditional Chinese (Hong Kong)",
+        "label": "Traditional Chinese (Hong Kong)"
     },
     {
         "value": "YouTube Video Editing",
         "label": "YouTube Video Editing"
     },
     {
-        "value": "Filmación de películas",
-        "label": "Filmación de películas"
+        "value": "Movie shooting",
+        "label": "Filmmaking"
     },
     {
-        "value": "Inmobiliaria",
-        "label": "Inmobiliaria"
+        "value": "Real Estate",
+        "label": "Real Estate"
     },
     {
-        "value": "Redacción académica",
-        "label": "Redacción académica"
+        "value": "Academic Writing",
+        "label": "Academic Writing"
     },
     {
-        "value": "Motor de Google App",
-        "label": "Motor de Google App"
+        "value": "Google App Engine",
+        "label": "Google App Engine"
     },
     {
         "value": "JSP",
@@ -4529,7 +4532,7 @@
         "label": "Scripting"
     },
     {
-        "value": "Video Hardware",
+        "value": "VideoHardware",
         "label": "Video Hardware"
     },
     {
@@ -4537,7 +4540,7 @@
         "label": "Vue.js Framework"
     },
     {
-        "value": "App Development",
+        "value": "AppDevelopment",
         "label": "App Development"
     },
     {
@@ -4545,8 +4548,8 @@
         "label": "Domain Research"
     },
     {
-        "value": "Nóminas",
-        "label": "Nóminas"
+        "value": "Payrolls",
+        "label": "Payrolls"
     },
     {
         "value": "Raspberry Pi",
@@ -4565,19 +4568,19 @@
         "label": "Computer Support"
     },
     {
-        "value": "Solicitud de subvenciones",
-        "label": "Solicitud de subvenciones"
+        "value": "Grant Request",
+        "label": "Grant Application"
     },
     {
-        "value": "PLC y SCADA",
-        "label": "PLC y SCADA"
+        "value": "PLC and SCADA",
+        "label": "PLC and SCADA"
     },
     {
         "value": "Social Media Copy",
         "label": "Social Media Copy"
     },
     {
-        "value": "Visual Studio",
+        "value": "VisualStudio",
         "label": "Visual Studio"
     },
     {
@@ -4585,7 +4588,7 @@
         "label": "Amazon FBA"
     },
     {
-        "value": "Computer Vision",
+        "value": "ComputerVision",
         "label": "Computer Vision"
     },
     {
@@ -4593,16 +4596,16 @@
         "label": "Facebook API"
     },
     {
-        "value": "Open Cart",
-        "label": "Open Cart"
+        "value": "OpenCart",
+        "label": "OpenCart"
     },
     {
-        "value": "Polaco",
-        "label": "Polaco"
+        "value": "Polish",
+        "label": "Polish"
     },
     {
-        "value": "Ingeniería de telecomunicaciones",
-        "label": "Ingeniería de telecomunicaciones"
+        "value": "Telecommunications Engineering",
+        "label": "Telecommunications engineering"
     },
     {
         "value": "Web API",
@@ -4617,8 +4620,8 @@
         "label": "Canva"
     },
     {
-        "value": "Desarrollador de emails",
-        "label": "Desarrollador de emails"
+        "value": "Email Developer",
+        "label": "Email Developer"
     },
     {
         "value": "GitHub",
@@ -4641,8 +4644,8 @@
         "label": "Symfony PHP"
     },
     {
-        "value": "Teaching/Lecturing",
-        "label": "Teaching/Lecturing"
+        "value": "Teaching/Lecture",
+        "label": "Teaching/Lecture"
     },
     {
         "value": "VPN",
@@ -4657,12 +4660,12 @@
         "label": "Audio Editing"
     },
     {
-        "value": "Biología",
-        "label": "Biología"
+        "value": "Biology",
+        "label": "Biology"
     },
     {
-        "value": "Cartografía y Mapas",
-        "label": "Cartografía y Mapas"
+        "value": "Cartography and Maps",
+        "label": "Cartography and Maps"
     },
     {
         "value": "Debian",
@@ -4681,7 +4684,7 @@
         "label": "Image Processing"
     },
     {
-        "value": "Mobile Development",
+        "value": "MobileDevelopment",
         "label": "Mobile Development"
     },
     {
@@ -4693,7 +4696,7 @@
         "label": "SMTP"
     },
     {
-        "value": "Twitter Marketing",
+        "value": "TwitterMarketing",
         "label": "Twitter Marketing"
     },
     {
@@ -4705,36 +4708,36 @@
         "label": "Android UI Design"
     },
     {
-        "value": "Bluetooth de baja energía",
-        "label": "Bluetooth de baja energía"
+        "value": "Bluetooth Low Energy",
+        "label": "Bluetooth Low Energy"
     },
     {
         "value": "Content Management System (CMS)",
         "label": "Content Management System (CMS)"
     },
     {
-        "value": "Soporte a usuarios finales",
-        "label": "Soporte a usuarios finales"
+        "value": "End user support",
+        "label": "End user support"
     },
     {
         "value": "Flask",
         "label": "Flask"
     },
     {
-        "value": "Google APIs",
+        "value": "GoogleAPI",
         "label": "Google APIs"
     },
     {
-        "value": "Diseño de paisajes",
-        "label": "Diseño de paisajes"
+        "value": "Landscape Design",
+        "label": "Landscape Design"
     },
     {
-        "value": "Mudanza",
-        "label": "Mudanza"
+        "value": "Move",
+        "label": "Moving"
     },
     {
-        "value": "Boletines de noticias",
-        "label": "Boletines de noticias"
+        "value": "Newsletters",
+        "label": "Newsletters"
     },
     {
         "value": "Pitch Deck Writing",
@@ -4745,12 +4748,12 @@
         "label": "Subtitles & Captions"
     },
     {
-        "value": "Chino Tradicional (Taiwan)",
-        "label": "Chino Tradicional (Taiwan)"
+        "value": "Traditional Chinese (Taiwan)",
+        "label": "Traditional Chinese (Taiwan)"
     },
     {
-        "value": "Mundos virtuales",
-        "label": "Mundos virtuales"
+        "value": "Virtual Worlds",
+        "label": "Virtual Worlds"
     },
     {
         "value": "AI (Artificial Intelligence) HW/SW",
@@ -4761,16 +4764,16 @@
         "label": "Autodesk Inventor"
     },
     {
-        "value": "Corel Draw",
-        "label": "Corel Draw"
+        "value": "CorelDraw",
+        "label": "CorelDraw"
     },
     {
         "value": "Digital Art",
         "label": "Digital Art"
     },
     {
-        "value": "Extensiones y ampliaciones",
-        "label": "Extensiones y ampliaciones"
+        "value": "Extensions and extensions",
+        "label": "Extensions and extensions"
     },
     {
         "value": "Healthcare Sales",
@@ -4809,8 +4812,8 @@
         "label": "3D Architecture"
     },
     {
-        "value": "Angular Material",
-        "label": "Angular Material"
+        "value": "AngularMaterial",
+        "label": "AngularMaterial"
     },
     {
         "value": "Atlassian Jira",
@@ -4833,20 +4836,20 @@
         "label": "Drone Photography"
     },
     {
-        "value": "Diseñador eLearning",
-        "label": "Diseñador eLearning"
+        "value": "eLearning Designer",
+        "label": "eLearning Designer"
     },
     {
-        "value": "Diseño industrial",
-        "label": "Diseño industrial"
+        "value": "Industrial design",
+        "label": "Industrial design"
     },
     {
         "value": "Financial Consulting",
         "label": "Financial Consulting"
     },
     {
-        "value": "Ingeniería industrial",
-        "label": "Ingeniería industrial"
+        "value": "Industrial engineering",
+        "label": "Industrial Engineering"
     },
     {
         "value": "Jitsi",
@@ -4865,12 +4868,12 @@
         "label": "Minecraft"
     },
     {
-        "value": "Redacción en línea",
-        "label": "Redacción en línea"
+        "value": "Online Compose",
+        "label": "Online Writing"
     },
     {
-        "value": "Programación en Photoshop",
-        "label": "Programación en Photoshop"
+        "value": "Programming in Photoshop",
+        "label": "Programming in Photoshop"
     },
     {
         "value": "Public Speaking",
@@ -4885,8 +4888,8 @@
         "label": "SQLite"
     },
     {
-        "value": "Solución de problemas",
-        "label": "Solución de problemas"
+        "value": "Troubleshooting",
+        "label": "Troubleshooting"
     },
     {
         "value": "Zoom",
@@ -4913,16 +4916,16 @@
         "label": "Business Requirement Documentation"
     },
     {
-        "value": "Navidad",
-        "label": "Navidad"
+        "value": "Christmas",
+        "label": "Christmas"
     },
     {
         "value": "Construction Engineering",
         "label": "Construction Engineering"
     },
     {
-        "value": "Cursos",
-        "label": "Cursos"
+        "value": "Courses",
+        "label": "Courses"
     },
     {
         "value": "Econometrics",
@@ -4933,20 +4936,20 @@
         "label": "Engineering Mathematics"
     },
     {
-        "value": "Financial Modeling",
-        "label": "Financial Modeling"
+        "value": "Financial Modelling",
+        "label": "Financial Modelling"
     },
     {
-        "value": "Game UI",
-        "label": "Game UI"
+        "value": "GameUI",
+        "label": "GameUI"
     },
     {
         "value": "Health Care Management",
         "label": "Health Care Management"
     },
     {
-        "value": "Paisajismo",
-        "label": "Paisajismo"
+        "value": "Landscaping",
+        "label": "Landscaping"
     },
     {
         "value": "MEAN Stack",
@@ -4969,7 +4972,7 @@
         "label": "Photon Multiplayer"
     },
     {
-        "value": "Podcast Marketing",
+        "value": "PodcastMarketing",
         "label": "Podcast Marketing"
     },
     {
@@ -4993,16 +4996,16 @@
         "label": "Software Sales"
     },
     {
-        "value": "Abastecimiento de proveedores",
-        "label": "Abastecimiento de proveedores"
+        "value": "Supplier Sourcing",
+        "label": "Supplier Sourcing"
     },
     {
         "value": "Unboxing Videos",
         "label": "Unboxing Videos"
     },
     {
-        "value": "Servicios web",
-        "label": "Servicios web"
+        "value": "Web Services",
+        "label": "Web Services"
     },
     {
         "value": "3D Layout",
@@ -5037,8 +5040,8 @@
         "label": "Business Consulting"
     },
     {
-        "value": "Frases publicitarias",
-        "label": "Frases publicitarias"
+        "value": "Advertising phrases",
+        "label": "advertising phrases"
     },
     {
         "value": "Comedy Writing",
@@ -5061,19 +5064,19 @@
         "label": "ERP Software"
     },
     {
-        "value": "Diagramas de flujo",
-        "label": "Diagramas de flujo"
+        "value": "Flowcharts",
+        "label": "Flowcharts"
     },
     {
-        "value": "Google PageSpeed Insights",
-        "label": "Google PageSpeed Insights"
+        "value": "Google PageSpeed ​​Insights",
+        "label": "Google PageSpeed ​​Insights"
     },
     {
         "value": "Haskell",
         "label": "Haskell"
     },
     {
-        "value": "Imaging",
+        "value": "Image",
         "label": "Imaging"
     },
     {
@@ -5137,7 +5140,7 @@
         "label": "Affinity Photo"
     },
     {
-        "value": "Amazon App Development",
+        "value": "Amazon AppDevelopment",
         "label": "Amazon App Development"
     },
     {
@@ -5145,7 +5148,7 @@
         "label": "Apache Spark"
     },
     {
-        "value": "Applescript",
+        "value": "AppleScript",
         "label": "Applescript"
     },
     {
@@ -5177,16 +5180,16 @@
         "label": "Certified Information Systems Security Professional (CISSP)"
     },
     {
-        "value": "Cloud Security",
-        "label": "Cloud Security"
+        "value": "CloudSecurity",
+        "label": "CloudSecurity"
     },
     {
         "value": "Combinatorial Optimization",
         "label": "Combinatorial Optimization"
     },
     {
-        "value": "Cocina / Horneado",
-        "label": "Cocina / Horneado"
+        "value": "Cooking / Baking",
+        "label": "Cooking / Baking"
     },
     {
         "value": "Datatables",
@@ -5209,12 +5212,12 @@
         "label": "Financial Software Development"
     },
     {
-        "value": "Freelancer API",
-        "label": "Freelancer API"
+        "value": "Freelance API",
+        "label": "Freelance API"
     },
     {
-        "value": "Ingeniería geotécnica",
-        "label": "Ingeniería geotécnica"
+        "value": "Geotechnical Engineering",
+        "label": "Geotechnical Engineering"
     },
     {
         "value": "Google Shopping",
@@ -5241,12 +5244,12 @@
         "label": "Instructional Design"
     },
     {
-        "value": "Interiores",
-        "label": "Interiores"
+        "value": "Interiors",
+        "label": "Interiors"
     },
     {
-        "value": "Investigación de inversiones",
-        "label": "Investigación de inversiones"
+        "value": "Investment Research",
+        "label": "Investment Research"
     },
     {
         "value": "Keras",
@@ -5269,7 +5272,7 @@
         "label": "Mixing Engineering"
     },
     {
-        "value": "Motor Control",
+        "value": "MotorControl",
         "label": "Motor Control"
     },
     {
@@ -5277,7 +5280,7 @@
         "label": "Open Source"
     },
     {
-        "value": "Parcel Delivery",
+        "value": "ParcelDelivery",
         "label": "Parcel Delivery"
     },
     {
@@ -5301,16 +5304,16 @@
         "label": "Renewables"
     },
     {
-        "value": "Gestión de riesgos",
-        "label": "Gestión de riesgos"
+        "value": "Risk Management",
+        "label": "Risk Management"
     },
     {
         "value": "SAP 4 Hana",
         "label": "SAP 4 Hana"
     },
     {
-        "value": "Desarrollo Scrum",
-        "label": "Desarrollo Scrum"
+        "value": "Scrum Development",
+        "label": "Scrum development"
     },
     {
         "value": "Serial Peripheral Interface (SPI)",
@@ -5337,8 +5340,8 @@
         "label": "Virtual Machines"
     },
     {
-        "value": "API de Windows",
-        "label": "API de Windows"
+        "value": "Windows API",
+        "label": "Windows API"
     },
     {
         "value": "Coding Lesson",
@@ -5361,16 +5364,16 @@
         "label": "Education Consulting"
     },
     {
-        "value": "Energía",
-        "label": "Energía"
+        "value": "Energy",
+        "label": "Energy"
     },
     {
         "value": "Esports",
         "label": "Esports"
     },
     {
-        "value": "Reconocimiento facial",
-        "label": "Reconocimiento facial"
+        "value": "Face Recognition",
+        "label": "Face Recognition"
     },
     {
         "value": "Financial Sales",
@@ -5381,8 +5384,8 @@
         "label": "GCP AI"
     },
     {
-        "value": "Geología",
-        "label": "Geología"
+        "value": "Geology",
+        "label": "Geology"
     },
     {
         "value": "Investigative Journalism",
@@ -5397,8 +5400,8 @@
         "label": "Language Tutoring"
     },
     {
-        "value": "Microbiología",
-        "label": "Microbiología"
+        "value": "Microbiology",
+        "label": "Microbiology"
     },
     {
         "value": "Modding",
@@ -5409,8 +5412,8 @@
         "label": "Offline Conversion Facebook API Integration"
     },
     {
-        "value": "Poeta",
-        "label": "Poeta"
+        "value": "Poet",
+        "label": "Poet"
     },
     {
         "value": "PostgreSQL Administration",
@@ -5434,7 +5437,7 @@
     },
     {
         "value": "SAP PI",
-        "label": "SAP PI"
+        "label": "SAPPI"
     },
     {
         "value": "Social Impact",
@@ -5466,7 +5469,7 @@
     },
     {
         "value": "Weblogic",
-        "label": "Weblogic"
+        "label": "WebLogic"
     },
     {
         "value": "Wireless Network Security Analysis",
@@ -5514,7 +5517,7 @@
     },
     {
         "value": "Apache Solr",
-        "label": "Apache Solr"
+        "label": "Apache Solar"
     },
     {
         "value": "ArangoDB",
@@ -5673,7 +5676,7 @@
         "label": "OpenCL"
     },
     {
-        "value": "Oracle EBS Tech Integration",
+        "value": "Oracle EBS TechIntegration",
         "label": "Oracle EBS Tech Integration"
     },
     {
@@ -5701,8 +5704,8 @@
         "label": "Rapid Prototyping"
     },
     {
-        "value": "Ray-tracing",
-        "label": "Ray-tracing"
+        "value": "Ray tracing",
+        "label": "Ray tracing"
     },
     {
         "value": "Sails.js",
@@ -5713,7 +5716,7 @@
         "label": "Scientific Computing"
     },
     {
-        "value": "Swift Package Manager",
+        "value": "Swift PackageManager",
         "label": "Swift Package Manager"
     },
     {
@@ -5777,56 +5780,56 @@
         "label": "Android"
     },
     {
-        "value": "Marketing por Internet",
-        "label": "Marketing por Internet"
+        "value": "Internet Marketing",
+        "label": "Internet Marketing"
     },
     {
-        "value": "Modelado 3D",
-        "label": "Modelado 3D"
+        "value": "3D modelling",
+        "label": "3D modeling"
     },
     {
-        "value": "Redacción",
-        "label": "Redacción"
+        "value": "Writing",
+        "label": "Writing"
     },
     {
-        "value": "Traducción",
-        "label": "Traducción"
+        "value": "Translation",
+        "label": "Translation"
     },
     {
         "value": "After Effects",
         "label": "After Effects"
     },
     {
-        "value": "Diseño con Photoshop",
-        "label": "Diseño con Photoshop"
+        "value": "Design with Photoshop",
+        "label": "Design with Photoshop"
     },
     {
-        "value": "Programación en C",
-        "label": "Programación en C"
+        "value": "Programming in C",
+        "label": "Programming in C"
     },
     {
-        "value": "Producción de video",
-        "label": "Producción de video"
+        "value": "Video Production",
+        "label": "Video Production"
     },
     {
         "value": "Linux",
         "label": "Linux"
     },
     {
-        "value": "Ventas",
-        "label": "Ventas"
+        "value": "Sales",
+        "label": "Sales"
     },
     {
         "value": "Non-fungible Tokens (NFT)",
-        "label": "Non-fungible Tokens (NFT)"
+        "label": "Non-Fungible Tokens (NFT)"
     },
     {
-        "value": "Asistente virtual",
-        "label": "Asistente virtual"
+        "value": "Virtual Assistant",
+        "label": "Virtual Assistant"
     },
     {
-        "value": "Edición de fotos",
-        "label": "Edición de fotos"
+        "value": "Photo editing",
+        "label": "Photo Editing"
     },
     {
         "value": "Shopify",
@@ -5837,16 +5840,16 @@
         "label": "Web Hosting"
     },
     {
-        "value": "Diseño de folletos",
-        "label": "Diseño de folletos"
+        "value": "Brochure Design",
+        "label": "Brochure Design"
     },
     {
         "value": "Objective C",
         "label": "Objective C"
     },
     {
-        "value": "Búsqueda en la web",
-        "label": "Búsqueda en la web"
+        "value": "Web Search",
+        "label": "Web Search"
     },
     {
         "value": "Cryptocurrency",
@@ -5857,12 +5860,12 @@
         "label": "Smart Contracts"
     },
     {
-        "value": "Redacción creativa",
-        "label": "Redacción creativa"
+        "value": "Creative Writing",
+        "label": "Creative Writing"
     },
     {
-        "value": "Diseño de productos",
-        "label": "Diseño de productos"
+        "value": "Product Design",
+        "label": "Product Design"
     },
     {
         "value": "Web3.js",
@@ -5877,16 +5880,16 @@
         "label": "ASP.NET"
     },
     {
-        "value": "Atención al cliente",
-        "label": "Atención al cliente"
+        "value": "Customer Service",
+        "label": "Customer Service"
     },
     {
         "value": "Django",
         "label": "Django"
     },
     {
-        "value": "Gramática inglesa",
-        "label": "Gramática inglesa"
+        "value": "English Grammar",
+        "label": "English Grammar"
     },
     {
         "value": "Instagram",
@@ -5897,24 +5900,24 @@
         "label": "API"
     },
     {
-        "value": "Redacción comercial",
-        "label": "Redacción comercial"
+        "value": "Business Writing",
+        "label": "Commercial Writing"
     },
     {
-        "value": "Seguridad web",
-        "label": "Seguridad web"
+        "value": "Web Security",
+        "label": "Web Security"
     },
     {
         "value": "Discord",
         "label": "Discord"
     },
     {
-        "value": "Análisis estadístico",
-        "label": "Análisis estadístico"
+        "value": "Statistical analysis",
+        "label": "Statistical Analysis"
     },
     {
-        "value": "Presentaciones",
-        "label": "Presentaciones"
+        "value": "Presentations",
+        "label": "Presentations"
     },
     {
         "value": "Bitcoin",
@@ -5929,32 +5932,32 @@
         "label": "Odd Jobs"
     },
     {
-        "value": "Seguridad informática",
-        "label": "Seguridad informática"
+        "value": "Computer Security",
+        "label": "Computer Security"
     },
     {
         "value": "UI / User Interface",
         "label": "UI / User Interface"
     },
     {
-        "value": "Carritos de compras",
-        "label": "Carritos de compras"
+        "value": "Shopping carts",
+        "label": "Shopping carts"
     },
     {
-        "value": "Descripciones de productos",
-        "label": "Descripciones de productos"
+        "value": "Product Descriptions",
+        "label": "Product Descriptions"
     },
     {
-        "value": "Turco",
-        "label": "Turco"
+        "value": "Turkish",
+        "label": "Turkish"
     },
     {
         "value": "Maya",
         "label": "Maya"
     },
     {
-        "value": "Diseño de sonido",
-        "label": "Diseño de sonido"
+        "value": "Sound Design",
+        "label": "Sound Design"
     },
     {
         "value": "Google Adsense",
@@ -5965,28 +5968,28 @@
         "label": "Ionic Framework"
     },
     {
-        "value": "Ingeniería química",
-        "label": "Ingeniería química"
+        "value": "Chemical Engineering",
+        "label": "Chemical Engineering"
     },
     {
-        "value": "Web Application",
-        "label": "Web Application"
+        "value": "WebApplication",
+        "label": "WebApplication"
     },
     {
         "value": "ERP",
         "label": "ERP"
     },
     {
-        "value": "Diseño creativo",
-        "label": "Diseño creativo"
+        "value": "Creative Design",
+        "label": "Creative Design"
     },
     {
-        "value": "Ortografía de inglés",
-        "label": "Ortografía de inglés"
+        "value": "English spelling",
+        "label": "English Spelling"
     },
     {
-        "value": "API Integration",
-        "label": "API Integration"
+        "value": "API integration",
+        "label": "API integration"
     },
     {
         "value": "Microsoft Access",
@@ -6001,7 +6004,7 @@
         "label": "Unreal Engine"
     },
     {
-        "value": "Business Development",
+        "value": "BusinessDevelopment",
         "label": "Business Development"
     },
     {
@@ -6013,15 +6016,15 @@
         "label": "MVC"
     },
     {
-        "value": "Data Delivery",
-        "label": "Data Delivery"
+        "value": "DataDelivery",
+        "label": "DataDelivery"
     },
     {
-        "value": "Contratación",
-        "label": "Contratación"
+        "value": "Recruitment",
+        "label": "Hiring"
     },
     {
-        "value": "Asterisk PBX",
+        "value": "AsteriskPBX",
         "label": "Asterisk PBX"
     },
     {
@@ -6057,24 +6060,24 @@
         "label": "Wix"
     },
     {
-        "value": "Diseño de fabricación",
-        "label": "Diseño de fabricación"
+        "value": "Manufacturing Design",
+        "label": "Manufacturing design"
     },
     {
-        "value": "Desarrollo de aplicaciones de Salesforce",
-        "label": "Desarrollo de aplicaciones de Salesforce"
+        "value": "Salesforce App Development",
+        "label": "Salesforce App Development"
     },
     {
         "value": "AJAX",
         "label": "AJAX"
     },
     {
-        "value": "Infografías",
-        "label": "Infografías"
+        "value": "Infographics",
+        "label": "Infographics"
     },
     {
-        "value": "Psicología",
-        "label": "Psicología"
+        "value": "Psychology",
+        "label": "Psychology"
     },
     {
         "value": "UNIX",
@@ -6085,16 +6088,16 @@
         "label": "CSS3"
     },
     {
-        "value": "Java Spring",
-        "label": "Java Spring"
+        "value": "JavaSpring",
+        "label": "JavaSpring"
     },
     {
-        "value": "Rumano",
-        "label": "Rumano"
+        "value": "Romanian",
+        "label": "Romanian"
     },
     {
-        "value": "Soporte técnico",
-        "label": "Soporte técnico"
+        "value": "Technical support",
+        "label": "Technical support"
     },
     {
         "value": "Unity",
@@ -6109,11 +6112,11 @@
         "label": "Google Cloud Platform"
     },
     {
-        "value": "Ruso",
-        "label": "Ruso"
+        "value": "Russian",
+        "label": "Russian"
     },
     {
-        "value": "Binance Smart Chain",
+        "value": "Binance SmartChain",
         "label": "Binance Smart Chain"
     },
     {
@@ -6137,8 +6140,8 @@
         "label": "Photo Retouching"
     },
     {
-        "value": "Robótica",
-        "label": "Robótica"
+        "value": "Robotics",
+        "label": "Robotics"
     },
     {
         "value": "Spreadsheets",
@@ -6161,8 +6164,8 @@
         "label": "Proposal Writing"
     },
     {
-        "value": "Sueco",
-        "label": "Sueco"
+        "value": "Swedish",
+        "label": "Swedish"
     },
     {
         "value": "2D Animation Explainer Video",
@@ -6173,16 +6176,16 @@
         "label": "Delphi"
     },
     {
-        "value": "Front-end Design",
-        "label": "Front-end Design"
+        "value": "Front End Design",
+        "label": "Front End Design"
     },
     {
         "value": "OpenGL",
         "label": "OpenGL"
     },
     {
-        "value": "Typing",
-        "label": "Typing"
+        "value": "Type",
+        "label": "Type"
     },
     {
         "value": "Writing",
@@ -6193,20 +6196,20 @@
         "label": "Audiobook Narration"
     },
     {
-        "value": "Traductor de Danés",
-        "label": "Traductor de Danés"
+        "value": "Danish Translator",
+        "label": "Danish Translator"
     },
     {
-        "value": "Húngaro",
-        "label": "Húngaro"
+        "value": "Hungarian",
+        "label": "Hungarian"
     },
     {
-        "value": "E/S Socket",
-        "label": "E/S Socket"
+        "value": "I/O Socket",
+        "label": "Socket I/O"
     },
     {
-        "value": "Ensamblador x86/x64",
-        "label": "Ensamblador x86/x64"
+        "value": "x86/x64 Assembler",
+        "label": "x86/x64 Assembler"
     },
     {
         "value": "Amazon Kindle",
@@ -6217,12 +6220,12 @@
         "label": "Audio Processing"
     },
     {
-        "value": "Artista literario",
-        "label": "Artista literario"
+        "value": "Literary Artist",
+        "label": "Literary Artist"
     },
     {
-        "value": "Griego",
-        "label": "Griego"
+        "value": "Greek",
+        "label": "Greek"
     },
     {
         "value": "Moodle",
@@ -6237,7 +6240,7 @@
         "label": "Video Game Coaching"
     },
     {
-        "value": "3D CAD",
+        "value": "3DCAD",
         "label": "3D CAD"
     },
     {
@@ -6249,16 +6252,16 @@
         "label": "Google Docs"
     },
     {
-        "value": "pintura mural",
-        "label": "pintura mural"
+        "value": "wall painting",
+        "label": "wall painting"
     },
     {
         "value": "Office 365",
         "label": "Office 365"
     },
     {
-        "value": "Artes visuales",
-        "label": "Artes visuales"
+        "value": "Visual Arts",
+        "label": "Visual Arts"
     },
     {
         "value": "Apache Kafka",
@@ -6277,11 +6280,11 @@
         "label": "HTTP"
     },
     {
-        "value": "Malayo",
-        "label": "Malayo"
+        "value": "Malay",
+        "label": "Malay"
     },
     {
-        "value": "Network Monitoring",
+        "value": "NetworkMonitoring",
         "label": "Network Monitoring"
     },
     {
@@ -6289,7 +6292,7 @@
         "label": "Podcast Editing"
     },
     {
-        "value": "Training Development",
+        "value": "TrainingDevelopment",
         "label": "Training Development"
     },
     {
@@ -6297,7 +6300,7 @@
         "label": "Comics"
     },
     {
-        "value": "Database Management",
+        "value": "DatabaseManagement",
         "label": "Database Management"
     },
     {
@@ -6309,8 +6312,8 @@
         "label": "Instagram API"
     },
     {
-        "value": "Printing 3D",
-        "label": "Printing 3D"
+        "value": "3D Printing",
+        "label": "3D Printing"
     },
     {
         "value": "Etherscan",
@@ -6341,28 +6344,28 @@
         "label": "SSL"
     },
     {
-        "value": "Creador de modelos en 3D",
-        "label": "Creador de modelos en 3D"
+        "value": "3D Model Builder",
+        "label": "3D Model Creator"
     },
     {
         "value": "Amazon ECS",
         "label": "Amazon ECS"
     },
     {
-        "value": "Traductor de Bengalí",
-        "label": "Traductor de Bengalí"
+        "value": "Bengali Translator",
+        "label": "Bengali Translator"
     },
     {
-        "value": "SO Chrome",
-        "label": "SO Chrome"
+        "value": "Chrome OS",
+        "label": "Chrome OS"
     },
     {
         "value": "cURL",
         "label": "cURL"
     },
     {
-        "value": "Herramientas para Webmaster de Google",
-        "label": "Herramientas para Webmaster de Google"
+        "value": "Google Webmaster Tools",
+        "label": "Google Webmaster Tools"
     },
     {
         "value": "Linear Regression",
@@ -6373,7 +6376,7 @@
         "label": "Music Management"
     },
     {
-        "value": "Oracle Database",
+        "value": "OracleDatabase",
         "label": "Oracle Database"
     },
     {
@@ -6385,8 +6388,8 @@
         "label": "Spark"
     },
     {
-        "value": "Diseño de pegatinas",
-        "label": "Diseño de pegatinas"
+        "value": "Sticker Design",
+        "label": "Sticker Design"
     },
     {
         "value": "Twitter API",
@@ -6405,23 +6408,23 @@
         "label": "Adobe Captivate"
     },
     {
-        "value": "Traductor de afrikaans",
-        "label": "Traductor de afrikaans"
+        "value": "Afrikaans Translator",
+        "label": "Afrikaans Translator"
     },
     {
         "value": "App Publication",
-        "label": "App Publication"
+        "label": "App Publishing"
     },
     {
         "value": "Cloudflare",
         "label": "Cloudflare"
     },
     {
-        "value": "Arte conceptual",
-        "label": "Arte conceptual"
+        "value": "Concept Art",
+        "label": "Concept Art"
     },
     {
-        "value": "Core PHP",
+        "value": "CorePHP",
         "label": "Core PHP"
     },
     {
@@ -6445,8 +6448,8 @@
         "label": "Houdini"
     },
     {
-        "value": "Informatica",
-        "label": "Informatica"
+        "value": "Informatics",
+        "label": "Computer Science"
     },
     {
         "value": "Ionic React",
@@ -6477,8 +6480,8 @@
         "label": "Adobe Acrobat"
     },
     {
-        "value": "Análisis binario",
-        "label": "Análisis binario"
+        "value": "Binary analysis",
+        "label": "Binary analysis"
     },
     {
         "value": "Digital ASIC Coding",
@@ -6489,7 +6492,7 @@
         "label": "DotNetNuke"
     },
     {
-        "value": "Facebook Development",
+        "value": "FacebookDevelopment",
         "label": "Facebook Development"
     },
     {
@@ -6517,8 +6520,8 @@
         "label": "MonetDB"
     },
     {
-        "value": "Nanotecnología",
-        "label": "Nanotecnología"
+        "value": "Nanotechnology",
+        "label": "Nanotechnology"
     },
     {
         "value": "OpenSSL",
@@ -6534,7 +6537,7 @@
     },
     {
         "value": "Sass",
-        "label": "Sass"
+        "label": "Sassy"
     },
     {
         "value": "Vectorworks",
@@ -6581,8 +6584,8 @@
         "label": "Apple Homekit"
     },
     {
-        "value": "Apple UIKit",
-        "label": "Apple UIKit"
+        "value": "AppleUIKit",
+        "label": "Apple UI Kit"
     },
     {
         "value": "ASM",
@@ -6610,11 +6613,11 @@
     },
     {
         "value": "Cloud Service",
-        "label": "Cloud Service"
+        "label": "Cloud Services"
     },
     {
-        "value": "Cross Browser",
-        "label": "Cross Browser"
+        "value": "CrossBrowser",
+        "label": "CrossBrowser"
     },
     {
         "value": "CUDA",
@@ -6625,8 +6628,8 @@
         "label": "Cutout Animation"
     },
     {
-        "value": "Traductor Dali",
-        "label": "Traductor Dali"
+        "value": "Dali Translator",
+        "label": "Dali translator"
     },
     {
         "value": "DDR3 (PCIe, board design/fpga)",
@@ -6637,8 +6640,8 @@
         "label": "Dinka Translator"
     },
     {
-        "value": "DOS",
-        "label": "DOS"
+        "value": "TWO",
+        "label": "TWO"
     },
     {
         "value": "Epic Systems",
@@ -6653,8 +6656,8 @@
         "label": "Facade Design"
     },
     {
-        "value": "Traductor de Filipino",
-        "label": "Traductor de Filipino"
+        "value": "Filipino Translator",
+        "label": "Filipino Translator"
     },
     {
         "value": "Fircosoft",
@@ -6669,7 +6672,7 @@
         "label": "FreeSwitch"
     },
     {
-        "value": "Game Trailer",
+        "value": "GameTrailer",
         "label": "Game Trailer"
     },
     {
@@ -6681,8 +6684,8 @@
         "label": "HomeKit"
     },
     {
-        "value": "HP Openview",
-        "label": "HP Openview"
+        "value": "HPopenview",
+        "label": "HP OpenView"
     },
     {
         "value": "IBM BPM",
@@ -6701,20 +6704,20 @@
         "label": "Latin"
     },
     {
-        "value": "SDK de Leap Motion",
-        "label": "SDK de Leap Motion"
+        "value": "Leap Motion SDK",
+        "label": "Leap Motion SDK"
     },
     {
         "value": "LibreOffice",
         "label": "LibreOffice"
     },
     {
-        "value": "Lituano",
-        "label": "Lituano"
+        "value": "Lithuanian",
+        "label": "Lithuanian"
     },
     {
-        "value": "Macedonio",
-        "label": "Macedonio"
+        "value": "Macedonian",
+        "label": "Macedonian"
     },
     {
         "value": "MCAT Tutoring",
@@ -6741,7 +6744,7 @@
         "label": "OpenSceneGraph"
     },
     {
-        "value": "Oracle Hyperion",
+        "value": "OracleHyperion",
         "label": "Oracle Hyperion"
     },
     {
@@ -6757,23 +6760,23 @@
         "label": "Physics Tutoring"
     },
     {
-        "value": "Protractor Javascript",
-        "label": "Protractor Javascript"
+        "value": "Javascript Protractor",
+        "label": "Javascript Protractor"
     },
     {
         "value": "PyCaret",
         "label": "PyCaret"
     },
     {
-        "value": "Expresiones regulares",
-        "label": "Expresiones regulares"
+        "value": "Regular Expressions",
+        "label": "Regular Expressions"
     },
     {
         "value": "RxJS",
         "label": "RxJS"
     },
     {
-        "value": "Scikit Learn",
+        "value": "ScikitLearn",
         "label": "Scikit Learn"
     },
     {
@@ -6797,7 +6800,7 @@
         "label": "WinJS"
     },
     {
-        "value": "Traductor de yiddish",
-        "label": "Traductor de yiddish"
+        "value": "Yiddish Translator",
+        "label": "Yiddish Translator"
     }
 ]
