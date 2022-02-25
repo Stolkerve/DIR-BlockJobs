@@ -181,10 +181,10 @@ impl Marketplace {
             if self.service_by_id.insert(&self.total_services, &service).is_some() {
                 env::panic(b"Service already exists");
             }
-
-            services_set.insert(&self.total_services);
-            service.id = self.total_services;
+            
             self.total_services += 1;
+            service.id = self.total_services;
+            services_set.insert(&self.total_services);
             
             NearEvent::log_service_mint(
                 service.id.clone(),
