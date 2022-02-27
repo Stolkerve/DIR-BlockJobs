@@ -19,7 +19,7 @@ near_sdk::setup_alloc!();
 
 const NO_DEPOSIT: Balance = 0;
 const BASE_GAS: Gas = 30_000_000_000_000;
-const GAS_FT_TRANSFER: Gas = 30_000_000_000_000;
+const GAS_FT_TRANSFER: Gas = 14_000_000_000_000;
 const USER_MINT_LIMIT: u16 = 100;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
@@ -287,6 +287,41 @@ impl Marketplace {
     }
 
 
+    /// Dar por aprobado un servicio por parte del empleador.
+    /// 
+    #[payable]
+    pub fn approve_service(&mut self, service_id: u64) {
+        let service = self.get_service_by_id(service_id.clone());
+        let user = env::predecessor_account_id();
+
+        assert!(service.actual_owner == user, "You aren't the owner");
+        assert!(service.on_dispute == false, "You already have requested a dispute for this service");
+
+        let _res = ext_mediator::pay_service(
+            env::signer_account_id(),
+            service.metadata.price.into(),
+            service.metadata.token.clone(),
+            &self.contract_me,
+            ONE_YOCTO,
+            BASE_GAS,
+        ).then(ext_self::on_return_service(
+            service_id,
+            &env::current_account_id(),
+            NO_DEPOSIT,
+            BASE_GAS,
+        ));
+
+        // self.delete_service(&service_id, &service.actual_owner);
+        // self.add_service(&service_id, &service.creator_id);
+        // service.on_sale = true;
+        // service.actual_owner = service.creator_id.clone();
+        // service.buy_moment = 0;
+        // service.sold = false;
+        // self.service_by_id.insert(&service_id, &service);
+
+        // service
+    }
+
     /// Crear disputa en el contrato mediador.
     /// Solo ejecutable por el empleador que compro el servicio.
     ///
@@ -357,7 +392,8 @@ impl Marketplace {
 
         let _res = ext_mediator::pay_service(
             env::signer_account_id(),
-            service.metadata.price,
+            service.metadata.price.into(),
+            service.metadata.token.clone(),
             &self.contract_me,
             NO_DEPOSIT,
             BASE_GAS,
@@ -402,7 +438,8 @@ impl Marketplace {
 
         let _res = ext_mediator::pay_service(
             env::signer_account_id(),
-            service.metadata.price,
+            service.metadata.price.into(),
+            service.metadata.token.clone(),
             &self.contract_me,
             NO_DEPOSIT,
             BASE_GAS,
