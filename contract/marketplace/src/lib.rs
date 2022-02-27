@@ -148,13 +148,15 @@ impl Marketplace {
     #[payable]
     pub fn mint_service(&mut self, metadata: ServiceMetadata, quantity: u16, duration: u16) -> Service {
         let sender = env::predecessor_account_id();
+
+        let initial_storage_usage = env::storage_usage();
+
         let user = self.update_user_mints(quantity); // Cantidad de servicios
 
         //Verificar que sea un profesional
         if !user.roles.get(&UserRoles::Professional).is_some() {
             env::panic(b"Only professionals can mint a service");
         }
-        let initial_storage_usage = env::storage_usage();
         // env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
@@ -182,10 +184,10 @@ impl Marketplace {
                 env::panic(b"Service already exists");
             }
             
-            self.total_services += 1;
             service.id = self.total_services;
             services_set.insert(&self.total_services);
             
+            self.total_services += 1;
             NearEvent::log_service_mint(
                 service.id.clone(),
                 service.actual_owner.clone().to_string(),

@@ -9,11 +9,11 @@ const tokenIcons = [
     path: require("../../assets/logo-black.svg"),
   },
   {
-    value: "usdc",
+    value: "usdc.fakes.testnet",
     path: require("../../assets/usd-coin-usdc-logo.svg"),
   },
   {
-    value: "jobs",
+    value: "ft.blockjobs.testnet",
     path: require("../../assets/JobsCoinIcon.svg"),
   },
 ];
@@ -25,13 +25,13 @@ export default function ServicesCard({ service }) {
       onClick={() => {
         navigate(`/service/${service.id}`);
       }}
-      className="hover:cursor-pointer rounded-md border-2 shadow-md border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#74787B] transition ease-in-out hover:scale-[1.02]"
+      className="min-w-[850px] hover:cursor-pointer rounded-md border-2 shadow-md border-[#27C0EF] p-4 bg-[#F8F7FF] font-semibold text-[#74787B] transition ease-in-out hover:scale-[1.02]"
     >
       <div className="flex">
         <div className="flex self-baseline">
           {service.metadata.icon ? (
             <img
-              className="w-24 h-24 rounded-full mr-4 object-cover"
+              className="w-32 h-32 md:w-48 md:h-auto md:rounded md:rounded-bl-xl md:rounded-tl-xl rounded-full mr-4 object-cover "
               src={service.metadata.icon}
             />
           ) : (
@@ -118,7 +118,7 @@ export default function ServicesCard({ service }) {
             return (
               <div
                 key={i}
-                className="mx-0.5 px-2 py-1 rounded-xl bg-[#27C0EF] text-white font-light text-xs transition ease-in-out hover:scale-[1.02]"
+                className="mx-0.5 px-2 py-2 rounded-xl bg-[#27C0EF] text-white font-light text-xs transition ease-in-out hover:scale-[1.02]"
               >
                 {v}
               </div>

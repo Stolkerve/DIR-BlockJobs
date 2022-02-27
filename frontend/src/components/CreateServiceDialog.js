@@ -243,14 +243,14 @@ export default function CreateServiceDialog({
                           value: amountOfServices,
                           setter: setAmountOfServicesService,
                         },
-                        // {
-                        //   title: `Precio (${paidmentMethod.value})`,
-                        //   value: priceService,
-                        //   action: handleOnChangePrice,
-                        //   counter: handleCounter,
-                        //   value: priceService,
-                        //   setter: setPriceService,
-                        // },
+                        {
+                          title: `Precio (${paidmentMethod.value})`,
+                          value: priceService,
+                          action: handleOnChangePrice,
+                          counter: handleCounter,
+                          value: priceService,
+                          setter: setPriceService,
+                        },
                       ].map((v, i) => {
                         return (
                           <div className="h-auto w-32 mr-4" key={i}>
@@ -304,6 +304,14 @@ export default function CreateServiceDialog({
                           value: priceService,
                           setter: setPriceService,
                         },
+                        // {
+                        //   title: `Precio (${paidmentMethod.value})`,
+                        //   value: priceService,
+                        //   action: handleOnChangePrice,
+                        //   counter: handleCounter,
+                        //   value: priceService,
+                        //   setter: setPriceService,
+                        // }
                       ].map((v, i) => {
                         return (
                           <div className="h-auto w-32 mr-4" key={i}>
@@ -340,7 +348,7 @@ export default function CreateServiceDialog({
                           </div>
                         );
                       })}
-                  <div className="h-auto w-auto mr-4">
+                  {/* <div className="h-auto w-auto mr-4">
                     <label className="w-full text-gray-700 text-sm font-semibold">
                       {`Precio (${paidmentMethod.value})`}
                     </label>
@@ -353,7 +361,7 @@ export default function CreateServiceDialog({
                         <span className="m-auto text-2xl font-thin"> </span>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="mt-4">
