@@ -1,22 +1,19 @@
 import React, { Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
-import { buyFT } from "../utils";
-import { toast } from "react-toastify";
+import { blockTokens } from "../utils";
 
-export default function BuyJobsCoinDialog({ isOpen, closeModal, openModal }) {
-  const [amountOfNears, setAmountOfNears] = useState("");
+export default function BlockTokenDialog({ isOpen, closeModal, openModal }) {
+  const [amountOfTokens, setAmountOfTokens] = useState("0.0");
 
   const handleNumber = (e) => {
-    let input = e.target.value;
+    console.log(e.target.value.length)
+    let input = e.target.value.length > 10 ? amountOfTokens : e.target.value;
 
-    if (input.match(/^([0-9]{1,})?(\.)?([0-9]{1,})?$/)) setAmountOfNears(input);
+    if (input.match(/^[0-9]*\.[0-9]+([eE][0-9]+)?$/)) {
+      setAmountOfTokens(input);
+    }
   };
 
-  const handleFloat = () => {
-    // The conditional prevents parseFloat(null) = NaN (when the user deletes the input)
-    setAmountOfNears(parseFloat(amountOfNears) || "");
-  };
-  
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -58,29 +55,18 @@ export default function BuyJobsCoinDialog({ isOpen, closeModal, openModal }) {
                 as="h3"
                 className="text-lg font-semibold leading-6 text-gray-900 text-center"
               >
-                Comprar JOBS
+                Bloquear JOBS
               </Dialog.Title>
               <div className="mt-2">
                 <div className="h-auto w-32 mr-4">
-                  <label className="w-full block text-gray-700 text-sm font-semibold">
-                    NEARs
-                  </label>
                   <div className="flex items-center">
                     <div className="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1 mr-4">
                       <input
                         className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700"
-                        value={amountOfNears}
-                        type={"number"}
-                        step={0.1}
+                        value={amountOfTokens}
                         onChange={handleNumber}
-                        onBlur={handleFloat}
+                        required
                       ></input>
-                    </div>
-                  </div>
-                  <div className="whitespace-pre-wrap">
-                    <div className="flex">
-                      <div>JOBS: </div>
-                      {(amountOfNears * 1000).toFixed(1)}
                     </div>
                   </div>
                 </div>
@@ -90,10 +76,10 @@ export default function BuyJobsCoinDialog({ isOpen, closeModal, openModal }) {
                   type="button"
                   className="inline-flex justify-center items-center px-4 py-2 mr-4 text-white bg-[#27C0EF] border border-transparent rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 font-bold"
                   onClick={async () => {
-                    await buyFT(parseFloat(amountOfNears));
+                    await blockTokens(amountOfTokens)
                   }}
                 >
-                  Comprar!
+                  Bloquear!
                 </button>
               </div>
             </div>

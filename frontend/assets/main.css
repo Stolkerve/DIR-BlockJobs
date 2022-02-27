@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.0.18 | MIT License | https://tailwindcss.com
+! tailwindcss v3.0.23 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -526,6 +526,8 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .prose :where(ol):not(:where([class~="not-prose"] *)) {
   list-style-type: decimal;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
   padding-left: 1.625em;
 }
 
@@ -567,6 +569,8 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .prose :where(ul):not(:where([class~="not-prose"] *)) {
   list-style-type: disc;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
   padding-left: 1.625em;
 }
 
@@ -1211,20 +1215,28 @@ Ensure the default browser behavior of the `hidden` attribute.
   min-height: 400px;
 }
 
-.w-full {
-  width: 100%;
+.w-auto {
+  width: auto;
 }
 
 .w-32 {
   width: 8rem;
 }
 
+.w-full {
+  width: 100%;
+}
+
 .w-20 {
   width: 5rem;
 }
 
-.w-auto {
-  width: auto;
+.w-28 {
+  width: 7rem;
+}
+
+.w-1 {
+  width: 0.25rem;
 }
 
 .w-\[220px\] {
@@ -1267,26 +1279,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 50%;
 }
 
-.w-fit {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-}
-
-.w-\[32px\] {
-  width: 32px;
-}
-
 .w-\[40px\] {
   width: 40px;
 }
 
-.min-w-\[50\%\] {
-  min-width: 50%;
-}
-
 .min-w-\[80\%\] {
   min-width: 80%;
+}
+
+.min-w-\[50\%\] {
+  min-width: 50%;
 }
 
 .max-w-md {
@@ -1370,12 +1372,12 @@ Ensure the default browser behavior of the `hidden` attribute.
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .cursor-not-allowed {
   cursor: not-allowed;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .list-outside {
@@ -1389,15 +1391,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .appearance-none {
   -webkit-appearance: none;
           appearance: none;
-}
-
-.grid-flow-row {
-  grid-auto-flow: row;
-}
-
-.auto-rows-min {
-  grid-auto-rows: -webkit-min-content;
-  grid-auto-rows: min-content;
 }
 
 .grid-cols-2 {
@@ -1473,10 +1466,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .self-start {
   align-self: flex-start;
-}
-
-.self-center {
-  align-self: center;
 }
 
 .self-stretch {
@@ -1875,16 +1864,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-weight: 600;
 }
 
-.font-thin {
-  font-weight: 100;
-}
-
 .font-bold {
   font-weight: 700;
 }
 
 .font-extrabold {
   font-weight: 800;
+}
+
+.font-thin {
+  font-weight: 100;
 }
 
 .font-medium {
@@ -1937,11 +1926,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
-.text-gray-600 {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity));
-}
-
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -1950,6 +1934,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
 .text-\[\#313335\] {
@@ -2347,14 +2336,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.hover\:text-gray-700:hover {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
 .hover\:text-black:hover {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.hover\:text-gray-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
 .hover\:text-\[\#352E5B\]:hover {

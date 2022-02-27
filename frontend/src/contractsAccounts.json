@@ -1,5 +1,5 @@
 {
-	"MARKETPLACE_CONTRACT": "blockjobs.testnet",
+	"MARKETPLACE_CONTRACT": "market.blockjobs.testnet",
 	"MEDIATOR_CONTRACT": "mediator.blockjobs.testnet",
 	"FT_CONTRACT": "ft.blockjobs.testnet",
 	"SALES_CONTRACT": "sales.blockjobs.testnet"
