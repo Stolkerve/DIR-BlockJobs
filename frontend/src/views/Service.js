@@ -243,7 +243,7 @@ export default function Service() {
                 <div className="flex self-baseline">
                   {service.metadata.icon ? (
                     <img
-                      className="w-32 h-32 rounded-full mr-4 object-cover"
+                      className="w-32 h-32 md:w-48 md:h-auto md:rounded md:rounded-bl-xl md:rounded-tl-xl rounded-full mr-4 object-cover "
                       src={service.metadata.icon}
                     />
                   ) : (

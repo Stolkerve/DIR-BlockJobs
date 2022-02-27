@@ -26,7 +26,7 @@ export default function CreateServiceDialog({
     service ? service.metadata.description : ""
   );
   const [categoriesService, setCategoriesService] = useState(
-    service ? JSON.parse(service.metadata.categories) : null
+    service ? JSON.parse(service.metadata.categories).map((v) => {return {value: v, label: v}}) : null
   );
   const [iconServiceFile, setIconServiceFile] = useState(null);
   const [priceService, setPriceService] = useState(
