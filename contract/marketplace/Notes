@@ -4,6 +4,7 @@ near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --
 
 near call $MA add_user '{"roles": ["Professional"], "personal_data": {"legal_name": "Pepe Ramos", "education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol", "picture": "foto.jpg", "country": "NEARland"}}}' --accountId $ID --amount 0.03
 near call $MA add_user '{"roles": ["Employeer"], "personal_data": {"legal_name": "Pepe Ramos2", "education": "I am a smart contract, I dont need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol", "picture": "foto.jpg", "country": "NEARland"}}}' --accountId $ID2 --amount 0.03
+near call $MA add_user '{"roles": ["Employeer"]}' --accountId $ID2 --amount 0.03
 
 near call $MA update_user_data '{"account_id": "'$ID'", "data": "{"education": "I am not a smart contract, I need school", "links": [], "bio": "I live inside of a smart contract in the NEAR protocol", "picture": "foto.jpg"}"}' --accountId $MA
 
@@ -16,6 +17,8 @@ near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 300000000000000
 near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
 
+near call $MA approve_service '{"service_id": 2}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
+
 near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 1 --gas 300000000000000
 
 near call $MA update_service_on_sale '{"service_id": 1, "on_sale": false}' --accountId $ID
@@ -26,7 +29,7 @@ near call $MA return_service_by_admin '{"service_id": 0}' --accountId $MA
 
 # Get functions
 near view $MA get_user '{"account_id": "'$MA'"}' --accountId $MA
-near view $MA get_user '{"account_id": "'$ID'"}' --accountId $MA
+near view $MA get_user '{"account_id": "'$ID2'"}' --accountId $MA
 
 near view $MA get_users_by_role '{"role": "Professional", "from_index": 0, "limit": 2}' --accountId $MA
 
@@ -42,5 +45,8 @@ near view $MA get_total_services '{}' --accountId $MA
 near view $MA get_services '{"from_index":, "limit": }' --accountId $MA
 
 near call $MA get_ft_balance '{"token": "jobs"}' --accountId $ID2
+near view $MA get_ft_balance_of '{"token": "jobs", "user": "'$ID2'"}' --accountId $ID2
 
+near call $MA withdraw_ft '{"amount":"500000000000000000","token":"jobs"}' --accountId $ID2 --gas 300000000000000
+                                     500000000000000000 
 near view exchange.ref-dev.testnet get_pool '{"pool_id":347}' --accountId stolkerve4.testnet

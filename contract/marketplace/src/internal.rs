@@ -188,7 +188,7 @@ impl Marketplace {
     /// #Arguments
     /// * `service_id`
     pub fn get_service_by_id(&self, service_id: u64) -> Service {
-        return expect_value_found(self.service_by_id.get(&service_id.into()), "No users found. Register the user first".as_bytes());
+        return expect_value_found(self.service_by_id.get(&service_id.into()), "Service not found".as_bytes());
     }
 
     /// Obtener los servicios y su metadata de un usuario
@@ -231,6 +231,15 @@ impl Marketplace {
         }
         else {
             return self.jobs_balances.get(&sender).unwrap_or(0);
+        }
+    }
+
+    pub fn get_ft_balance_of(&self, token: String, user: AccountId) -> Balance {
+        if token == "usdc".to_string() {
+            return self.usdc_balances.get(&user).unwrap_or(0);
+        }
+        else {
+            return self.jobs_balances.get(&user).unwrap_or(0);
         }
     }
 

@@ -147,7 +147,7 @@ pub trait Token {
 #[ext_contract(ext_mediator)]
 pub trait Mediator {
     fn new_dispute(service_id: u64, applicant: AccountId, accused: AccountId, proves: String, price: u128);
-    fn pay_service(beneficiary: AccountId, amount: Balance) -> Balance;
+    fn pay_service(beneficiary: AccountId, amount: U128, token: String);
 }
 #[ext_contract(ext_self)]
 pub trait ExtSelf {
