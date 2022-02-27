@@ -1,10 +1,10 @@
 use near_sdk::{ env, ext_contract, near_bindgen, setup_alloc, AccountId, Balance, 
-    Gas, PanicOnDefault, Promise, PromiseResult,
+    Gas, PanicOnDefault, Promise, PromiseResult
 };
 // , Promise, serde_json::{json}};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::UnorderedMap;
-// use near_sdk::json_types::ValidAccountId;
+use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fmt::{Debug, Display, Formatter, Result};
@@ -21,6 +21,7 @@ const BASE_GAS: Gas = 30_000_000_000_000;
 const MAX_GAS: Gas = 250_000_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 const YOCTO_NEAR: u128 = 1000000000000000000000000;
+const GAS_FT_TRANSFER: Gas = 14_000_000_000_000;
 
 setup_alloc!();
 
@@ -321,7 +322,7 @@ impl Mediator {
     /// Pagar al profesional o empleador según corresponda.
     /// Solo ejecutable desde Marketplace.
     /// 
-    pub fn pay_service(&self, beneficiary: AccountId, amount: Balance) -> Balance {
+    pub fn pay_service(&self, beneficiary: AccountId, amount: U128, token: String) {
         let sender = env::predecessor_account_id();
         env::log(sender.as_bytes());
         env::log(self.marketplace_contract.as_bytes());
@@ -330,10 +331,19 @@ impl Mediator {
             env::panic(b"You don't have permissions to generate a payment");
         }
 
-        // Realizar el pago en NEARs.
-        Promise::new(beneficiary).transfer(amount * YOCTO_NEAR);
-
-        env::account_balance()
+        if token == "near".to_string() {
+            // Realizar el pago en NEARs.
+            Promise::new(beneficiary).transfer(amount.0 * YOCTO_NEAR);
+        } else {
+            ext_contract::ft_transfer(
+                beneficiary.clone(),
+                amount.clone(),
+                None,
+                &token, 
+                1, 
+                GAS_FT_TRANSFER
+            );
+        }
     }
 
     /// Pagar al profesional o empleador según corresponda.
@@ -477,6 +487,15 @@ impl Mediator {
         self.assert_owner(&env::signer_account_id());
         self.max_jurors = quantity;
         quantity
+    }
+
+    /// Modificar contrato de Marketpla
+    ///
+    pub fn update_marketplace_contract(&mut self, marketplace_contract: AccountId) -> AccountId{
+        self.assert_owner(&env::signer_account_id());
+        self.marketplace_contract = marketplace_contract.clone();
+
+        marketplace_contract
     }
 
 
@@ -635,6 +654,11 @@ pub trait ExtSelf {
     // fn on_increase_allowance();
     // fn on_decrease_allowance();
     fn on_ban_user();
+}
+#[ext_contract(ext_contract)]
+trait ExtContract {
+    fn ft_transfer(&mut self, receiver_id: AccountId, amount: U128, memo: Option<String>);
+    fn ft_transfer_call(&mut self, receiver_id: ValidAccountId, amount: U128, memo: Option<String>, msg: String) -> PromiseOrValue<U128>;
 }
 
 fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {

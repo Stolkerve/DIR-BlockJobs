@@ -18,9 +18,9 @@ cd ../mediator
 
 echo "Deployando el contrato de mediator"
 near dev-deploy ../out/mediator.wasm
-echo "Exportanto la cuenta del contrato mediador en ME_ID"
+echo "Exportanto la cuenta del contrato mediador en ME"
 source neardev/dev-account.env
-export ME_ID=$CONTRACT_NAME
+export ME=$CONTRACT_NAME
 
 cd ../ft
 
@@ -36,7 +36,7 @@ echo "Creando el fichero .env en frontend"
 cd ./frontend/src/
 NEWLINE=$'\n'
 TAP=$'\t'
-echo "{${NEWLINE}${TAP}\"MARKETPLACE_CONTRACT\": \"$MA_ID\",${NEWLINE}${TAP}\"MEDIATOR_CONTRACT\": \"$ME_ID\",${NEWLINE}${TAP}\"FT_CONTRACT\": \"${FT_ID}\"${NEWLINE}}" > contractsAccounts.json
+echo "{${NEWLINE}${TAP}\"MARKETPLACE_CONTRACT\": \"$MA_ID\",${NEWLINE}${TAP}\"MEDIATOR_CONTRACT\": \"$ME\",${NEWLINE}${TAP}\"FT_CONTRACT\": \"${FT_ID}\"${NEWLINE}}" > contractsAccounts.json
 cd ../../
 
 echo "inicializando el contrato de FT"
