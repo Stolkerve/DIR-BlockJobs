@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import IntersectionVisible from "react-intersection-visible";
+
 import DisputeCard from "../components/DisputeCard";
 import DisputesFilter from "../components/DisputesFilter";
 import SkeletonLoaderDispute from "../components/SkeletonLoaderDispute";

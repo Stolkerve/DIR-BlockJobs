@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import ServicesCard from "../components/ServicesCard";
 import CreateServiceDialog from "../components/CreateServiceDialog";
@@ -12,7 +11,6 @@ export default function MyServices() {
   let [services, setServices] = useState([]);
   let [loading, setLoading] = useState(true);
   let [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(async () => {
     const _services = await getUserServices();

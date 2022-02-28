@@ -1195,6 +1195,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 6rem;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
 .max-h-\[500px\] {
   max-height: 500px;
 }
@@ -1674,6 +1678,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .stroke-2 {
   stroke-width: 2;
+}
+
+.object-contain {
+  object-fit: contain;
 }
 
 .object-cover {
@@ -2408,6 +2416,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .md\:h-auto {
     height: auto;
+  }
+
+  .md\:max-h-28 {
+    max-height: 7rem;
   }
 
   .md\:w-48 {

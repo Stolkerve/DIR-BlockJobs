@@ -266,6 +266,17 @@ export async function reclaimService() {
   }
 }
 
+export async function getTotalServices() {
+  try {
+    return await window.marketplaceContract.get_total_services();
+  } catch (e) {
+    let finalErrorMsg = getErrMsg(e);
+    toast.error(finalErrorMsg);
+    console.log(e);
+    return null;
+  }
+}
+
 export async function getUserServices(serviceId) {
   try {
     return await window.marketplaceContract.get_user_services({
