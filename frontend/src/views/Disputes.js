@@ -4,21 +4,31 @@ import IntersectionVisible from "react-intersection-visible";
 import DisputeCard from "../components/DisputeCard";
 import DisputesFilter from "../components/DisputesFilter";
 import SkeletonLoaderDispute from "../components/SkeletonLoaderDispute";
-import { getDisputes, getMaxJurors } from "../utils";
+import { getDisputes, getMaxJurors, getTotalDisputes } from "../utils";
+
+const maxAmountOfDisputesPerPag = 10;
 
 export default function Disputes() {
   let [loading, setLoading] = useState(true);
   let [maxJurors, setMaxJurors] = useState(0);
-  let [disputes, setDisputes] = useState();
+  let [disputes, setDisputes] = useState([]);
+  let [totalOfDisputes, setTotalOfDisputes] = useState(0);
 
   useEffect(async () => {
-    const d = await getDisputes(0, 10);
+    setTotalOfDisputes(await getTotalDisputes());
+
+    const d = await getDisputes(0, maxAmountOfDisputesPerPag);
 
     console.log(d);
     setDisputes(d);
     setMaxJurors(await getMaxJurors());
     setLoading(false);
   }, []);
+
+  async function onShow(entries) {
+    const d = await getDisputes(disputes.length, maxAmountOfDisputesPerPag);
+    setDisputes([...disputes, ...d]);
+  }
 
   return (
     <div className="m-8">
@@ -60,6 +70,29 @@ export default function Disputes() {
                     Parece ser que nadie ha creado una disputa...
                   </div>
                 </>
+              )}
+
+              {disputes.length < totalOfDisputes ? (
+                <IntersectionVisible
+                  onIntersect={(e) => {}}
+                  onHide={(e) => {}}
+                  onShow={onShow}
+                >
+                  <div className="h-40 flex items-center justify-center">
+                    <svg className="spinner-normal" viewBox="0 0 50 50">
+                      <circle
+                        className="path"
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        fill="none"
+                        strokeWidth="5"
+                      ></circle>
+                    </svg>
+                  </div>
+                </IntersectionVisible>
+              ) : (
+                <></>
               )}
             </div>
           </div>

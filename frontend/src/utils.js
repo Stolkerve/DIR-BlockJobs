@@ -471,6 +471,17 @@ export async function getMaxJurors() {
   }
 }
 
+export async function getTotalDisputes() {
+  try {
+    return await window.mediatorContract.get_total_disputes();
+  } catch (e) {
+    let finalErrorMsg = getErrMsg(e);
+    toast.error(finalErrorMsg);
+    console.log(e);
+    return null;
+  }
+}
+
 export async function getJOBSBalanceFromNearWallet(account) {
   try {
     return await window.ftContract.ft_balance_of({ account_id: account });

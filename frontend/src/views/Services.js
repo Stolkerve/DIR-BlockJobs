@@ -16,7 +16,7 @@ export default function Services() {
   let [amountOfServices, setAmountOfServices] = useState(0);
   let [isOpen, setIsOpen] = useState(false);
   let [totalOfServices, setTotalOfServices] = useState(0);
-  
+
   useEffect(async () => {
     setTotalOfServices(await getTotalServices());
     let _services = await getServices(
@@ -47,13 +47,7 @@ export default function Services() {
     setAmountOfServices(_services.length);
   }, []);
 
-  function onHide(entries) {
-  }
-
   async function onShow(entries) {
-    console.log("Se mostro");
-
-    // setLoadingMoreSerivces(true)
     let _services = await getServices(
       amountOfServices,
       maxAmountOfServicesPerPag
@@ -80,9 +74,6 @@ export default function Services() {
     // console.log(services)
     setServices([...services, ...finalServices]);
     setAmountOfServices(amountOfServices + _services.length);
-  }
-
-  function onIntersect(entries) {
   }
 
   function closeModal() {
@@ -141,8 +132,8 @@ export default function Services() {
                 )}
                 {(amountOfServices < totalOfServices) ? (
                   <IntersectionVisible
-                    onIntersect={onIntersect}
-                    onHide={onHide}
+                    onIntersect={(e) => {}}
+                    onHide={(e) => {}}
                     onShow={onShow}
                   >
                     <div className="h-40 flex items-center justify-center">
