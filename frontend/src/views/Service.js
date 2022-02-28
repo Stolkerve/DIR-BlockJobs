@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { ImCross, ImCheckmark } from "react-icons/im";
 import { utils } from "near-api-js";
-import { toast } from "react-toastify";
 
 import {
   buyService,
@@ -11,16 +11,16 @@ import {
   reclaimService,
   reclaimServiceTest,
 } from "../utils";
+
 import CreateServiceDialog from "../components/CreateServiceDialog";
 import CreateDisputeDialog from "../components/CreateDisputeDialog";
-import ServicesCard from "../components/ServicesCard";
 import UserProfile from "../components/UserProfile";
 import SkeletonLoaderService from "../components/SkeletonLoaderService";
 import SkeletonLoaderProfile from "../components/SkeletonLoaderProfile";
 
-import { ImCross, ImCheckmark } from "react-icons/im";
-
 import { useGlobalState } from "../state";
+
+import { TokenIcons } from "../components/TokenIcons";
 
 export default function Service() {
   const [isUserCreated] = useGlobalState("isUserCreated");
@@ -55,20 +55,23 @@ export default function Service() {
   }, []);
 
   const handleBuyService = async () => {
-    const userBalance = utils.format.formatNearAmount(
-      (await window.walletConnection.account().getAccountBalance()).available
-    );
+    // const userBalance = utils.format.formatNearAmount(
+    // (await window.walletConnection.account().getAccountBalance()).available
+    // );
 
-    if (service.metadata.price < userBalance) {
+    // if (service.metadata.price < userBalance) {
+    console.log(amount);
+    if (service.metadata.token != "near") {
+      await buyService(service.id, 0);
+    } else {
       const amount = utils.format.parseNearAmount(
         String(service.metadata.price)
       );
-      console.log(amount);
       await buyService(service.id, amount);
-      return;
     }
+    return;
 
-    toast.error("No tienes suficientes fondos para adquirir este servicio");
+    // toast.error("No tienes suficientes fondos para adquirir este servicio");
   };
 
   const closeModal = () => {
@@ -290,8 +293,12 @@ export default function Service() {
                   <span className="font-semibold">Price</span>:{" "}
                   {service.metadata.price}
                   <img
-                    className="w-[26px]"
-                    src={require("../../assets/logo-black.svg")}
+                    className="w-[26px] ml-1"
+                    src={
+                      TokenIcons.find((v) => {
+                        return v.value === service.metadata.token;
+                      }).path
+                    }
                   ></img>
                 </div>
 

@@ -3,20 +3,7 @@ import React from "react";
 import { ImCross, ImCheckmark } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 
-const tokenIcons = [
-  {
-    value: "near",
-    path: require("../../assets/logo-black.svg"),
-  },
-  {
-    value: "usdc.fakes.testnet",
-    path: require("../../assets/usd-coin-usdc-logo.svg"),
-  },
-  {
-    value: "ft.blockjobs.testnet",
-    path: require("../../assets/JobsCoinIcon.svg"),
-  },
-];
+import {TokenIcons} from "./TokenIcons";
 
 export default function ServicesCard({ service }) {
   const navigate = useNavigate();
@@ -106,7 +93,7 @@ export default function ServicesCard({ service }) {
           <img
             className="w-[26px] ml-1"
             src={
-              tokenIcons.find((v) => {
+              TokenIcons.find((v) => {
                 return v.value === service.metadata.token;
               }).path
             }

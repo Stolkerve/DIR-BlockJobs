@@ -240,6 +240,10 @@ impl Marketplace {
         let token = &service.metadata.token;
         // Realizar el pago en NEARs.
         if token == "near" {
+            if env::attached_deposit() < service.metadata.price {
+                env::panic(b"Insufficient NEARs balance");
+            }
+
             Promise::new(self.contract_me.clone()).transfer(service.metadata.price);
 
             // Establecer como servicio vendido y no en venta.
@@ -260,11 +264,11 @@ impl Marketplace {
 
             if token == "usdc.fakes.testnet".to_string() {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient USDC balance");
             }
             else if token == "ft.blockjobs.testnet".to_string() {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient JOBS balance");
             } 
             else {
                 env::panic(b"Token not soported");
@@ -739,7 +743,8 @@ impl Marketplace {
                 &token, ONE_YOCTO, GAS_FT_TRANSFER
             );
             return new_balance;
-        } else {
+        }
+        else if token == "ft.blockjobs.testnet".to_string() {
             let actual_balance = self.jobs_balances.get(&sender).unwrap_or(0);
             assert!(actual_balance >= amount.into(), "Insufficient balance");
 
@@ -753,6 +758,9 @@ impl Marketplace {
                 &token, ONE_YOCTO, GAS_FT_TRANSFER
             );
             return new_balance;
+        }
+        else {
+            env::panic(b"Token not soported");
         }
 
         // .then(ext_self::on_withdraw_ft(
