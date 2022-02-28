@@ -217,7 +217,7 @@ export default function MyTokens() {
                     <div> </div>
                     <Menu
                       as="div"
-                      className="relative inline-block text-left z-30"
+                      className="relative inline-block text-left z-40"
                     >
                       <div className="">
                         <Menu.Button className="w-full p-2 bg-[#27C0EF] rounded-full transition ease-in-out hover:scale-105 duration-300">
