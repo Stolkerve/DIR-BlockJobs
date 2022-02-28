@@ -70,7 +70,9 @@ export default function MyTokens() {
     {
       title: "Retirar JOBS bloquedos",
       icon: <BsArrowUp />,
-      action: () => {},
+      action: () => {
+        
+      },
     },
   ];
   const USDCMenuItems = [

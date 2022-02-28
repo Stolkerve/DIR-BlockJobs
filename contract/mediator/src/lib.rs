@@ -586,7 +586,7 @@ impl Mediator {
 
     /// Callback para incrementar en 3% los tokens de quien voto correctamente.
     /// 
-    pub fn on_increase_allowance() {
+    pub fn on_increase_locked_tokens() {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -596,7 +596,7 @@ impl Mediator {
         );
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
-                env::log(b"Allowance increase");
+                env::log(b"Locked tokens increase");
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),
@@ -605,7 +605,7 @@ impl Mediator {
 
     /// Callback para decrementar en 3% los tokens de quien voto incorrectamente.
     /// 
-    pub fn on_decrease_allowance() {
+    pub fn on_decrease_locked_tokens() {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"only the contract can call its function")
         }
@@ -615,7 +615,7 @@ impl Mediator {
         );
         match env::promise_result(0) {
             PromiseResult::Successful(_data) => {
-                env::log(b"Allowance decreased");
+                env::log(b"Locked tokens decreased");
             },
             PromiseResult::Failed => env::panic(b"Callback faild"),
             PromiseResult::NotReady => env::panic(b"Callback faild"),

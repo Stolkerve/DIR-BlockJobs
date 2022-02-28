@@ -107,10 +107,15 @@ export async function initContract() {
         "ft_balance_of",
         "get_minter",
         "get_pending_to_mint",
-        "get_allowance_of",
+        "get_locked_tokens_of",
         "verify_blocked_amount",
       ],
-      changeMethods: ["ft_transfer_call", "transfer_ft", "block_tokens"],
+      changeMethods: [
+        "ft_transfer_call",
+        "transfer_ft",
+        "block_tokens",
+        "withdraw_tokens"
+      ],
       sender: ftConfig.contractName,
     }
   );
@@ -496,6 +501,17 @@ export async function getJOBSBalanceFromNearWallet(account) {
 export async function blockTokens(amount) {
   try {
     return await window.ftContract.block_tokens({ amount: amount });
+  } catch (e) {
+    let finalErrorMsg = getErrMsg(e);
+    toast.error(finalErrorMsg);
+    console.log(e);
+    return null;
+  }
+}
+
+export async function withdrawTokens(amount) {
+  try {
+    return await window.ftContract.withdraw_tokens({ amount: amount });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
     toast.error(finalErrorMsg);
