@@ -2,7 +2,7 @@ import React from "react";
 import { VscArrowRight, VscArrowDown } from "react-icons/vsc";
 import Fade from "react-reveal/Fade";
 import { Link } from "react-router-dom";
-
+import { login } from "../utils";
 
 import { useGlobalState } from "../state";
 

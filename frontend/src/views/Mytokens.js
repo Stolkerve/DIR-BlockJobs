@@ -193,6 +193,11 @@ export default function MyTokens() {
                   </div>
                 </th>
                 <th>
+                  <div className="flex flex-row items-center ml-8">
+                    
+                  </div>
+                </th>
+                <th>
                   <div> </div>
                 </th>
               </tr>

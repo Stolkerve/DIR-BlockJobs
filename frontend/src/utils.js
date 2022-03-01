@@ -524,7 +524,7 @@ export async function ftTransferCallJOBS(amount) {
   try {
     return await window.ftContract.ft_transfer_call(
       {
-        receiver_id: marketplaceContract.contractName,
+        receiver_id: window.marketplaceContract.contractId,
         amount: amount,
         msg: "empty",
       },
