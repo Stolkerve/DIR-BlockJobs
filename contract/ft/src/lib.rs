@@ -156,7 +156,7 @@ impl Token {
         self.locked_tokens.get(&sender).unwrap_or(0)
     }
 
-    /// Redimir tokens segun la locked_tokens actual.
+    /// Redimir tokens segun la cantidad bloqueada actual.
     /// Solo ejecutable por quien los bloqueo inicialmente.
     /// 
     #[payable]
@@ -164,11 +164,12 @@ impl Token {
         let sender = env::signer_account_id();
         let contract = self.owner.clone().into();
 
-        if self.locked_tokens.get(&sender) >= Some(amount*DECIMALS) {
-            self.token.internal_transfer(&contract, &sender, amount*DECIMALS, None);
-        };
-
+        assert!(self.locked_tokens.get(&sender) >= Some(amount*DECIMALS), "Insufficient balance");
+        
+        self.token.internal_transfer(&contract, &sender, amount*DECIMALS, None);
+        
         let new_locked_tokens = self.locked_tokens.get(&sender).unwrap_or(0) - amount*DECIMALS;
+        
         // Modificar locked_tokens restando lo que se retira
         self.locked_tokens.insert(&sender, &new_locked_tokens);
         
