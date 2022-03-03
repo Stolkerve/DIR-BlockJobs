@@ -7,37 +7,40 @@ import { getUser } from '../utils';
 import UserProfile from '../components/UserProfile';
 import DialogUserCreator from "../components/DialogUserCreator"
 
+import { useGlobalState } from "../state";
+
 // import userTestData from "../../assets/userTestData.json"
 
 export default function Profile() {
 	let [loading, setLoading] = useState(true)
 	let [isOpen, setIsOpen] = useState(false)
 	let [enableEdit, setEnableEdit] = useState(false)
-	let [user, setUser] = useState()
-
+	// let [user, setUser] = useState()
+	const [userProfile] = useGlobalState("userProfile");
 	const params = useParams();
 
 	useEffect(async () => {
-		let userNearId = null
-		if (params.id) {
-			userNearId = params.id
-		}
-		else {
-			userNearId = window.accountId
-		}
-		console.log(userNearId)
+		console.log(userProfile)
+		// let userNearId = null
+		// if (params.id) {
+		// 	userNearId = params.id
+		// }
+		// else {
+		// 	userNearId = window.accountId
+		// }
+		// console.log(userNearId)
 
-		let user = await getUser(userNearId)
-		if (user) {
-			user.personal_data = JSON.parse(user.personal_data)
-			setUser(user)
-			setLoading(false)
-			console.log(user)
-		}
-		else {
-			// setUser(userTestData)
-			// setLoading(false)
-		}
+		// let user = await getUser(userNearId)
+		// if (user) {
+		// 	user.personal_data = JSON.parse(user.personal_data)
+		// 	setUser(user)
+		// 	setLoading(false)
+		// 	console.log(user)
+		// }
+		// else {
+		// 	// setUser(userTestData)
+		// 	// setLoading(false)
+		// }
 	}, [])
 
 	function closeModal() {
@@ -53,7 +56,7 @@ export default function Profile() {
 	return (
 		<div className="m-8">
 			{
-				loading ? (
+				!userProfile ? (
 					<div className="">
 						{/* <svg className="spinner" viewBox="0 0 50 50">
 							<circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
@@ -158,11 +161,11 @@ export default function Profile() {
 							<div className="absolute right-0 top-0 hover:cursor-pointer rounded-full p-2 bg-[#04AADD] flex items-center justify-center transition ease-in-out hover:scale-110 duration-300">
 								<FaEdit className="" size={"23px"} color='#ffffff' onClick={openModal} />
 							</div>
-							<UserProfile user={user} />
+							<UserProfile user={userProfile} />
 						</div>
 						{
 							enableEdit ? (
-								<DialogUserCreator isOpen={isOpen} closeModal={closeModal} user={user} />
+								<DialogUserCreator isOpen={isOpen} closeModal={closeModal} user={userProfile} />
 							) : (<></>)
 						}
 					</div>

@@ -206,9 +206,9 @@ export default function Service() {
                   >
                     Editar servicio
                   </button>
-                  <button className="uppercase py-2 px-4 rounded-lg bg-red-400 border-transparent text-white text-md mr-4">
+                  {/* <button className="uppercase py-2 px-4 rounded-lg bg-red-400 border-transparent text-white text-md mr-4">
                     Eliminar servicio
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ) : service.actual_owner == window.accountId &&

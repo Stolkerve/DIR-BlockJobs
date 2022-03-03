@@ -179,6 +179,7 @@ impl Marketplace {
 
         for _i in 0 .. quantity {
             service.on_sale = true;
+            self.total_services += 1;
 
             if self.service_by_id.insert(&self.total_services, &service).is_some() {
                 env::panic(b"Service already exists");
@@ -187,7 +188,6 @@ impl Marketplace {
             service.id = self.total_services;
             services_set.insert(&self.total_services);
             
-            self.total_services += 1;
             NearEvent::log_service_mint(
                 service.id.clone(),
                 service.actual_owner.clone().to_string(),
@@ -415,6 +415,7 @@ impl Marketplace {
             sender_id.clone().to_string()
         );
     }
+
 
     // #[payable]
     // pub fn reclaim_service_test(&mut self, service_id: u64) {

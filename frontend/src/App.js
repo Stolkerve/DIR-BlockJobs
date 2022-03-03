@@ -17,10 +17,11 @@ import Footer from "./components/Footer";
 import Services from "./views/Services";
 import Service from "./views/Service";
 
-import { useGlobalState, setIsUserCreated } from "./state";
+import { useGlobalState, setIsUserCreated, setUserProfile } from "./state";
 import { getUser } from "./utils";
 import Disputes from "./views/Disputes";
 import Dispute from "./views/Dispute";
+import NotFoundPage from "./views/NotFoundPage";
 
 export default function App() {
   const [isUserCreated] = useGlobalState("isUserCreated");
@@ -28,7 +29,10 @@ export default function App() {
 
   useEffect(async () => {
     if (window.walletConnection.isSignedIn()) {
-      if (await getUser(window.accountId)) {
+      let user = await getUser(window.accountId);
+      if (user) {
+        user.personal_data = JSON.parse(user.personal_data)
+        setUserProfile(user);
         setIsUserCreated(true);
       } else {
         setIsUserCreated(false);
@@ -64,6 +68,7 @@ export default function App() {
 
             <Route path="disputes" element={<Disputes />} />
             <Route path="dispute/:id" element={<Dispute />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
           <ToastContainer

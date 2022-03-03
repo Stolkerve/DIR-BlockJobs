@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <div className="bg-[#27C0EF] relative overflow-hidden h-screen">
         {/* Primera seccion */}
-        <div className="flex mx-10 mb-20 justify-between">
+        <div className="flex mx-10 mb-20 justify-between lg:justify-center lg:items-center">
           <Fade left cascade>
             <div className="sm:w-2/3 lg:w-2/5 flex flex-col relative z-20 justify-center">
               <h1 className="mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4">
@@ -49,7 +49,7 @@ export default function Home() {
               </div>
             </div>
           </Fade>
-          <Fade right>
+          <Fade right className="lg:hidden">
             <div className="flex lg:h-auto lg:w-1/2">
               <div className="object-cover w-full max-w-full rounded-md lg:h-full">
                 <img
@@ -123,10 +123,10 @@ export default function Home() {
 
       {/* Cuarta seccion */}
       <div className="bg-[#d2f0fa] p-10">
-        <div className="font-bebas-neue grid grid-cols-2 gap-4">
+        <div className="font-bebas-neue flex justify-center gap-4">
           <Fade top cascade>
             <div className="flex flex-col justify-center items-center">
-              <div className="text-center text-[#034D82] text-2xl italic font-bold ">
+              <div className="text-center text-[#034D82] text-4xl italic font-bold ">
                 Become a Freelancer
               </div>
               <img
@@ -170,7 +170,7 @@ export default function Home() {
               </div>
             </div>
           </Fade>
-          <Fade bottom cascade>
+          {/* <Fade bottom cascade>
             <div className="flex flex-col justify-center items-center">
               <div className="text-center text-[#034D82] text-2xl italic font-bold ">
                 Become an Employer
@@ -215,7 +215,7 @@ export default function Home() {
                 Pay Invoices in Near
               </div>
             </div>
-          </Fade>
+          </Fade> */}
         </div>
       </div>
     </>

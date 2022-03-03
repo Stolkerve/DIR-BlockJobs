@@ -8,20 +8,24 @@ import ServicesFilter from "../components/ServicesFilter";
 
 import { getServices, getTotalServices } from "../utils";
 
-const maxAmountOfServicesPerPag = 10;
+import { useGlobalState } from "../state";
+
+const MAX_AMOUNT_OF_SERVICES_PER_PAG = 10;
 
 export default function Services() {
-  let [services, setServices] = useState([]);
-  let [loading, setLoading] = useState(true);
-  let [amountOfServices, setAmountOfServices] = useState(0);
-  let [isOpen, setIsOpen] = useState(false);
-  let [totalOfServices, setTotalOfServices] = useState(0);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [amountOfServices, setAmountOfServices] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [totalOfServices, setTotalOfServices] = useState(0);
+  const [isUserCreated] = useGlobalState("isUserCreated");
+  const [filter, setFilter] = useState(null);
 
   useEffect(async () => {
     setTotalOfServices(await getTotalServices());
     let _services = await getServices(
       amountOfServices,
-      maxAmountOfServicesPerPag
+      MAX_AMOUNT_OF_SERVICES_PER_PAG
     );
     let finalServices = [];
     console.log(_services);
@@ -50,7 +54,7 @@ export default function Services() {
   async function onShow(entries) {
     let _services = await getServices(
       amountOfServices,
-      maxAmountOfServicesPerPag
+      MAX_AMOUNT_OF_SERVICES_PER_PAG
     );
     let finalServices = [];
     console.log(_services);
@@ -101,14 +105,18 @@ export default function Services() {
         ) : (
           <div className="flex flex-row">
             <div className="relative">
-              <div className="flex justify-center">
-                <button
-                  className="uppercase shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80 py-2 px-4 rounded-lg border-transparent font-semibold text-white text-md mr-4 bg-[#27C0EF]"
-                  onClick={openModal}
-                >
-                  Crear Servicio
-                </button>
-              </div>
+              {isUserCreated ? (
+                <div className="flex justify-center">
+                  <button
+                    className="uppercase shadow-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-[#27C0EF]/80 py-2 px-4 rounded-lg border-transparent font-semibold text-white text-md mr-4 bg-[#27C0EF]"
+                    onClick={openModal}
+                  >
+                    Crear Servicio
+                  </button>
+                </div>
+              ) : (
+                <></>
+              )}
               <ServicesFilter mains={false} />
             </div>
             <div className=" mx-auto">
@@ -130,7 +138,7 @@ export default function Services() {
                     </div>
                   </>
                 )}
-                {(amountOfServices < totalOfServices) ? (
+                {amountOfServices < totalOfServices ? (
                   <IntersectionVisible
                     onIntersect={(e) => {}}
                     onHide={(e) => {}}

@@ -40,10 +40,16 @@ export default function CreateServiceDialog({
     service ? service.duration : 0
   );
   const [amountOfServices, setAmountOfServicesService] = useState(0);
-  const [paidmentMethod, setPaidmentMethod] = useState({
-    value: "",
-    label: "",
-  });
+  const [paidmentMethod, setPaidmentMethod] = useState(
+    service
+      ? tokensData.find((v) => {
+          return v.value === service.metadata.token
+        })
+      : {
+          value: "",
+          label: "",
+        }
+  );
 
   const filterCategories = (inputValue) => {
     return categoriesData.filter((i) =>
