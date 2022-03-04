@@ -126,13 +126,6 @@ impl Marketplace {
         this
     }
 
-    /// Agregar nuevo token soportado.
-    pub fn add_token(&mut self, token: ValidAccountId) -> ValidAccountId {
-        self.assert_admin();
-        self.tokens.insert(token.as_ref());
-        token
-    }
-    
 
     /*******************************/
     /****** SERVICES FUNCTIONS *****/
@@ -769,6 +762,37 @@ impl Marketplace {
         //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
         // );
 
+    }
+
+
+    /*******************************/
+    /****** ADMIN'S FUNCTIONS *****/
+    /*******************************/
+
+    /// Agregar nuevo token soportado.
+    /// 
+    pub fn add_token(&mut self, token: ValidAccountId) -> ValidAccountId {
+        self.assert_admin();
+        if self.tokens.contains(&token.to_string()) {
+            env::panic(b"Token already added");
+        }
+        self.tokens.insert(token.as_ref());
+        token
+    }
+    
+    /// Modificar las address de los contratos
+    /// 
+    pub fn change_address(&mut self, contract: String, new_address: AccountId) {
+        self.assert_admin();
+        if contract == "marketplace".to_string() {
+            self.contract_owner = new_address;
+        } else if contract == "mediator".to_string() {
+            self.contract_me = new_address;
+        } else if contract == "ft".to_string() {
+            self.contract_ft = new_address;
+        } else {
+            env::panic(b"Incorrect contract name");
+        }
     }
 
     /*******************************/
