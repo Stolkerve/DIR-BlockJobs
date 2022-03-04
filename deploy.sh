@@ -30,6 +30,14 @@ echo "Exportanto la cuenta del contrato mediador en FT"
 source neardev/dev-account.env
 export FT=$CONTRACT_NAME
 
+cd ../sales
+
+echo "Deployando el contrato de ventas y airdrop"
+near dev-deploy ../out/sales.wasm
+echo "Exportanto la cuenta del contrato mediador en SA"
+source neardev/dev-account.env
+export SA=$CONTRACT_NAME
+
 cd ../../
 
 echo "Exportando dariofs.testnet a la variable ID"
@@ -65,14 +73,14 @@ near call $MA add_user '{"roles": ["Employeer"], "categories": "hola"}' --accoun
 near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "none", "token": "usdc.fakes.testnet"}, "quantity": 1, "duration": 30}' --accountId $ID --amount 0.029
 near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 20, "categories": "none", "token": "'$FT'"}, "quantity": 1, "duration": 20}' --accountId $ID --amount 0.029
 
-# near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 10000000000000
-# near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 0.2 --gas 100000000000000
+# # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 10000000000000
+# # near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 0.2 --gas 100000000000000
 
-near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
-near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT
+# near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
+# near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT
+# near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT
 
-near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
+# near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
 # near call $FT block_tokens '{"amount": 10000}' --accountId $ME --depositYocto 1
 # near call $FT block_tokens '{"amount": 10000}' --accountId $MA --depositYocto 1
@@ -87,4 +95,4 @@ near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 
 # near call $ME update_dispute_status '{"dispute_id": 0}' --accountId $ME --gas 300000000000000
 
 
-// 000000000000000000
+# 000000000000000000
