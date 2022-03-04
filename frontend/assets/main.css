@@ -1291,6 +1291,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 50%;
 }
 
+.w-screen {
+  width: 100vw;
+}
+
 .w-\[40px\] {
   width: 40px;
 }
@@ -1700,6 +1704,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   object-fit: cover;
 }
 
+.object-fill {
+  object-fit: fill;
+}
+
 .p-6 {
   padding: 1.5rem;
 }
@@ -1813,6 +1821,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .pb-10 {
   padding-bottom: 2.5rem;
+}
+
+.pt-10 {
+  padding-top: 2.5rem;
 }
 
 .pt-2 {

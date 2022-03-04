@@ -26,7 +26,14 @@ export default function Home() {
               </p>
               <div className="flex mt-8">
                 {isUserCreated ? (
-                  <></>
+                  <>
+                    <Link
+                      to="/help"
+                      className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
+                    >
+                      See how it works
+                    </Link>
+                  </>
                 ) : (
                   <>
                     <Link
@@ -131,7 +138,7 @@ export default function Home() {
                 src={require("../../assets/create_a_service.svg")}
               ></img>
               <div className="text-center text-[#034D82] text-2xl font-bold ">
-                Create a serivce
+                Create a Serivce
               </div>
               <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
               <img
@@ -143,11 +150,11 @@ export default function Home() {
               </div>
               <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
               <img
-                className="max-w-[100px] mb-1"
-                src={require("../../assets/image 11.png")}
+                className="max-w-[150px] mb-1"
+                src={require("../../assets/logo-black.svg")}
               ></img>
-              <div className="text-center text-[#034D82] text-xl font-bold ">
-                Receive Near
+              <div className="text-center text-[#034D82] text-2xl font-bold ">
+                Receive Tokens
               </div>
             </div>
           </Fade>
@@ -199,13 +206,17 @@ export default function Home() {
           </Fade> */}
         </div>
       </div>
-      <div className="p-10">
-        <div className="font-bebas-neue flex justify-center gap-4">
-          <div className="flex flex-col justify-center items-center">
+      <div className="pt-10">
+        <div className="font-bebas-neue">
+          <div className="flex flex-col justify-center items-center pb-10">
             <div className="text-center text-[#034D82] text-4xl italic font-bold ">
               Roadmap
             </div>
           </div>
+          <img
+            className="h-screen w-screen object-fill rounded-lg"
+            src={require("../../assets/roadmap.svg")}
+          ></img>
         </div>
       </div>
     </>
