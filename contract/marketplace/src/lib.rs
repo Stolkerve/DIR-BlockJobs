@@ -160,7 +160,7 @@ impl Marketplace {
         // env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
-            id: self.total_services,
+            id: self.total_services.clone(),
             creator_id: sender.clone(),
             metadata: metadata,
             employers_account_ids: Default::default(),
@@ -180,11 +180,12 @@ impl Marketplace {
         for _i in 0 .. quantity {
             service.on_sale = true;
             
-            if self.service_by_id.insert(&self.total_services, &service).is_some() {
+            if self.service_by_id.insert(&self.total_services.clone(), &service).is_some() {
                 env::panic(b"Service already exists");
             }
             
-            services_set.insert(&self.total_services);
+            services_set.insert(&self.total_services.clone());
+
             self.total_services += 1;
             
             NearEvent::log_service_mint(

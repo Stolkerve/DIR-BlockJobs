@@ -25,27 +25,24 @@ export default function Home() {
                 compliant.
               </p>
               <div className="flex mt-8">
-                {
-                  isUserCreated ? (
-                    <>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        to="/help"
-                        className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
-                      >
-                        See how it works
-                      </Link>
-                      <button
-                        className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
-                        onClick={login}
-                      >
-                        Start now
-                      </button>
-                    </>
-                  )
-                }
+                {isUserCreated ? (
+                  <></>
+                ) : (
+                  <>
+                    <Link
+                      to="/help"
+                      className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
+                    >
+                      See how it works
+                    </Link>
+                    <button
+                      className="uppercase py-2 px-4 rounded-lg bg-transparent border-2 text-white text-md transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
+                      onClick={login}
+                    >
+                      Start now
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </Fade>
@@ -130,35 +127,19 @@ export default function Home() {
                 Become a Freelancer
               </div>
               <img
-                className=" max-w-[100px] mt-4 mb-1"
-                src={require("../../assets/image 4.png")}
+                className=" max-w-[150px] mt-4 mb-1"
+                src={require("../../assets/create_a_service.svg")}
               ></img>
-              <div className="text-center text-[#034D82] text-xl font-bold ">
-                Find Job
+              <div className="text-center text-[#034D82] text-2xl font-bold ">
+                Create a serivce
               </div>
               <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
               <img
-                className="max-w-[100px] mb-1"
-                src={require("../../assets/image 5.png")}
+                className="max-w-[150px] mb-1"
+                src={require("../../assets/get_hired.svg")}
               ></img>
-              <div className="text-center text-[#034D82] text-xl font-bold ">
-                Apply for a Job
-              </div>
-              <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
-              <img
-                className="max-w-[100px] mb-1"
-                src={require("../../assets/image 8.png")}
-              ></img>
-              <div className="text-center text-[#034D82] text-xl font-bold ">
+              <div className="text-center text-[#034D82] text-2xl font-bold ">
                 Get Hired
-              </div>
-              <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
-              <img
-                className="max-w-[100px] mb-1"
-                src={require("../../assets/image 10.png")}
-              ></img>
-              <div className="text-center text-[#034D82] text-xl font-bold ">
-                Create Invoices
               </div>
               <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
               <img
@@ -216,6 +197,15 @@ export default function Home() {
               </div>
             </div>
           </Fade> */}
+        </div>
+      </div>
+      <div className="p-10">
+        <div className="font-bebas-neue flex justify-center gap-4">
+          <div className="flex flex-col justify-center items-center">
+            <div className="text-center text-[#034D82] text-4xl italic font-bold ">
+              Roadmap
+            </div>
+          </div>
         </div>
       </div>
     </>
