@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <div className="bg-[#27C0EF] relative overflow-hidden h-screen">
         {/* Primera seccion */}
-        <div className="flex mx-10 mb-20 justify-between lg:justify-center lg:items-center">
+        <div className="flex mx-10 mb-20 justify-between">
           <Fade left cascade>
             <div className="sm:w-2/3 lg:w-2/5 flex flex-col relative z-20 justify-center">
               <h1 className="mb-8 font-bebas-neue uppercase text-8xl sm:text-5xl font-black flex flex-col leading-none text-white pr-4">

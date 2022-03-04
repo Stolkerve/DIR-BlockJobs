@@ -6,6 +6,8 @@ import {
   utils,
 } from "near-api-js";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 import getConfig from "./config";
 import { NFTStorage } from "nft.storage";
 import contractsAccounts from "./contractsAccounts.json";
@@ -114,7 +116,7 @@ export async function initContract() {
         "ft_transfer_call",
         "transfer_ft",
         "block_tokens",
-        "withdraw_tokens"
+        "withdraw_tokens",
       ],
       sender: ftConfig.contractName,
     }
@@ -195,16 +197,21 @@ export async function mintService(
 }
 // {"amount":1000000000000000000,"token":"jobs"}
 export async function withdrawFT(amount, token) {
-  console.log(JSON.stringify({
-    amount: String(amount),
-    token: token,
-  }))
-  // return;
-  try {
-    await window.marketplaceContract.withdraw_ft({
+  console.log(
+    JSON.stringify({
       amount: String(amount),
       token: token,
-    }, "300000000000000");
+    })
+  );
+  // return;
+  try {
+    await window.marketplaceContract.withdraw_ft(
+      {
+        amount: String(amount),
+        token: token,
+      },
+      "300000000000000"
+    );
     return true;
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
@@ -565,11 +572,13 @@ export async function getFTBalanceOf(user, token) {
 }
 
 export async function ftTransferCallUSDC(amount) {
-  console.log(JSON.stringify({
-    receiver_id: marketplaceConfig.contractName,
-    amount: amount,
-    msg: "empty"
-  }));
+  console.log(
+    JSON.stringify({
+      receiver_id: marketplaceConfig.contractName,
+      amount: amount,
+      msg: "empty",
+    })
+  );
   try {
     return await window.USDCConstract.ft_transfer_call(
       {

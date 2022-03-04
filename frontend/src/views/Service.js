@@ -25,7 +25,7 @@ import { TokenIcons } from "../components/TokenIcons";
 export default function Service() {
   const [isUserCreated] = useGlobalState("isUserCreated");
   let [service, setService] = useState();
-  let [user, setUser] = useState();
+  let [user, setUser] = useState(null);
   let [loading, setLoading] = useState(true);
   let [loadingReclaimService, setLoadingReclaimService] = useState(false);
   let [isOpen, setIsOpen] = useState(false);
@@ -44,7 +44,9 @@ export default function Service() {
 
     let user = await getUser(s.creator_id);
     if (user) {
-      user.personal_data = JSON.parse(user.personal_data);
+      try {
+        user.personal_data = JSON.parse(user.personal_data);
+      } catch (e) {}
       console.log(user);
       setUser(user);
       loadingUser = false;

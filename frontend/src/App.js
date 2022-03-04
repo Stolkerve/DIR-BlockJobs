@@ -22,6 +22,7 @@ import { getUser } from "./utils";
 import Disputes from "./views/Disputes";
 import Dispute from "./views/Dispute";
 import NotFoundPage from "./views/NotFoundPage";
+import ConnectionError from "./views/ConnectionError";
 
 export default function App() {
   const [isUserCreated] = useGlobalState("isUserCreated");
@@ -68,6 +69,7 @@ export default function App() {
 
             <Route path="disputes" element={<Disputes />} />
             <Route path="dispute/:id" element={<Dispute />} />
+            <Route path="/error" element={<ConnectionError />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
