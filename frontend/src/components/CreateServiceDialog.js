@@ -30,7 +30,7 @@ export default function CreateServiceDialog({
       ? JSON.parse(service.metadata.categories).map((v) => {
           return { value: v, label: v };
         })
-      : null
+      : []
   );
   const [iconServiceFile, setIconServiceFile] = useState(null);
   const [priceService, setPriceService] = useState(
@@ -387,16 +387,28 @@ export default function CreateServiceDialog({
                       const validateInputs = !service
                         ? [
                             {
-                              ok: titleService.length > 0,
-                              msg: "Falta el titulo",
+                              ok: titleService.length > 10,
+                              msg: "Titulo minimo 10 caracteres",
                             },
                             {
-                              ok: descriptionService.length > 0,
-                              msg: "Falta la descripcion",
+                              ok: titleService.length < 58,
+                              msg: "Titulo maximo de 58 caracteres",
+                            },
+                            {
+                              ok: descriptionService.length > 10,
+                              msg: "Descripcion minimo 10 caracteres",
+                            },
+                            {
+                              ok: descriptionService.length < 180,
+                              msg: "Descripcion maximo de 180",
                             },
                             {
                               ok: categoriesService.length > 0,
-                              msg: "Falta categorias",
+                              msg: "Categorias minimo 1",
+                            },
+                            {
+                              ok: categoriesService.length < 15,
+                              msg: "Categorias maximo 10",
                             },
                             {
                               ok: iconServiceFile != null,
@@ -417,12 +429,20 @@ export default function CreateServiceDialog({
                           ]
                         : [
                             {
-                              ok: titleService.length > 0,
-                              msg: "Falta el titulo",
+                              ok: titleService.length > 10,
+                              msg: "El titulo minimo 10 caracteres",
                             },
                             {
-                              ok: descriptionService.length > 0,
-                              msg: "Falta la descripcion",
+                              ok: titleService.length < 58,
+                              msg: "El titulo maximo de 58 caracteres",
+                            },
+                            {
+                              ok: descriptionService.length > 10,
+                              msg: "Descripcion minimo 10 caracteres",
+                            },
+                            {
+                              ok: descriptionService.length < 180,
+                              msg: "Descripcion maximo de 180",
                             },
                             {
                               ok: paidmentMethod.value.length > 0,
@@ -450,12 +470,12 @@ export default function CreateServiceDialog({
                         token: paidmentMethod.value.toLowerCase(),
                       };
                       try {
-                        let finalValidatorMsg = "";
+                        let finalValidatorMsg = [];
                         let finalOk = true;
                         validateInputs.forEach((v) => {
                           finalOk &= v.ok;
                           if (!v.ok) {
-                            finalValidatorMsg += v.msg + ". ";
+                            finalValidatorMsg.push(v.msg);
                           }
                         });
 
@@ -498,7 +518,9 @@ export default function CreateServiceDialog({
                             );
                           }
                         } else {
-                          toast.error(finalValidatorMsg);
+                          finalValidatorMsg.forEach((v) => {
+                            toast.error(v);
+                          })
                         }
                       } catch (e) {
                         console.log(e.error);

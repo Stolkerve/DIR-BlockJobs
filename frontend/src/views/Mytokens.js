@@ -97,38 +97,44 @@ export default function MyTokens() {
     },
   ];
 
-  useEffect(async () => {
-    let balanceOfJOBS = await getFTBalanceOf(
-      window.accountId,
-      "ft.blockjobs.testnet"
-    );
-    if (balanceOfJOBS) {
-      balanceOfJOBS = balanceOfJOBS / 10 ** 18;
-    }
+  useEffect(() => {
+    const foo = async () => {
+      let balanceOfJOBS = await getFTBalanceOf(
+        window.accountId,
+        "ft.blockjobs.testnet"
+      );
+      console.log(balanceOfJOBS)
+      if (balanceOfJOBS) {
+        balanceOfJOBS = balanceOfJOBS / 10 ** 18;
+      }
 
-    let balanceOfUSDC = await getFTBalanceOf(window.accountId, "usdc");
-    console.log("USDC tokens en marketplace", balanceOfUSDC);
-    if (balanceOfUSDC) {
-      balanceOfUSDC = balanceOfUSDC / 10 ** 18;
-    }
+      let balanceOfUSDC = await getFTBalanceOf(window.accountId, "usdc");
+      console.log("USDC tokens en marketplace", balanceOfUSDC);
+      if (balanceOfUSDC) {
+        balanceOfUSDC = balanceOfUSDC / 10 ** 18;
+      }
 
-    let JOBSBalanceFromWallet =
-      (await getJOBSBalanceFromNearWallet(window.accountId)) / 10 ** 18;
-    let USDCBalanceFromWallet =
-      (await getUSDCBalanceFromNearWallet(window.accountId)) / 10 ** 18;
-    console.log(USDCBalanceFromWallet);
-    setJOBSWalletCBalance(JOBSBalanceFromWallet);
-    setUSDWalletCBalance(USDCBalanceFromWallet);
-    setUSDCBalance(balanceOfUSDC);
-    setJOBSBalance(balanceOfJOBS);
-    setNearBalance(
-      utils.format.formatNearAmount(
-        (await window.walletConnection.account().getAccountBalance()).available,
-        4
-      )
-    );
+      let JOBSBalanceFromWallet =
+        (await getJOBSBalanceFromNearWallet(window.accountId)) / 10 ** 18;
+      let USDCBalanceFromWallet =
+        (await getUSDCBalanceFromNearWallet(window.accountId)) / 10 ** 18;
+      console.log(USDCBalanceFromWallet);
+      setJOBSWalletCBalance(JOBSBalanceFromWallet);
+      setUSDWalletCBalance(USDCBalanceFromWallet);
+      setUSDCBalance(balanceOfUSDC);
+      setJOBSBalance(balanceOfJOBS);
+      setNearBalance(
+        utils.format.formatNearAmount(
+          (await window.walletConnection.account().getAccountBalance())
+            .available,
+          4
+        )
+      );
 
-    setLoading(false);
+      setLoading(false);
+    };
+
+    foo();
   }, []);
 
   function closeBuyJOBSModal() {

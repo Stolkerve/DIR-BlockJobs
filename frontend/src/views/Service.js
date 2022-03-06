@@ -24,53 +24,57 @@ import { TokenIcons } from "../components/TokenIcons";
 
 export default function Service() {
   const [isUserCreated] = useGlobalState("isUserCreated");
-  let [service, setService] = useState();
-  let [user, setUser] = useState(null);
-  let [loading, setLoading] = useState(true);
-  let [loadingReclaimService, setLoadingReclaimService] = useState(false);
-  let [isOpen, setIsOpen] = useState(false);
+  const [service, setService] = useState();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingReclaimService, setLoadingReclaimService] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [loadingBuyService, setLoadingBuyService] = useState(false);
+
   const params = useParams();
   const navigate = useNavigate();
-  useEffect(async () => {
-    let loadingService = true;
-    let loadingUser = true;
+  useEffect(() => {
+    const foo = async () => {
+      let loadingService = true;
+      let loadingUser = true;
 
-    let s = await getServiceById(Number(params.id));
+      let s = await getServiceById(Number(params.id));
 
-    if (s) {
-      setService(s);
-      loadingService = false;
-    }
+      if (s) {
+        setService(s);
+        loadingService = false;
+      }
 
-    let user = await getUser(s.creator_id);
-    if (user) {
-      try {
-        user.personal_data = JSON.parse(user.personal_data);
-      } catch (e) {}
+      let user = await getUser(s.creator_id);
       console.log(user);
-      setUser(user);
-      loadingUser = false;
-    }
-    if (!loadingService && !loadingUser) {
-      setLoading(false);
-    }
+      if (user) {
+        try {
+          user.personal_data = JSON.parse(user.personal_data);
+        } catch (e) {}
+        console.log(user);
+        setUser(user);
+        loadingUser = false;
+      }
+      if (!loadingService && !loadingUser) {
+        setLoading(false);
+      }
+    };
+    foo();
   }, []);
 
   const handleBuyService = async () => {
-    // const userBalance = utils.format.formatNearAmount(
-    // (await window.walletConnection.account().getAccountBalance()).available
-    // );
-
-    // if (service.metadata.price < userBalance) {
-    console.log(amount);
+    setLoadingBuyService(true);
     if (service.metadata.token != "near") {
-      await buyService(service.id, 0);
+      await buyService(service.id, service.metadata.price);
     } else {
       const amount = utils.format.parseNearAmount(
         String(service.metadata.price)
       );
+      console.log(amount);
       await buyService(service.id, amount);
     }
+
+    setLoadingBuyService(false);
     return;
 
     // toast.error("No tienes suficientes fondos para adquirir este servicio");
@@ -192,9 +196,26 @@ export default function Service() {
               isUserCreated ? (
               <button
                 onClick={handleBuyService}
-                className="uppercase py-2 px-4 rounded-lg bg-green-500 border-transparent text-white text-md mr-4"
+                className="uppercase py-2 px-4 rounded-lg flex items-center bg-green-500 border-transparent text-white text-lg mr-4"
+                disabled={loadingBuyService}
               >
-                Comprar servicio
+                Comprar servicio{" "}
+                {loadingBuyService ? (
+                  <div className="ml-2">
+                    <svg className="spinner-normal" viewBox="0 0 50 50">
+                      <circle
+                        className="path !stroke-white"
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        fill="none"
+                        strokeWidth="5"
+                      ></circle>
+                    </svg>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </button>
             ) : service.actual_owner == window.accountId &&
               service.creator_id == window.accountId &&

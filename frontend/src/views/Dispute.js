@@ -27,15 +27,19 @@ export default function Dispute() {
 
   const params = useParams();
 
-  useEffect(async () => {
-    // await updateDisputeStatus(Number(params.id))
-    setMaxJurors(await getMaxJurors());
-    const d = await getDispute(Number(params.id));
-    console.log(
-      !d.votes.length || d.votes.find((v) => v.account !== window.accountId)
-    );
-    setDispute(d);
-    setLoading(false);
+  useEffect(() => {
+    const foo = async () => {
+      // await updateDisputeStatus(Number(params.id))
+      setMaxJurors(await getMaxJurors());
+      const d = await getDispute(Number(params.id));
+      console.log(
+        !d.votes.length || d.votes.find((v) => v.account !== window.accountId)
+      );
+      setDispute(d);
+      setLoading(false);
+    };
+
+    foo();
   }, []);
 
   function openModalCreateDispute() {

@@ -20,7 +20,7 @@ near_sdk::setup_alloc!();
 const NO_DEPOSIT: Balance = 0;
 const BASE_GAS: Gas = 30_000_000_000_000;
 const GAS_FT_TRANSFER: Gas = 14_000_000_000_000;
-const USER_MINT_LIMIT: u16 = 100;
+const USER_MINT_LIMIT: u16 = 20;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
 
@@ -141,6 +141,28 @@ impl Marketplace {
     #[payable]
     pub fn mint_service(&mut self, metadata: ServiceMetadata, quantity: u16, duration: u16) -> Service {
         let sender = env::predecessor_account_id();
+
+        if metadata.title.len() > 58 {
+            env::panic(b"Title max 58 characters");
+        }
+        else if metadata.title.len() < 10 {
+            env::panic(b"Title min 10 characters");
+        }
+
+        if metadata.description.len() > 180 {
+            env::panic(b"Description max 180 characters");
+        }
+        else if metadata.description.len() > 180 {
+            env::panic(b"Description min 10 characters");
+        }
+
+        let categories: Vec<String> = serde_json::from_str(&metadata.categories).unwrap();
+        if categories.len() > 15 {
+            env::panic(b"Max 15 categories");
+        }
+        else if categories.len() < 1 {
+            env::panic(b"Min 1 categories");
+        }
 
         let initial_storage_usage = env::storage_usage();
 
@@ -463,6 +485,28 @@ impl Marketplace {
     ///
     #[payable]
     pub fn update_service(&mut self, service_id: u64, metadata: ServiceMetadata, duration: u16) -> Service {
+        if metadata.title.len() > 58 {
+            env::panic(b"Title max 58 characters");
+        }
+        else if metadata.title.len() < 10 {
+            env::panic(b"Title min 10 characters");
+        }
+
+        if metadata.description.len() > 180 {
+            env::panic(b"Description max 180 characters");
+        }
+        else if metadata.description.len() > 180 {
+            env::panic(b"Description min 10 characters");
+        }
+
+        let categories: Vec<String> = serde_json::from_str(&metadata.categories).unwrap();
+        if categories.len() > 15 {
+            env::panic(b"Max 15 categories");
+        }
+        else if categories.len() < 1 {
+            env::panic(b"Min 1 categories");
+        }
+
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
@@ -566,7 +610,28 @@ impl Marketplace {
 
         if personal_data.is_some() {
             // Solo vereficar los nombre del json.
-            let _p: PersonalData = serde_json::from_str(personal_data.as_ref().unwrap()).unwrap();
+            let p: PersonalData = serde_json::from_str(personal_data.as_ref().unwrap()).unwrap();
+            if p.legal_name.len() > 60 {
+                env::panic(b"Legal name max 60 characters");
+            }
+            if p.education.len() > 60 {
+                env::panic(b"Education max 60 characters");
+            }
+            if p.country.len() > 60 {
+                env::panic(b"Country max 60 characters");
+            }
+            if p.email.len() > 255 {
+                env::panic(b"Email max 255 characters");
+            }
+            if p.bio.len() > 400 {
+                env::panic(b"Bio max 400 characters");
+            }
+            if p.idioms.len() > 15 {
+                env::panic(b"Max 15 idioms");
+            }
+            if p.links.len() > 10 {
+                env::panic(b"Max 10 links");
+            }
         }
         
         let services_set = UnorderedSet::new(unique_prefix(&account_id));
@@ -782,18 +847,18 @@ impl Marketplace {
     
     /// Modificar las address de los contratos
     /// 
-    pub fn change_address(&mut self, contract: String, new_address: AccountId) {
-        self.assert_admin();
-        if contract == "marketplace".to_string() {
-            self.contract_owner = new_address;
-        } else if contract == "mediator".to_string() {
-            self.contract_me = new_address;
-        } else if contract == "ft".to_string() {
-            self.contract_ft = new_address;
-        } else {
-            env::panic(b"Incorrect contract name");
-        }
-    }
+    // pub fn change_address(&mut self, contract: String, new_address: AccountId) {
+    //     self.assert_admin();
+    //     if contract == "marketplace".to_string() {
+    //         self.contract_owner = new_address;
+    //     } else if contract == "mediator".to_string() {
+    //         self.contract_me = new_address;
+    //     } else if contract == "ft".to_string() {
+    //         self.contract_ft = new_address;
+    //     } else {
+    //         env::panic(b"Incorrect contract name");
+    //     }
+    // }
 
     /*******************************/
     /****** CALLBACK FUNCTIONS *****/

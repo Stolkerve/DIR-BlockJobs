@@ -27,12 +27,14 @@ export default function Home() {
               <div className="flex mt-8">
                 {isUserCreated ? (
                   <>
-                    <Link
-                      to="/help"
+                    <div
+                      onClick={() => {
+                        window.open("https://dariofs153.gitbook.io/blockjobs-eng/");
+                      }}
                       className="uppercase py-2 px-4 rounded-lg bg-white border-transparent text-cyan-500 text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg shadow-sky-500"
                     >
                       See how it works
-                    </Link>
+                    </div>
                   </>
                 ) : (
                   <>
@@ -206,17 +208,19 @@ export default function Home() {
           </Fade> */}
         </div>
       </div>
-      <div className="pt-10">
+      <div className="py-10">
         <div className="font-bebas-neue">
           <div className="flex flex-col justify-center items-center pb-10">
             <div className="text-center text-[#034D82] text-4xl italic font-bold ">
               Roadmap
             </div>
           </div>
-          <img
-            className="h-screen w-screen object-fill rounded-lg"
-            src={require("../../assets/roadmap.svg")}
-          ></img>
+          <div className=" flex justify-center">
+            <img
+              className="h-screen rounded-lg border-2 shadow-md px-2 py-2"
+              src={require("../../assets/roadmap.svg")}
+            ></img>
+          </div>
         </div>
       </div>
     </>

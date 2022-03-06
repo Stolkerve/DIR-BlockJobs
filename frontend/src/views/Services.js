@@ -21,34 +21,38 @@ export default function Services() {
   const [isUserCreated] = useGlobalState("isUserCreated");
   const [filter, setFilter] = useState(null);
 
-  useEffect(async () => {
-    setTotalOfServices(await getTotalServices());
-    let _services = await getServices(
-      amountOfServices,
-      MAX_AMOUNT_OF_SERVICES_PER_PAG
-    );
-    let finalServices = [];
-    console.log(_services);
-    if (_services.length > 0) {
-      for (let i = 0; i < _services.length; i++) {
-        try {
-          _services[i].metadata.categories = JSON.parse(
-            _services[i].metadata.categories
-          );
-          finalServices.push(_services[i]);
-        } catch (e) {
-          console.log(
-            "La categoria",
-            _services[i].id,
-            "no tiene el formato correcto"
-          );
+  useEffect(() => {
+    const foo = async () => {
+      setTotalOfServices(await getTotalServices());
+      let _services = await getServices(
+        amountOfServices,
+        MAX_AMOUNT_OF_SERVICES_PER_PAG
+      );
+      let finalServices = [];
+      console.log(_services);
+      if (_services.length > 0) {
+        for (let i = 0; i < _services.length; i++) {
+          try {
+            _services[i].metadata.categories = JSON.parse(
+              _services[i].metadata.categories
+            );
+            finalServices.push(_services[i]);
+          } catch (e) {
+            console.log(
+              "La categoria",
+              _services[i].id,
+              "no tiene el formato correcto"
+            );
+          }
         }
       }
-    }
 
-    setLoading(false);
-    setServices(finalServices);
-    setAmountOfServices(_services.length);
+      setLoading(false);
+      setServices(finalServices);
+      setAmountOfServices(_services.length);
+    };
+
+    foo()
   }, []);
 
   async function onShow(entries) {

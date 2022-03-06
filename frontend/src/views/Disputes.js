@@ -14,15 +14,19 @@ export default function Disputes() {
   let [disputes, setDisputes] = useState([]);
   let [totalOfDisputes, setTotalOfDisputes] = useState(0);
 
-  useEffect(async () => {
-    setTotalOfDisputes(await getTotalDisputes());
+  useEffect(() => {
+    const foo = async () => {
+      setTotalOfDisputes(await getTotalDisputes());
 
-    const d = await getDisputes(0, maxAmountOfDisputesPerPag);
+      const d = await getDisputes(0, maxAmountOfDisputesPerPag);
 
-    console.log(d);
-    setDisputes(d);
-    setMaxJurors(await getMaxJurors());
-    setLoading(false);
+      console.log(d);
+      setDisputes(d);
+      setMaxJurors(await getMaxJurors());
+      setLoading(false);
+    };
+
+    foo()
   }, []);
 
   async function onShow(entries) {

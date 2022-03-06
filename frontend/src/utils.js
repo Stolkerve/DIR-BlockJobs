@@ -230,7 +230,7 @@ export async function buyService(serviceId, deposit) {
     );
     return true;
   } catch (e) {
-    let finalErrorMsg = getErrMsg(e);
+    let finalErrorMsg = JSON.parse(e.message).kind.ExecutionError
     toast.error(finalErrorMsg);
     console.log(e);
     return false;

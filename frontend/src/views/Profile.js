@@ -19,7 +19,7 @@ export default function Profile() {
 	const [userProfile] = useGlobalState("userProfile");
 	const params = useParams();
 
-	useEffect(async () => {
+	useEffect(() => {
 		console.log(userProfile)
 		// let userNearId = null
 		// if (params.id) {

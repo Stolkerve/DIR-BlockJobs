@@ -78,7 +78,7 @@ function NavBarContent() {
       },
     },
     {
-      title: "JobsCoin",
+      title: "Tokens",
       icon: <BiCoinStack />,
       action: () => {
         navegation("/dashboard/tokens");

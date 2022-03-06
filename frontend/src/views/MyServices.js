@@ -12,27 +12,31 @@ export default function MyServices() {
   let [loading, setLoading] = useState(true);
   let [isOpen, setIsOpen] = useState(false);
 
-  useEffect(async () => {
-    const _services = await getUserServices();
-    let finalServices = [];
-    for (let i = 0; i < _services.length; i++) {
-      try {
-        _services[i].metadata.categories = JSON.parse(
-          _services[i].metadata.categories
-        );
-        finalServices.push(_services[i]);
-      } catch (e) {
-        console.log(
-          "La categoria",
-          _services[i].id,
-          "no tiene el formato correcto"
-        );
+  useEffect(() => {
+    const foo = async () => {
+      const _services = await getUserServices();
+      let finalServices = [];
+      for (let i = 0; i < _services.length; i++) {
+        try {
+          _services[i].metadata.categories = JSON.parse(
+            _services[i].metadata.categories
+          );
+          finalServices.push(_services[i]);
+        } catch (e) {
+          console.log(
+            "La categoria",
+            _services[i].id,
+            "no tiene el formato correcto"
+          );
+        }
       }
-    }
-    console.log(finalServices);
-    setServices(finalServices);
+      console.log(finalServices);
+      setServices(finalServices);
 
-    setLoading(false);
+      setLoading(false);
+    };
+
+    foo()
   }, []);
 
   function closeModal() {

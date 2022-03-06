@@ -80,11 +80,13 @@ export default function UserProfile({ user }) {
           <div className="mr-8 font-semibold text-lg">
             <ul class="list-outside list-disc ml-6">
               {user.personal_data.links.map((v, i) => {
-                return (
+                v.lenght > 0 ? (
                   <li className="text-red-500" key={i}>
                     <a href={v}>{v}</a>
                   </li>
-                );
+                ) : (
+                  <></>
+                )
               })}
             </ul>
           </div>
@@ -115,7 +117,7 @@ export default function UserProfile({ user }) {
 
               <div className="text-[#047fdd] font-semibold text-lg">
                 {user.personal_data.idioms.map((v, i) => {
-                  return <div key={i}>({v.level})</div>;
+                  return <div key={i}>{v.level}</div>;
                 })}
               </div>
             </div>
