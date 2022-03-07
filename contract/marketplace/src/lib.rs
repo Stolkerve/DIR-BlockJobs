@@ -171,7 +171,7 @@ impl Marketplace {
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender)));
 
         for _i in 0 .. quantity {
-            service.on_sale = true;
+            service.id = self.total_services.clone();
             
             if self.service_by_id.insert(&self.total_services.clone(), &service).is_some() {
                 env::panic(b"Service already exists");
@@ -782,13 +782,13 @@ impl Marketplace {
     
     /// Modificar las address de los contratos
     /// 
-    pub fn change_address(&mut self, contract: String, new_address: AccountId) {
+    pub fn change_address(&mut self, contract_name: String, new_address: AccountId) {
         self.assert_admin();
-        if contract == "marketplace".to_string() {
+        if contract_name == "marketplace".to_string() {
             self.contract_owner = new_address;
-        } else if contract == "mediator".to_string() {
+        } else if contract_name == "mediator".to_string() {
             self.contract_me = new_address;
-        } else if contract == "ft".to_string() {
+        } else if contract_name == "ft".to_string() {
             self.contract_ft = new_address;
         } else {
             env::panic(b"Incorrect contract name");
