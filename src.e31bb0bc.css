@@ -1377,10 +1377,15 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .prose :where(tbody td):not(:where([class~="not-prose"] *)) {
   vertical-align: baseline;
-  padding-top: 0.5714286em;
-  padding-right: 0.5714286em;
-  padding-bottom: 0.5714286em;
-  padding-left: 0.5714286em;
+}
+
+.prose :where(tfoot):not(:where([class~="not-prose"] *)) {
+  border-top-width: 1px;
+  border-top-color: var(--tw-prose-th-borders);
+}
+
+.prose :where(tfoot td):not(:where([class~="not-prose"] *)) {
+  vertical-align: top;
 }
 
 .prose {
@@ -1511,11 +1516,18 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding-right: 0;
 }
 
-.prose :where(tbody td:first-child):not(:where([class~="not-prose"] *)) {
+.prose :where(tbody td, tfoot td):not(:where([class~="not-prose"] *)) {
+  padding-top: 0.5714286em;
+  padding-right: 0.5714286em;
+  padding-bottom: 0.5714286em;
+  padding-left: 0.5714286em;
+}
+
+.prose :where(tbody td:first-child, tfoot td:first-child):not(:where([class~="not-prose"] *)) {
   padding-left: 0;
 }
 
-.prose :where(tbody td:last-child):not(:where([class~="not-prose"] *)) {
+.prose :where(tbody td:last-child, tfoot td:last-child):not(:where([class~="not-prose"] *)) {
   padding-right: 0;
 }
 
@@ -1730,6 +1742,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: 2rem;
 }
 
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
 .block {
   display: block;
 }
@@ -1826,6 +1842,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   max-height: 400px;
 }
 
+.max-h-28 {
+  max-height: 7rem;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1906,6 +1926,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 40px;
 }
 
+.w-\[512px\] {
+  width: 512px;
+}
+
 .min-w-\[80\%\] {
   min-width: 80%;
 }
@@ -1920,6 +1944,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-\[1030px\] {
+  max-width: 1030px;
 }
 
 .max-w-\[700px\] {
@@ -2111,6 +2139,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   overflow-y: auto;
 }
 
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+
 .overflow-x-scroll {
   overflow-x: scroll;
 }
@@ -2123,6 +2155,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.whitespace-normal {
+  white-space: normal;
 }
 
 .whitespace-pre-line {
@@ -2386,6 +2422,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding-bottom: 2rem;
 }
 
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -2432,10 +2473,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .pl-12 {
   padding-left: 3rem;
-}
-
-.pl-8 {
-  padding-left: 2rem;
 }
 
 .text-left {
@@ -2501,6 +2538,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-8xl {
   font-size: 6rem;
   line-height: 1;
+}
+
+.text-\[120px\] {
+  font-size: 120px;
 }
 
 .font-semibold {
@@ -3077,6 +3118,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 @media (min-width: 1024px) {
   .lg\:flex {
     display: flex;
+  }
+
+  .lg\:hidden {
+    display: none;
   }
 
   .lg\:h-auto {
