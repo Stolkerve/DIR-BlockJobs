@@ -193,6 +193,9 @@ impl Marketplace {
             .unwrap_or_else(|| UnorderedSet::new(unique_prefix(&sender)));
 
         for _i in 0 .. quantity {
+            self.total_services += 1;
+
+            service.id = self.total_services.clone();
             service.on_sale = true;
             
             if self.service_by_id.insert(&self.total_services.clone(), &service).is_some() {
@@ -201,7 +204,6 @@ impl Marketplace {
             
             services_set.insert(&self.total_services.clone());
 
-            self.total_services += 1;
             
             NearEvent::log_service_mint(
                 service.id.clone(),
