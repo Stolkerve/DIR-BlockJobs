@@ -849,18 +849,18 @@ impl Marketplace {
     
     /// Modificar las address de los contratos
     /// 
-    // pub fn change_address(&mut self, contract: String, new_address: AccountId) {
-    //     self.assert_admin();
-    //     if contract == "marketplace".to_string() {
-    //         self.contract_owner = new_address;
-    //     } else if contract == "mediator".to_string() {
-    //         self.contract_me = new_address;
-    //     } else if contract == "ft".to_string() {
-    //         self.contract_ft = new_address;
-    //     } else {
-    //         env::panic(b"Incorrect contract name");
-    //     }
-    // }
+    pub fn change_address(&mut self, contract_name: String, new_address: AccountId) {
+        self.assert_admin();
+        if contract_name == "marketplace".to_string() {
+            self.contract_owner = new_address;
+        } else if contract_name == "mediator".to_string() {
+            self.contract_me = new_address;
+        } else if contract_name == "ft".to_string() {
+            self.contract_ft = new_address;
+        } else {
+            env::panic(b"Incorrect contract name");
+        }
+    }
 
     /*******************************/
     /****** CALLBACK FUNCTIONS *****/

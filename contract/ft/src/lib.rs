@@ -271,6 +271,13 @@ impl Token {
         }
     }
 
+    /// Modificar el contrato de ventas
+    /// near call $FT change_sales_contract '{"new_account_id": "sales.blockjobs.testnet"}' --accountId $FT
+    pub fn change_sales_contract(&mut self, new_account_id: AccountId) {
+        self.assert_owner();
+        self.sales_contract = new_account_id;
+    }
+
     // /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
     // /// Solo ejecutable por y desde desde Mediator.
     // /// 

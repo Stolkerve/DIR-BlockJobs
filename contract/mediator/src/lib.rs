@@ -287,7 +287,18 @@ impl Mediator {
         ));
     }
 
+    pub fn vote_test(&mut self, dispute_id: DisputeId, vote: bool) {
+        let sender = env::predecessor_account_id();
+        Event::log_dispute_vote( dispute_id.clone(), sender.clone().to_string(), vote.clone() );
+        let _res = ext_ft::validate_tokens(
+            sender.clone(), &self.token_contract, NO_DEPOSIT, BASE_GAS,
+        ).then(ext_self::on_vote(
+            dispute_id, sender, vote,
+            &env::current_account_id(), NO_DEPOSIT, BASE_GAS,
+        ));
+    }
 
+    
     /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde Marketplace.
     /// 
     pub fn on_vote(&mut self, dispute_id: u64, user_id: AccountId, vote: bool) -> Dispute {
@@ -489,7 +500,7 @@ impl Mediator {
         quantity
     }
 
-    /// Modificar contrato de Marketpla
+    /// Modificar contrato de Marketplace.
     ///
     pub fn update_marketplace_contract(&mut self, marketplace_contract: AccountId) -> AccountId{
         self.assert_owner(&env::signer_account_id());
