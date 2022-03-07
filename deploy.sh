@@ -59,6 +59,9 @@ near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --
 echo "inicializando el contrato Mediator"
 near call $ME new '{"marketplace_id": "'$MA'", "token_id": "'$FT'"}' --accountId $ME
 
+echo "inicializando el contrato Sales"
+near call $SA new '{"ft_address": "'$FT'", "admin_id": "'$SA'"}' --accountId $SA
+
 # echo "Estableciendo a Mediator como Minter"
 # near call $FT update_minter '{"account": "'$ME'"}' --accountId $FT
 
@@ -79,6 +82,8 @@ near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "
 # near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
 # near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT
 # near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$SA'", "amount": "10000000000000000000000"}' --accountId $FT
+near call $SA buy_ft '{}' --accountId $ID --amount 1 --gas 260000000000000
 
 # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
