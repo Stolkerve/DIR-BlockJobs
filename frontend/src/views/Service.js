@@ -380,7 +380,7 @@ export default function Service() {
               <div className="text-2xl font-bold text-gray-800 mb-4">
                 Perfil del usuario
               </div>
-              <UserProfile user={user} />
+              {user ? <UserProfile user={user} /> : <SkeletonLoaderProfile />}
             </div>
           </div>
         )}
