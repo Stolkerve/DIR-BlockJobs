@@ -68,7 +68,7 @@ export default function MyTokens() {
       },
     },
     {
-      title: "Retirar JOBS bloquedos",
+      title: "Retirar JOBS bloqueados",
       icon: <BsArrowUp />,
       action: () => {},
     },
@@ -195,13 +195,13 @@ export default function MyTokens() {
                     <th className="text-left mr-8">
                       <div className="flex flex-row items-center ml-8">
                         <FaWallet className=" mx-2" />
-                        BlockJobs
+                        Balances
                       </div>
                     </th>
                     <th>
                       <div className="flex flex-row items-center ml-8">
                         <BiBlock className=" mx-2" />
-                        JOBS bloquedos
+                        JOBS bloqueados
                       </div>
                     </th>
                     <th>
