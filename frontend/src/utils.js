@@ -409,7 +409,8 @@ export async function updateDisputeStatus(disputeId) {
   try {
     return await window.mediatorContract.update_dispute_status(
       { dispute_id: disputeId },
-      "300000000000000"
+      "300000000000000",
+      "1"
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
@@ -507,7 +508,18 @@ export async function getJOBSBalanceFromNearWallet(account) {
 
 export async function blockTokens(amount) {
   try {
-    return await window.ftContract.block_tokens({ amount: amount });
+    return await window.ftContract.block_tokens({ amount: Number(amount) }, "300000000000000", "1");
+  } catch (e) {
+    let finalErrorMsg = getErrMsg(e);
+    toast.error(finalErrorMsg);
+    console.log(e);
+    return null;
+  }
+}
+
+export async function getLockedTokensOf(account) {
+  try {
+    return await window.ftContract.get_locked_tokens_of({ account: account });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
     toast.error(finalErrorMsg);
@@ -518,7 +530,7 @@ export async function blockTokens(amount) {
 
 export async function withdrawTokens(amount) {
   try {
-    return await window.ftContract.withdraw_tokens({ amount: amount });
+    return await window.ftContract.withdraw_tokens({ amount: Number(amount) }, "300000000000000", "1");
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
     toast.error(finalErrorMsg);

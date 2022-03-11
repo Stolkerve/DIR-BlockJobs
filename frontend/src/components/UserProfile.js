@@ -79,15 +79,17 @@ export default function UserProfile({ user }) {
           </div>
           <div className="mr-8 font-semibold text-lg">
             <ul class="list-outside list-disc ml-6">
-              {user.personal_data.links.map((v, i) => {
-                v.lenght > 0 ? (
-                  <li className="text-red-500" key={i}>
-                    <a href={v}>{v}</a>
-                  </li>
-                ) : (
-                  <></>
-                )
-              })}
+              {user.personal_data.links.length > 0 ? (
+                <>
+                  {user.personal_data.links.map((v, i) => {
+                    return <li className="text-red-500" key={i}>
+                      <a href={v}>{v}</a>
+                    </li>
+                  })}
+                </>
+              ) : (
+                <></>
+              )}
             </ul>
           </div>
         </div>

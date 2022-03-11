@@ -93,7 +93,7 @@ export default function ServicesCard({ service }) {
           <img
             className="w-[26px] ml-1"
             src={
-              TokenIcons.find((v) => {
+            TokenIcons.find((v) => {
                 return v.value === service.metadata.token;
               }).path
             }

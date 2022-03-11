@@ -170,7 +170,7 @@ export default function Dispute() {
                   onClick={async () => {
                     await preVote(dispute.id);
                   }}
-                  className="uppercase py-2 px-4 rounded-lg bg-red-500 border-transparent text-white text-md mb-4"
+                  className="uppercase py-2 px-4 rounded-lg bg-red-500 border-transparent text-white text-md mb-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                 >
                   Ser parte del jurado!!!
                 </button>
@@ -186,7 +186,7 @@ export default function Dispute() {
               <div className="flex justify-center">
                 <button
                   onClick={openModalOpenVoting}
-                  className="uppercase py-2 px-4 rounded-lg bg-red-500 border-transparent text-white text-md mb-4"
+                  className="uppercase py-2 px-4 rounded-lg bg-red-500 border-transparent text-white text-md mb-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                 >
                   Votar
                 </button>
@@ -290,13 +290,13 @@ export default function Dispute() {
               </div>
             )}
 
-          <div className="border-2 rounded-lg px-6 py-4 ">
+          <div className="shadow-lg border-2 rounded-lg px-6 py-4 ">
             <div className="text-2xl flex justify-center font-bold text-gray-800 mb-2">
               Disputa
             </div>
             <DisputeCard dispute={dispute} maxJurors={maxJurors} />
           </div>
-          <div className="border-2 rounded-lg px-6 py-4 mt-4">
+          <div className="shadow-lg border-2 rounded-lg px-6 py-4 mt-8">
             <div className="text-2xl  flex justify-center font-bold text-gray-800 mb-1">
               Pruebas
             </div>
@@ -323,7 +323,7 @@ export default function Dispute() {
             </div>
           </div>
 
-          <div className="border-2 rounded-lg px-6 py-4 mt-4">
+          <div className="shadow-lg border-2 rounded-lg px-6 py-4 mt-8">
             <div className="text-2xl font-bold text-gray-800 mb-1">Etapas</div>
             <div>Momento de creacion {getDate()}</div>
             <div>{getStatus()}</div>

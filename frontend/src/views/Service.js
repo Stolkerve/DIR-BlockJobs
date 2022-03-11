@@ -94,9 +94,9 @@ export default function Service() {
       d.toLocaleDateString() +
       "  (" +
       d.getHours() +
-      "h " +
+      ":" +
       d.getMinutes() +
-      "m )"
+      ")"
     );
   };
 
@@ -112,9 +112,9 @@ export default function Service() {
       s.getFullYear() +
       "  (" +
       s.getHours() +
-      "h " +
+      ":" +
       s.getMinutes() +
-      "m )"
+      ")"
     );
   };
 
@@ -186,7 +186,7 @@ export default function Service() {
             {!window.walletConnection.isSignedIn() ? (
               <button
                 onClick={login}
-                className="uppercase py-2 px-4 rounded-lg bg-[#04AADD] border-transparent text-white text-md mr-4"
+                className="uppercase py-2 px-4 rounded-lg bg-[#04AADD] border-transparent text-white text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
               >
                 Login
               </button>
@@ -196,7 +196,7 @@ export default function Service() {
               isUserCreated ? (
               <button
                 onClick={handleBuyService}
-                className="uppercase py-2 px-4 rounded-lg flex items-center bg-green-500 border-transparent text-white text-lg mr-4"
+                className="uppercase py-2 px-4 rounded-lg flex items-center bg-green-500 border-transparent text-white text-lg mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                 disabled={loadingBuyService}
               >
                 Comprar servicio{" "}
@@ -225,7 +225,7 @@ export default function Service() {
                 <div className="flex">
                   <button
                     onClick={openModal}
-                    className="uppercase py-2 px-4 rounded-lg bg-[#04AADD] border-transparent text-white text-md mr-4"
+                    className="uppercase py-2 px-4 rounded-lg bg-[#04AADD] border-transparent text-white text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                   >
                     Editar servicio
                   </button>
@@ -242,9 +242,9 @@ export default function Service() {
               <div className="flex justify-end">
                 <button
                   onClick={openModal}
-                  className="uppercase py-2 px-4 rounded-lg bg-red-400 border-transparent text-white text-md mr-4"
+                  className="uppercase py-2 px-4 rounded-lg bg-red-400 border-transparent text-white text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                 >
-                  Reclamar!
+                  Crear disputa!
                 </button>
               </div>
             ) : service.actual_owner != window.accountId &&
@@ -256,7 +256,7 @@ export default function Service() {
                 <button
                   onClick={handleReclainService}
                   disabled={loadingReclaimService}
-                  className="uppercase py-2 px-4 rounded-lg bg-green-600 border-transparent text-white text-md mr-4"
+                  className="uppercase py-2 px-4 rounded-lg bg-green-600 border-transparent text-white text-md mr-4 transition ease-in-out hover:scale-105 hover:-translate-y-0.5 duration-300 shadow-lg"
                 >
                   Reclamar Pago!
                 </button>

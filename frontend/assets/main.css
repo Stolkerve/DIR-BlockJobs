@@ -972,8 +972,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   z-index: 20;
 }
 
-.z-40 {
-  z-index: 40;
+.z-\[-1\] {
+  z-index: -1;
 }
 
 .col-span-1 {
@@ -1540,10 +1540,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.whitespace-normal {
-  white-space: normal;
 }
 
 .whitespace-pre-line {

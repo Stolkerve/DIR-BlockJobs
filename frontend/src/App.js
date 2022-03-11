@@ -28,7 +28,7 @@ export default function App() {
   const [isUserCreated] = useGlobalState("isUserCreated");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     const foo = async () => {
       if (window.walletConnection.isSignedIn()) {
         let user = await getUser(window.accountId);
@@ -41,7 +41,7 @@ export default function App() {
         }
       }
     };
-    foo();
+    await foo();
     console.log("Is user created", isUserCreated);
     setLoading(true);
   }, []);
