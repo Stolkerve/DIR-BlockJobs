@@ -109,7 +109,6 @@ function NavBarContent() {
           >
             Login
           </button>
-          {/* <img src={require("../../assets/logo-white.svg")}></img> */}
         </div>
       </nav>
     );

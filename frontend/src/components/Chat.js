@@ -39,6 +39,7 @@ export default function Chat({ service }) {
 
   useEffect(async () => {
     console.log(service);
+    console.log(messages);
     singInFirebaseAnonymously();
 
     const salasDoc = await getDoc(salasRef);
@@ -65,11 +66,11 @@ export default function Chat({ service }) {
     e.preventDefault();
     setNewMessage("");
 
-    const { uid } = auth.currentUser;
+    // const { uid } = auth.currentUser;
     await addDoc(messagesRef, {
       msg: newMessage,
       createdAt: Timestamp.fromDate(new Date()),
-      uid,
+      uid: user.uid,
     });
 
     if (dummy.current) {
@@ -104,19 +105,19 @@ export default function Chat({ service }) {
               <>
                 <div className="relative w-full p-6 overflow-y-auto h-[32rem]">
                   <ul className="space-y-2">
-                    {messages.map((v, i) => {
+                    {messages ? messages.map((v, i) => {
                       return (
                         <li
                           key={i}
                           className={
-                            v.uid == auth.currentUser.uid
+                            v.uid == user.uid
                               ? "flex justify-end"
                               : "flex justify-start"
                           }
                         >
                           <div
                             className={
-                              v.uid == auth.currentUser.uid
+                              v.uid == user.uid
                                 ? "relative max-w-xl px-4 pt-2 text-white bg-[#27C0EF] rounded shadow"
                                 : "relative max-w-xl px-4 pt-2 text-gray-700 rounded shadow"
                             }
@@ -135,7 +136,8 @@ export default function Chat({ service }) {
                           )}
                         </li>
                       );
-                    })}
+                    }) : {
+                    }}
                   </ul>
                 </div>
 

@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { buyFT, ftTransferCallJOBS, ftTransferCallUSDC, withdrawFT } from "../utils";
-import tokensData from "../../assets/tokensData.json"
+import tokensData from "../assets/tokensData.json"
 
 export default function DepositTokenDialog({ isOpen, closeModal, openModal, token, withdraw }) {
   const [amountOfTokens, setAmountOfTokens] = useState("0.0");

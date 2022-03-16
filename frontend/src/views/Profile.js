@@ -9,7 +9,7 @@ import DialogUserCreator from "../components/DialogUserCreator";
 
 import { useGlobalState } from "../state";
 
-// import userTestData from "../../assets/userTestData.json"
+// import userTestData from "../assets/userTestData.json"
 
 export default function Profile() {
   let [loading, setLoading] = useState(true);

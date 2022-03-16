@@ -12,6 +12,10 @@ import BuyJobsCoinDialog from "../components/BuyJobsCoinDialog";
 import DepositToken from "../components/DepositTokenDialog";
 import BlockTokenDialog from "../components/BlockTokenDialog";
 
+import jobsCoinIcon from "../assets/JobsCoinIcon.svg";
+import nearBlackLogo from "../assets/logo-black.svg";
+import usdcLogo from "../assets/usd-coin-usdc-logo.svg";
+
 import {
   getFTBalanceOf,
   getJOBSBalanceFromNearWallet,
@@ -225,7 +229,7 @@ export default function MyTokens() {
                       <div className="flex flex-row items-center">
                         <img
                           className="my-2 w-[40px]"
-                          src={require("../../assets/JobsCoinIcon.svg")}
+                          src={jobsCoinIcon}
                         ></img>
                         <div className="font-semibold ml-2 pr-4">JOBS</div>
                       </div>
@@ -252,7 +256,7 @@ export default function MyTokens() {
                       <div className="flex flex-row items-center">
                         <img
                           className="my-2 w-[40px]"
-                          src={require("../../assets/usd-coin-usdc-logo.svg")}
+                          src={usdcLogo}
                         ></img>
                         <div className="font-semibold ml-2">USDC</div>
                       </div>
@@ -277,7 +281,7 @@ export default function MyTokens() {
                       <div className="flex flex-row items-center">
                         <img
                           className="my-2 w-[40px]"
-                          src={require("../../assets/logo-black.svg")}
+                          src={nearBlackLogo}
                         ></img>
                         <div className="font-semibold ml-2">NEAR</div>
                       </div>

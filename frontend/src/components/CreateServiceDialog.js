@@ -5,8 +5,8 @@ import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import { toast } from "react-toastify";
 
-import categoriesData from "../../assets/categoriesData.json";
-import tokensData from "../../assets/tokensData.json";
+import categoriesData from "../categoriesData.json";
+import tokensData from "../tokensData.json";
 
 // import makeAnimated from 'react-select/animated';
 

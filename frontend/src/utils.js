@@ -145,7 +145,7 @@ export async function initContract() {
 
   // nft storage
   window.nftStorageClient = new NFTStorage({
-    token: String(process.env.NFT_STORAGE_API_KEY),
+    token: String(process.env.REACT_APP_NFT_STORAGE_API_KEY),
   });
 }
 
