@@ -25,11 +25,13 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@headlessui/react": "^1.4.2",
+    "firebase": "^9.6.8",
     "graphql": "^16.3.0",
     "near-api-js": "~0.43.1",
     "nft.storage": "^3.3.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-firebase-hooks": "^5.0.3",
     "react-hooks-global-state": "^1.0.2",
     "react-icons": "^4.3.1",
     "react-intersection-visible": "^2.1.0",

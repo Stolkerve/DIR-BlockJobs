@@ -6,7 +6,6 @@ import {
   utils,
 } from "near-api-js";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 import getConfig from "./config";
 import { NFTStorage } from "nft.storage";
@@ -165,9 +164,14 @@ export function login() {
 }
 
 function getErrMsg(e) {
-  let finalErrorMsg = String(e.message.match('".*"'));
-  finalErrorMsg.substring(1, finalErrorMsg.length - 1);
-  return finalErrorMsg.replace(/["']/g, "");
+  let finalErrorMsg = ""
+  try {
+    let finalErrorMsg = JSON.parse(e.message.substring(e.message.indexOf("{"))).kind.ExecutionError
+  }
+  catch(e) {
+    
+  }
+  return finalErrorMsg
 }
 
 /* Services relate */
@@ -262,7 +266,7 @@ export async function updateService(
   }
 }
 
-export async function reclaimService() {
+export async function reclaimService(serviceId) {
   // let fee = utils.format.parseNearAmount("0.1");
   try {
     await window.marketplaceContract.reclaim_service(
@@ -410,7 +414,6 @@ export async function updateDisputeStatus(disputeId) {
     return await window.mediatorContract.update_dispute_status(
       { dispute_id: disputeId },
       "300000000000000",
-      "1"
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);

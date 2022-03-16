@@ -13,7 +13,6 @@ export default function MyDisputes() {
     const foo = async () => {
       const d = await getDisputes(0, 10);
 
-      console.log(d);
       setDisputes(d);
       setMaxJurors(await getMaxJurors());
       setLoading(false);

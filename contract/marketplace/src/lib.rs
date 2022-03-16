@@ -397,7 +397,8 @@ impl Marketplace {
         let service = self.get_service_by_id(service_id.clone());
 
         // Verificar que haya pasado el tiempo establecido para poder hacer el reclamo.
-        if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64 + 2) {
+        env::log(format!("Tiempo de liberacion {}", service.buy_moment + ONE_DAY * (service.duration as u64)).as_bytes());
+        if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64) {
             env::panic("Insuficient time to reclame the service".as_bytes());
         }
 

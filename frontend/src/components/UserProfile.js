@@ -22,7 +22,7 @@ export default function UserProfile({ user }) {
                     user.reputation === 0
                       ? "text-gray-900"
                       : user.reputation > 0
-                      ? "text-green-400"
+                      ? "text-green-500"
                       : "text-red"
                   }
                 >
@@ -44,7 +44,7 @@ export default function UserProfile({ user }) {
                       }
                     >
                       {" "}
-                      {v}
+                      {(i + 1) != user.roles.length ? `${v},` : v}
                     </div>
                   );
                 })}
@@ -78,7 +78,7 @@ export default function UserProfile({ user }) {
             {/* <ImLink className='text-[#352E5B] mr-2'/> */} Links
           </div>
           <div className="mr-8 font-semibold text-lg">
-            <ul class="list-outside list-disc ml-6">
+            <ul className="list-outside list-disc ml-6">
               {user.personal_data.links.length > 0 ? (
                 <>
                   {user.personal_data.links.map((v, i) => {

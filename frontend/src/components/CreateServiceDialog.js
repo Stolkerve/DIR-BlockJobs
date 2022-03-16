@@ -91,7 +91,6 @@ export default function CreateServiceDialog({
     }
 
     v = v + 1 * mul;
-    console.log(v);
     setterHook(v);
   };
 

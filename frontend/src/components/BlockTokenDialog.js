@@ -6,7 +6,6 @@ export default function BlockTokenDialog({ isOpen, closeModal, openModal, withdr
   const [amountOfTokens, setAmountOfTokens] = useState("0.0");
 
   const handleNumber = (e) => {
-    console.log(e.target.value.length)
     let input = e.target.value.length > 10 ? amountOfTokens : e.target.value;
 
     if (input.match(/^[0-9]*\.[0-9]+([eE][0-9]+)?$/)) {

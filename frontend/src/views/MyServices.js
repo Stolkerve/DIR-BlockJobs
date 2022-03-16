@@ -30,7 +30,7 @@ export default function MyServices() {
           );
         }
       }
-      console.log(finalServices);
+
       setServices(finalServices);
 
       setLoading(false);

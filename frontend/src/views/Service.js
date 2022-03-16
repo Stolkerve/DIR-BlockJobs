@@ -21,6 +21,7 @@ import SkeletonLoaderProfile from "../components/SkeletonLoaderProfile";
 import { useGlobalState } from "../state";
 
 import { TokenIcons } from "../components/TokenIcons";
+import Chat from "../components/Chat";
 
 export default function Service() {
   const [isUserCreated] = useGlobalState("isUserCreated");
@@ -33,6 +34,7 @@ export default function Service() {
 
   const params = useParams();
   const navigate = useNavigate();
+
   useEffect(() => {
     const foo = async () => {
       let loadingService = true;
@@ -46,12 +48,10 @@ export default function Service() {
       }
 
       let user = await getUser(s.creator_id);
-      console.log(user);
       if (user) {
         try {
           user.personal_data = JSON.parse(user.personal_data);
         } catch (e) {}
-        console.log(user);
         setUser(user);
         loadingUser = false;
       }
@@ -62,6 +62,18 @@ export default function Service() {
     foo();
   }, []);
 
+  const showChat = () => {
+    if (
+      (window.accountId == service.creator_id ||
+        window.accountId == service.actual_owner) &&
+      service.creator_id != service.actual_owner
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
   const handleBuyService = async () => {
     setLoadingBuyService(true);
     if (service.metadata.token != "near") {
@@ -70,7 +82,6 @@ export default function Service() {
       const amount = utils.format.parseNearAmount(
         String(service.metadata.price)
       );
-      console.log(amount);
       await buyService(service.id, amount);
     }
 
@@ -91,12 +102,7 @@ export default function Service() {
   const dateToString = (date) => {
     let d = new Date(Math.round(date / 1000000));
     return (
-      d.toLocaleDateString() +
-      "  (" +
-      d.getHours() +
-      ":" +
-      d.getMinutes() +
-      ")"
+      d.toLocaleDateString() + "  (" + d.getHours() + ":" + d.getMinutes() + ")"
     );
   };
 
@@ -122,9 +128,9 @@ export default function Service() {
     let now = new Date().getTime();
     setLoadingReclaimService(true);
     if (now >= getReclaimDate()) {
-      // await reclaimService(service.id)
+      await reclaimService(service.id);
       // location.reload();
-      console.log("Hora correcta");
+      console.log(service.id, "Hora correcta");
     } else {
       await reclaimService(service.id);
       location.reload();
@@ -265,11 +271,14 @@ export default function Service() {
               <></>
             )}
             <div className="border-2 rounded-lg px-6 py-4 shadow-md mt-4">
+              <div className="text-2xl text-center font-bold text-gray-800 mb-4">
+                Servicio
+              </div>
               <div className="">
                 <div className="flex self-baseline">
                   {service.metadata.icon ? (
                     <img
-                      className="w-32 h-32 md:w-48 md:h-auto md:rounded md:rounded-bl-xl md:rounded-tl-xl rounded-full mr-4 object-cover "
+                      className="w-32 h-32 md:w-48 md:max-h-52 md:rounded md:rounded-bl-xl md:rounded-tl-xl rounded-full mr-4 object-contain "
                       src={service.metadata.icon}
                     />
                   ) : (
@@ -376,9 +385,21 @@ export default function Service() {
                 </div>
               )}
             </div>
-            <div className="border-2 rounded-lg shadow-md px-6 py-4 mt-4">
-              <div className="text-2xl font-bold text-gray-800 mb-4">
-                Perfil del usuario
+
+            {showChat() ? (
+              <div className=" border-2 rounded-lg shadow-md px-6 py-4 mt-8 ">
+                <div className="text-2xl text-center font-bold text-gray-800 mb-4">
+                  Chat
+                </div>
+                <Chat service={service}/>
+              </div>
+            ) : (
+              <></>
+            )}
+
+            <div className="border-2 rounded-lg shadow-md px-6 py-4 mt-8">
+              <div className="text-2xl text-center font-bold text-gray-800 mb-4">
+                Perfil del creador
               </div>
               {user ? <UserProfile user={user} /> : <SkeletonLoaderProfile />}
             </div>

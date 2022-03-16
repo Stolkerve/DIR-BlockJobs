@@ -32,9 +32,6 @@ export default function Dispute() {
       // await updateDisputeStatus(Number(params.id))
       setMaxJurors(await getMaxJurors());
       const d = await getDispute(Number(params.id));
-      console.log(
-        !d.votes.length || d.votes.find((v) => v.account !== window.accountId)
-      );
       setDispute(d);
       setLoading(false);
     };
@@ -324,7 +321,7 @@ export default function Dispute() {
           </div>
 
           <div className="shadow-lg border-2 rounded-lg px-6 py-4 mt-8">
-            <div className="text-2xl font-bold text-gray-800 mb-1">Etapas</div>
+            <div className="text-2xl font-bold text-gray-800 mb-1 text-center">Etapas</div>
             <div>Momento de creacion {getDate()}</div>
             <div>{getStatus()}</div>
           </div>

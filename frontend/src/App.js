@@ -42,7 +42,6 @@ export default function App() {
       }
     };
     await foo();
-    console.log("Is user created", isUserCreated);
     setLoading(true);
   }, []);
 

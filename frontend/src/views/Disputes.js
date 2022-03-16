@@ -20,7 +20,6 @@ export default function Disputes() {
 
       const d = await getDisputes(0, maxAmountOfDisputesPerPag);
 
-      console.log(d);
       setDisputes(d);
       setMaxJurors(await getMaxJurors());
       setLoading(false);
