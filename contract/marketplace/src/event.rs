@@ -35,7 +35,7 @@ pub enum NearEvent {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ServiceMintData {
     id: String,
-    creator_id: String,
+    creator: String,
     title: String,
     description: String,
     categories: String,
@@ -44,13 +44,13 @@ pub struct ServiceMintData {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ServiceBuyData {id: String, buyer_id: String}
+pub struct ServiceBuyData {id: String, buyer: String}
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ServiceReclaimData {id: String, sender_id: String}
+pub struct ServiceReclaimData {id: String, sender: String}
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ServiceReturnData {id: String, creator_id: String}
+pub struct ServiceReturnData {id: String, creator: String}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ServiceUpdateMetadataData {
@@ -83,7 +83,7 @@ impl NearEvent {
     // Minteo de uno o mas servicios.
     pub fn log_service_mint(
         id: String, 
-        creator_id: String, 
+        creator: String, 
         title: String,
         description: String,
         categories: String,
@@ -91,26 +91,26 @@ impl NearEvent {
         duration: String,) 
     {
         let data = ServiceMintData {
-            id, creator_id, title, description, categories, price, duration}
+            id, creator, title, description, categories, price, duration}
         ;
         NearEvent::ServiceMint(data).log();
     }
 
     // Compra de un servicio.
-    pub fn log_service_buy(id: String,  buyer_id: String) {
-        let data = ServiceBuyData {id, buyer_id};
+    pub fn log_service_buy(id: String,  buyer: String) {
+        let data = ServiceBuyData {id, buyer};
         NearEvent::ServiceBuy(data).log();
     }
 
     // Reclamo de un servicio por parte del profesional.
-    pub fn log_service_reclaim(id: String,  sender_id: String) {
-        let data = ServiceReclaimData {id, sender_id};
+    pub fn log_service_reclaim(id: String,  sender: String) {
+        let data = ServiceReclaimData {id, sender};
         NearEvent::ServiceReclaim(data).log();
     }
 
     // Retorno de un servicio por parte de un Admin.
-    pub fn log_service_return(id: String,  creator_id: String) {
-        let data = ServiceReturnData {id, creator_id};
+    pub fn log_service_return(id: String,  creator: String) {
+        let data = ServiceReturnData {id, creator};
         NearEvent::ServiceReturn(data).log();
     }
 
@@ -188,116 +188,116 @@ impl Display for NearEvent {
 
 //     #[test]
 //     fn service_mint() {
-//         let owner_id = "bob".to_string();
-//         let token_ids = make_tokens("0", "1"]);
-//         let mint_log = ServiceMintData { owner_id, token_ids, memo: None };
+//         let owner = "bob".to_string();
+//         let token = make_tokens("0", "1"]);
+//         let mint_log = ServiceMintData { owner, token, memo: None };
 //         let event_log = NearEvent::service_mint(mint_log]);
 //         assert_eq!(
 //             serde_json::to_string(&event_log).unwrap(),
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_mint","data":[{"owner_id":"bob","token_ids":["0","1"]}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_mint","data":[{"owner":"bob","token":["0","1"]}]}"#
 //         );
 //     }
 
 //     #[test]
 //     fn service_mints() {
-//         let owner_id = "bob".to_string();
-//         let token_ids = make_tokens("0", "1"]);
-//         let mint_log = ServiceMintData { owner_id, token_ids, memo: None };
+//         let owner = "bob".to_string();
+//         let token = make_tokens("0", "1"]);
+//         let mint_log = ServiceMintData { owner, token, memo: None };
 //         let event_log = NearEvent::service_mint(
 //             mint_log,
 //             ServiceMintData {
-//                 owner_id: "alice".to_string(),
-//                 token_ids: make_tokens("2", "3"]),
+//                 owner: "alice".to_string(),
+//                 token: make_tokens("2", "3"]),
 //                 memo: Some("has memo".to_string()),
 //             },
 //         ]);
 //         assert_eq!(
 //             serde_json::to_string(&event_log).unwrap(),
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_mint","data":[{"owner_id":"bob","token_ids":["0","1"]},{"owner_id":"alice","token_ids":["2","3"],"memo":"has memo"}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_mint","data":[{"owner":"bob","token":["0","1"]},{"owner":"alice","token":["2","3"],"memo":"has memo"}]}"#
 //         );
 //     }
 
 //     #[test]
 //     fn service_buy() {
-//         let owner_id = "bob".to_string();
-//         let token_ids = make_tokens("0", "1"]);
+//         let owner = "bob".to_string();
+//         let token = make_tokens("0", "1"]);
 //         let log = NearEvent::service_buy(ServiceBuyData {
-//             owner_id,
-//             authorized_id: None,
-//             token_ids,
+//             owner,
+//             authorized: None,
+//             token,
 //             memo: None,
 //         }])
 //             .to_json_string();
 //         assert_eq!(
 //             log,
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_buy","data":[{"owner_id":"bob","token_ids":["0","1"]}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_buy","data":[{"owner":"bob","token":["0","1"]}]}"#
 //         );
 //     }
 
 //     #[test]
 //     fn service_buys() {
-//         let owner_id = "bob".to_string();
-//         let token_ids = make_tokens("0", "1"]);
+//         let owner = "bob".to_string();
+//         let token = make_tokens("0", "1"]);
 //         let log = NearEvent::service_buy(
 //             ServiceBuyData {
-//                 owner_id: "alice".to_string(),
-//                 authorized_id: Some("4".to_string()),
-//                 token_ids: make_tokens("2", "3"]),
+//                 owner: "alice".to_string(),
+//                 authorized: Some("4".to_string()),
+//                 token: make_tokens("2", "3"]),
 //                 memo: Some("has memo".to_string()),
 //             },
-//             ServiceBuyData { owner_id, authorized_id: None, token_ids, memo: None },
+//             ServiceBuyData { owner, authorized: None, token, memo: None },
 //         ])
 //             .to_json_string();
 //         assert_eq!(
 //             log,
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_buy","data":[{"authorized_id":"4","owner_id":"alice","token_ids":["2","3"],"memo":"has memo"},{"owner_id":"bob","token_ids":["0","1"]}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_buy","data":[{"authorized":"4","owner":"alice","token":["2","3"],"memo":"has memo"},{"owner":"bob","token":["0","1"]}]}"#
 //         );
 //     }
 
 //     #[test]
 //     fn service_reclaim() {
-//         let old_owner_id = "bob".to_string();
-//         let new_owner_id = "alice".to_string();
-//         let token_ids = make_tokens("0", "1"]);
+//         let old_owner = "bob".to_string();
+//         let new_owner = "alice".to_string();
+//         let token = make_tokens("0", "1"]);
 //         let log = NearEvent::service_reclaim(ServiceReclaimData {
-//             old_owner_id,
-//             new_owner_id,
-//             authorized_id: None,
-//             token_ids,
+//             old_owner,
+//             new_owner,
+//             authorized: None,
+//             token,
 //             memo: None,
 //         }])
 //             .to_json_string();
 //         assert_eq!(
 //             log,
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_reclaim","data":[{"old_owner_id":"bob","new_owner_id":"alice","token_ids":["0","1"]}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_reclaim","data":[{"old_owner":"bob","new_owner":"alice","token":["0","1"]}]}"#
 //         );
 //     }
 
 //     #[test]
 //     fn service_reclaims() {
-//         let old_owner_id = "bob";
-//         let new_owner_id = "alice";
-//         let token_ids = make_tokens("0", "1"]);
+//         let old_owner = "bob";
+//         let new_owner = "alice";
+//         let token = make_tokens("0", "1"]);
 //         let log = NearEvent::service_reclaim(
 //             ServiceReclaimData {
-//                 old_owner_id: new_owner_id.to_string(),
-//                 new_owner_id: old_owner_id.to_string(),
-//                 authorized_id: Some("4".to_string()),
-//                 token_ids: make_tokens("2", "3"]),
+//                 old_owner: new_owner.to_string(),
+//                 new_owner: old_owner.to_string(),
+//                 authorized: Some("4".to_string()),
+//                 token: make_tokens("2", "3"]),
 //                 memo: Some("has memo".to_string()),
 //             },
 //             ServiceReclaimData {
-//                 old_owner_id: old_owner_id.to_string(),
-//                 new_owner_id: new_owner_id.to_string(),
-//                 authorized_id: None,
-//                 token_ids,
+//                 old_owner: old_owner.to_string(),
+//                 new_owner: new_owner.to_string(),
+//                 authorized: None,
+//                 token,
 //                 memo: None,
 //             },
 //         ])
 //             .to_json_string();
 //         assert_eq!(
 //             log,
-//             r#"{"standard":"nep171","version":"1.0.0","event":"service_reclaim","data":[{"authorized_id":"4","old_owner_id":"alice","new_owner_id":"bob","token_ids":["2","3"],"memo":"has memo"},{"old_owner_id":"bob","new_owner_id":"alice","token_ids":["0","1"]}]}"#
+//             r#"{"standard":"nep171","version":"1.0.0","event":"service_reclaim","data":[{"authorized":"4","old_owner":"alice","new_owner":"bob","token":["2","3"],"memo":"has memo"},{"old_owner":"bob","new_owner":"alice","token":["0","1"]}]}"#
 //         );
 //     }
 // }
