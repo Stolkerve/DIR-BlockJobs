@@ -51,7 +51,7 @@ ID2=proofs333.testnet
 # ID2=stolkerve2.testnet
 
 echo "inicializando el contrato de FT"
-near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000000000000000000", "sales_contract": "'$FT'"}' --accountId $FT
+near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000", "sales_contract": "'$FT'"}' --accountId $FT
 
 echo "inicializando el contrato de Marketplace"
 near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --accountId $MA --amount 0.03
