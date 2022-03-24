@@ -127,14 +127,14 @@ export default function Chat({ service }) {
                             <li
                               key={i}
                               className={
-                                v.uid == user.uid
+                                v.uid == window.accountId
                                   ? "flex justify-end"
                                   : "flex justify-start"
                               }
                             >
                               <div
                                 className={
-                                  v.uid == user.uid
+                                  v.uid == window.accountId
                                     ? "relative max-w-xl px-4 pt-2 text-white bg-[#27C0EF] rounded shadow"
                                     : "relative max-w-xl px-4 pt-2 text-gray-700 rounded shadow"
                                 }
