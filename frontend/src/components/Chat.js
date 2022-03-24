@@ -85,7 +85,7 @@ export default function Chat({ service }) {
     await addDoc(messagesRef, {
       msg: newMessage,
       createdAt: Timestamp.fromDate(new Date()),
-      uid: user.uid,
+      uid: window.accountId,
     });
 
     if (dummy.current) {
