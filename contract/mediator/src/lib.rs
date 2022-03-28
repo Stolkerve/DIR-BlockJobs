@@ -371,8 +371,12 @@ impl Mediator {
 
 
     /// Para verificar y actualizar el estado de la disputa.
-    /// 
+    ///
+    #[payable]
     pub fn update_dispute_status(&mut self, dispute_id: DisputeId) -> Dispute {
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("Initial store usage: {}", initial_storage_usage).as_bytes());
+
         let mut dispute: Dispute = expect_value_found(self.disputes.get(&dispute_id), "Disputa no encontrada".as_bytes());
 
         let actual_time = env::block_timestamp();
@@ -444,7 +448,18 @@ impl Mediator {
             }
         }
         
+
         self.disputes.insert(&dispute_id, &dispute);
+
+        env::log(format!("Second store usage: {}", env::storage_usage()).as_bytes());
+        if initial_storage_usage <  env::storage_usage() {
+            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+
+            let required_storage_in_bytes =  new_services_size_in_bytes;
+            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+            deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
+        }
 
         Event::log_dispute_change_status(
             dispute_id.clone(),
@@ -675,6 +690,23 @@ trait ExtContract {
 fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
     option.unwrap_or_else(|| env::panic(message))
 }
+
+fn deposit_refund_to(storage_used: u64, to: AccountId) {
+    env::log(format!("Storage cost per bytes: {}", env::storage_byte_cost()).as_bytes());
+    let required_cost = env::storage_byte_cost() * Balance::from(storage_used);
+    let attached_deposit = env::attached_deposit();
+
+    assert!(
+        required_cost <= attached_deposit,
+        "Requires to attach {:.1$} NEAR services to cover storage",required_cost as f64 / YOCTO_NEAR as f64, 3 // la presicion de decimales
+    );
+
+    let refund = attached_deposit - required_cost;
+    if refund > 0 {
+        Promise::new(to).transfer(refund);
+    }
+}
+
 
 // pub(crate) fn string_to_valid_account_id(account_id: &String) -> ValidAccountId{
 //     return ValidAccountId::try_from((*account_id).to_string()).unwrap();
