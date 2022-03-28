@@ -399,7 +399,8 @@ export async function addAccusedProves(disputeId, proves) {
     // let amt = utils.format.parseNearAmount("0.1");
     return await window.mediatorContract.add_accused_proves(
       { dispute_id: disputeId, accused_proves: proves },
-      "300000000000000"
+      "300000000000000",
+      utils.format.parseNearAmount("0.1")
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
@@ -414,6 +415,7 @@ export async function updateDisputeStatus(disputeId) {
     return await window.mediatorContract.update_dispute_status(
       { dispute_id: disputeId },
       "300000000000000",
+      utils.format.parseNearAmount("0.1")
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
@@ -427,7 +429,8 @@ export async function preVote(disputeId) {
   try {
     return await window.mediatorContract.pre_vote(
       { dispute_id: disputeId },
-      "300000000000000"
+      "300000000000000",
+      utils.format.parseNearAmount("0.1")
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
@@ -441,7 +444,8 @@ export async function vote(disputeId, vote) {
   try {
     return await window.mediatorContract.vote(
       { dispute_id: disputeId, vote: vote },
-      "300000000000000"
+      "300000000000000",
+      utils.format.parseNearAmount("0.1")
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);

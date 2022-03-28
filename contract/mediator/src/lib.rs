@@ -168,7 +168,11 @@ impl Mediator {
     /// Anadir pruebas por parte del profesional acusado.
     /// 
     #[allow(unused_must_use)]
+    #[payable]
     pub fn add_accused_proves(&mut self, dispute_id: DisputeId, accused_proves: String) -> Dispute {
+        let initial_storage_usage = env::storage_usage();
+        env::log(format!("Initial store usage: {}", initial_storage_usage).as_bytes());
+
         let mut dispute = self.update_dispute_status(dispute_id);
         if dispute.dispute_status != DisputeStatus::Open {
             env::panic(b"Time to upload proves is over");
@@ -189,6 +193,17 @@ impl Mediator {
         // dispute.dispute_status = DisputeStatus::Voting;
 
         self.disputes.insert(&dispute_id, &dispute);
+
+        env::log(format!("Second store usage: {}", env::storage_usage()).as_bytes());
+        if initial_storage_usage <  env::storage_usage() {
+            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+
+            let required_storage_in_bytes =  new_services_size_in_bytes;
+            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+            deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
+        }
+
 
         return dispute;
     }
@@ -225,7 +240,7 @@ impl Mediator {
     }
 
     /// Adicion del miembro del jurado en caso de cumplirse la verificacion desde marketplace.
-    /// 
+    #[payable]
     pub fn on_pre_vote(&mut self, dispute_id: u64, user_id: AccountId) {
         if env::predecessor_account_id() != env::current_account_id() {
             env::panic(b"Only the contract can call its function")
@@ -252,7 +267,7 @@ impl Mediator {
     /// Emitir un voto.
     /// Solo para miembros del jurado de la misma categoria del servicio en disputa.
     /// Se requiere cumplir con un minimo de tokens bloqueados en FT.
-    /// 
+    #[payable]
     pub fn vote(&mut self, dispute_id: DisputeId, vote: bool) {
         let sender = env::predecessor_account_id();
         let dispute = self.update_dispute_status(dispute_id);
