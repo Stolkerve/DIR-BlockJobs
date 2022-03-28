@@ -3,7 +3,10 @@ NETWORK=mainnet
 export NODE_ENV=$NETWORK
 
 OWNER=blockjobs.near
+MARKETPLACE=market.blockjobs.near
+MEDIATOR=mediator.blockjobs.near
 TOKEN=ft.blockjobs.near
+SALES=sales.blockjobs.near
 ADMIN_ACC=admin1.blockjobs.near
 TREASURY_ACC=blockjobs.near
 
@@ -67,7 +70,7 @@ echo "inicializando el contrato de FT"
 near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000", "sales_contract": "'$FT'"}' --accountId $FT
 
 echo "inicializando el contrato de Marketplace"
-near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --accountId $MA --amount 0.03
+near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'", "usdc": "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near"}' --accountId $MA --amount 0.03
 
 echo "inicializando el contrato Mediator"
 near call $ME new '{"marketplace_id": "'$MA'", "token_id": "'$FT'"}' --accountId $ME
