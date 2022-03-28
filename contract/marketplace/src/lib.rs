@@ -3,7 +3,7 @@ use near_sdk::collections::{LookupMap, UnorderedMap, UnorderedSet};
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::serde_json;
-use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, StorageUsage, 
+use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, 
     ext_contract, Gas, PromiseResult, PromiseOrValue};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
@@ -73,8 +73,6 @@ pub struct Marketplace {
     // Balance disponible de tokens de los usuarios.
     pub usdc_balances: LookupMap<AccountId, Balance>,
     pub jobs_balances: LookupMap<AccountId, Balance>,
-    // Storage en bytes por cada cuenta.
-    pub extra_storage_in_bytes_per_service: StorageUsage,
 }
 
 #[near_bindgen]
@@ -108,7 +106,6 @@ impl Marketplace {
             jobs_contract: ft.into(),
             usdc_balances: LookupMap::new(b"e".to_vec()),
             jobs_balances: LookupMap::new(b"f".to_vec()),
-            extra_storage_in_bytes_per_service: 0,
         };
         // Agregar NEAR por default.
         this.tokens.insert(&"near".to_string());
@@ -215,10 +212,8 @@ impl Marketplace {
         self.services_by_account.insert(&sender, &services_set);
 
         // Manejo del storage.
-        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
+        let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
         // env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        // env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund(required_storage_in_bytes);
         service
@@ -516,11 +511,9 @@ impl Marketplace {
         self.service_by_id.insert(&service_id, &service);
 
         if initial_storage_usage <  env::storage_usage() {
-            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+            let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", required_storage_in_bytes).as_bytes());
             
-            let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
             deposit_refund_to(required_storage_in_bytes, env::predecessor_account_id());
         }
 
@@ -635,11 +628,8 @@ impl Marketplace {
             env::panic(b"User account already added");
         }
 
-        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
-
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
+        let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
+        env::log(format!("New services size in bytes: {}", required_storage_in_bytes).as_bytes());
 
         deposit_refund_to(required_storage_in_bytes, account_id);
 
@@ -697,11 +687,9 @@ impl Marketplace {
 
         env::log(format!("Second store usage: {}", env::storage_usage()).as_bytes());
         if initial_storage_usage <  env::storage_usage() {
-            let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-            env::log(format!("New size in bytes: {}", new_services_size_in_bytes).as_bytes());
+            let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
+            env::log(format!("New size in bytes: {}", required_storage_in_bytes).as_bytes());
 
-            let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-            env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
             deposit_refund_to(required_storage_in_bytes, account_id);
         }
 
