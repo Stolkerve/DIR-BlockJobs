@@ -1,6 +1,6 @@
 BlockJobs
 =========
-BlockJobs es un proyecto del programa DIR de NEAR hispano, con la finalidad de crear un marketplace de servicios profesionales.
+BlockJobs es un proyecto del programa DIR de NEAR hispano, con la finalidad de crear un marketplace de servicios profesionales, donde se puede reclamar una disputa en caso de haber desacuerdo por las partes correspondientes en alguno de los servicios. Dicha disputa se resuelve descentralizadamente mediante un jurado aleatorio.
 
 
 Prerequisitos
@@ -72,7 +72,7 @@ Para wachear tailwind
 $ npm run watch:css
 ```
 
-Es posible que taiwind de errores, por que para solucionarlo elimina node_module y vuelve a instalar los paquetes. Tambien es posible que pueda haber fugas de memoria por cerrarlo incorrectamente el servidor de desarrollo y te coma toda la ram.
+Es posible que taiwind de errores, para solucionarlo elimine node_module y vuelva a instalar los paquetes. Tambien es posible que haya fugas de memoria por cerrar incorrectamente el servidor de desarrollo.
 
 Troubleshooting
 ===============

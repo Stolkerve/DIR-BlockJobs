@@ -7,7 +7,6 @@ use near_sdk::{env, near_bindgen, AccountId, Balance, PanicOnDefault, Promise, S
     ext_contract, Gas, PromiseResult, PromiseOrValue};
 use std::collections::{HashSet};
 use std::convert::TryFrom;
-// use near_env::PanicMessage;
 
 use crate::user::*;
 use crate::internal::*;
@@ -19,7 +18,7 @@ near_sdk::setup_alloc!();
 
 const NO_DEPOSIT: Balance = 0;
 const BASE_GAS: Gas = 30_000_000_000_000;
-const GAS_FT_TRANSFER: Gas = 14_000_000_000_000;
+const GAS_FT_TRANSFER: Gas = 10_000_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
 const DECIMALS: Balance = 1_000_000_000_000_000_000;
@@ -69,6 +68,8 @@ pub struct Marketplace {
     pub contract_ft: AccountId,
     // Tokens soportados.
     pub tokens: UnorderedSet<AccountId>,
+    pub usdc_contract: AccountId,
+    pub jobs_contract: AccountId,
     // Balance disponible de tokens de los usuarios.
     pub usdc_balances: LookupMap<AccountId, Balance>,
     pub jobs_balances: LookupMap<AccountId, Balance>,
@@ -88,6 +89,7 @@ impl Marketplace {
         owner_id: ValidAccountId, 
         mediator: ValidAccountId, 
         ft: ValidAccountId, 
+        usdc: ValidAccountId,
         tokens: Option<Vec<ValidAccountId>>) 
         -> Self 
         {
@@ -102,6 +104,8 @@ impl Marketplace {
             contract_me: mediator.clone().into(),
             contract_ft: ft.clone().into(),
             tokens: UnorderedSet::new(b"d".to_vec()),
+            usdc_contract: usdc.into(),
+            jobs_contract: ft.into(),
             usdc_balances: LookupMap::new(b"e".to_vec()),
             jobs_balances: LookupMap::new(b"f".to_vec()),
             extra_storage_in_bytes_per_service: 0,
@@ -115,13 +119,7 @@ impl Marketplace {
                 this.tokens.insert(id.as_ref());
             }
         }
-
-        let mut roles: Vec<UserRoles> = Vec::new();
-        roles.push(UserRoles::Judge);
-        this.add_user_p(roles.clone(), owner_id.into(), "{ \"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\", \"email\": \"marketplace@nearmail.com\", \"idioms\": [{ \"idiom\": \"binary\", \"level\": \"Native\" }]}".to_string());
-        this.add_user_p(roles.clone(), mediator.into(), "{ \"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\", \"email\": \"marketplace@nearmail.com\", \"idioms\": [{ \"idiom\": \"binary\", \"level\": \"Native\" }]}".to_string());
-        this.add_user_p(roles.clone(), ft.into(), "{ \"legal_name\": \"Marketplace Contract\", \"education\": \"I'am a smart contract, I dont need school\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"https://photo.png\", \"country\": \"NEARland\", \"email\": \"marketplace@nearmail.com\", \"idioms\": [{ \"idiom\": \"binary\", \"level\": \"Native\" }]}".to_string());
-            
+ 
         this.measure_min_service_storage_cost();
         this
     }
@@ -167,10 +165,10 @@ impl Marketplace {
         let initial_storage_usage = env::storage_usage();
 
         //Verificar que sea un profesional
-        // let user = self.update_user_mints(quantity); // Cantidad de servicios
-        // if !user.roles.get(&UserRoles::Professional).is_some() {
-        //     env::panic(b"Only professionals can mint a service");
-        // }
+        let user = self.update_user_mints(quantity); // Cantidad de servicios
+        if !user.roles.get(&UserRoles::Professional).is_some() {
+            env::panic(b"Only professionals can mint a service");
+        }
         // env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
@@ -277,11 +275,11 @@ impl Marketplace {
         } else {
             let token = service.metadata.token;
 
-            if token == "usdc.fakes.testnet".to_string() {
+            if token == self.usdc_contract {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
                 assert!(buyer_balance >= service.metadata.price, "Insufficient USDC balance");
             }
-            else if token == "ft.blockjobs.testnet".to_string() {
+            else if token == self.jobs_contract {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
                 assert!(buyer_balance >= service.metadata.price, "Insufficient JOBS balance");
             } 
@@ -332,15 +330,6 @@ impl Marketplace {
             BASE_GAS,
         ));
 
-        // self.delete_service(&service_id, &service.actual_owner);
-        // self.add_service(&service_id, &service.creator_id);
-        // service.on_sale = true;
-        // service.actual_owner = service.creator_id.clone();
-        // service.buy_moment = 0;
-        // service.sold = false;
-        // self.service_by_id.insert(&service_id, &service);
-
-        // service
     }
 
     /// Crear disputa en el contrato mediador.
@@ -431,16 +420,6 @@ impl Marketplace {
             sender_id.clone().to_string()
         );
     }
-
-
-    // #[payable]
-    // pub fn reclaim_service_test(&mut self, service_id: u64) {
-    //     self.assert_service_exists(&service_id);
-    //     let service = self.get_service_by_id(service_id.clone());
-    //     let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
-    //     env::log(sender_id.to_string().as_bytes());
-    //     let _res = ext_mediator::pay_service(env::signer_account_id(), service.metadata.price, &self.contract_me, NO_DEPOSIT, BASE_GAS,).then(ext_self::on_return_service(service_id, &env::current_account_id(), NO_DEPOSIT, BASE_GAS,));
-    // }
 
 
     /// Retornar un servicio al creador.
@@ -676,26 +655,6 @@ impl Marketplace {
         new_user
     }
 
-    fn add_user_p(&mut self, roles: Vec<UserRoles>, account_id: AccountId, data: String) -> User {
-        // solo vereficar los nombre del json
-        let _p: PersonalData = serde_json::from_str(&data).unwrap();
-        let services_set = UnorderedSet::new(unique_prefix(&account_id));
-        self.services_by_account.insert(&account_id, &services_set);
-        let initial_storage_usage = env::storage_usage();
-        env::log(format!("Initial store usage: {}", initial_storage_usage).as_bytes());
-        let mut new_user = User{ account_id: account_id.clone(), mints: 0, roles: HashSet::new(), reputation: 3, personal_data: Some(data), banned: false, };
-        for r in roles.iter() { new_user.roles.insert(*r); }
-        if self.users.insert(&account_id, &new_user).is_some() { env::panic(b"User account already added"); }
-
-        let new_services_size_in_bytes = env::storage_usage() - initial_storage_usage;
-        env::log(format!("New services size in bytes: {}", new_services_size_in_bytes).as_bytes());
-
-        let required_storage_in_bytes = self.extra_storage_in_bytes_per_service + new_services_size_in_bytes;
-        env::log(format!("Required storage in bytes: {}", required_storage_in_bytes).as_bytes());
-
-        deposit_refund_to(required_storage_in_bytes, account_id);
-        new_user
-    }
 
     /// Eliminar un usuario.
     /// Solo ejecutable por el admin.
@@ -710,6 +669,7 @@ impl Marketplace {
         self.services_by_account.remove(&user.account_id);
         self.users.remove(&account_id.into());
     }
+
 
     /// Reescribe las categorias del usuario.
     ///
@@ -789,7 +749,7 @@ impl Marketplace {
     /// 
     pub fn withdraw_ft(&mut self, amount: U128, token: AccountId) -> Balance {
         let sender = env::predecessor_account_id();
-        if token == "usdc.fakes.testnet".to_string() {
+        if token == self.usdc_contract {
             let actual_balance = self.usdc_balances.get(&sender).unwrap_or(0);
             assert!(actual_balance >= amount.into(), "Insufficient balance");
 
@@ -804,7 +764,7 @@ impl Marketplace {
             );
             return new_balance;
         }
-        else if token == "ft.blockjobs.testnet".to_string() {
+        else if token == self.jobs_contract {
             let actual_balance = self.jobs_balances.get(&sender).unwrap_or(0);
             assert!(actual_balance >= amount.into(), "Insufficient balance");
 
@@ -822,12 +782,6 @@ impl Marketplace {
         else {
             env::panic(b"Token not soported");
         }
-
-        // .then(ext_self::on_withdraw_ft(
-        //     amount,
-        //     &env::current_account_id(), NO_DEPOSIT, BASE_GAS)
-        // );
-
     }
 
 
@@ -881,9 +835,6 @@ impl Marketplace {
         true
     }
     
-    // pub fn validate_user_test(&self, _account_id: AccountId) -> bool {
-    //     true
-    // }
 
     /// Callback para retornar un servicio al creador.
     /// Ejecutable solo el contrator mediador una vez finalizada la disputa.

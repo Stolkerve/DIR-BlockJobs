@@ -38,7 +38,7 @@ pub struct Token {
     sales_contract: AccountId,
 }
 
-const IMAGE_ICON: &str = "";
+const IMAGE_ICON: &str = "data:image/svg+xml;charset=UTF-8,%3c?xml version='1.0' encoding='UTF-8'?%3e%3csvg width='210mm' height='297mm' version='1.1' viewBox='0 0 210 297' xmlns='http://www.w3.org/2000/svg%27%3e%3ccircle cx='105.84' cy='131.98' r='100' fill='%2327c0ef' fill-rule='evenodd' stroke-width='.26458'/%3e%3cpath transform='matrix(.43882 -.11048 .1113 .44207 -425.91 18.123)' d='m1247.1 385.15-135.85 359.34 153.92-100.71-383.73-18.162 143.35 115.27-101.31-370.56-65.327 171.95 321.12-210.86-183.72-8.9942 299.77 240.25z' fill='%23fff'/%3e%3ctext transform='matrix(1.0661 .1816 -.13523 .91493 0 0)' x='100.96188' y='160.4895' fill='%231a1a1a' font-family=''Bernard MT Condensed'' font-size='79.9px' stroke-width='.93633' style='line-height:1.25' xml:space='preserve'%3e%3ctspan x='100.96188' y='160.4895' fill='%231a1a1a' font-family=''Bernard MT Condensed'' font-size='79.9px' stroke-width='.93633'%3eJ%3c/tspan%3e%3c/text%3e%3cellipse cx='102.38' cy='90.819' rx='7.3871' ry='7.5765' fill='%231a1a1a' stroke-width='.26458'/%3e%3c/svg%3e";
 
 #[near_bindgen]
 impl Token {
@@ -51,8 +51,8 @@ impl Token {
             initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "JobsCoin Proof".to_string(),
-                symbol: "JOBSP".to_string(),
+                name: "JobsCoin".to_string(),
+                symbol: "JOBS".to_string(),
                 icon: Some(IMAGE_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
