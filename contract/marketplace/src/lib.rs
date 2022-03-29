@@ -117,7 +117,6 @@ impl Marketplace {
             }
         }
  
-        this.measure_min_service_storage_cost();
         this
     }
 
@@ -273,10 +272,17 @@ impl Marketplace {
             if token == self.usdc_contract {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
                 assert!(buyer_balance >= service.metadata.price, "Insufficient USDC balance");
+
+                let new_balance = buyer_balance - service.metadata.price;
+                self.usdc_balances.insert(&sender, &new_balance);
+
             }
             else if token == self.jobs_contract {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
                 assert!(buyer_balance >= service.metadata.price, "Insufficient JOBS balance");
+
+                let new_balance = buyer_balance - service.metadata.price;
+                self.jobs_balances.insert(&sender, &new_balance);
             } 
             else {
                 env::panic(b"Token not soported");
@@ -324,7 +330,6 @@ impl Marketplace {
             NO_DEPOSIT,
             BASE_GAS,
         ));
-
     }
 
     /// Crear disputa en el contrato mediador.
@@ -590,11 +595,11 @@ impl Marketplace {
             if p.education.len() > 60 {
                 env::panic(b"Education max 60 characters");
             }
-            if p.country.len() > 60 {
-                env::panic(b"Country max 60 characters");
-            }
-            if p.email.len() > 255 {
-                env::panic(b"Email max 255 characters");
+            // if p.country.len() > 30 {
+            //     env::panic(b"Country max 30 characters");
+            // }
+            if p.email.len() > 60 {
+                env::panic(b"Email max 60 characters");
             }
             if p.bio.len() > 400 {
                 env::panic(b"Bio max 400 characters");

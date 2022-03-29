@@ -82,20 +82,6 @@ impl Marketplace {
             .collect()
     }
 
-    pub fn measure_min_service_storage_cost(&mut self) {
-        let initial_storage_usage = env::storage_usage();
-        let tmp_account_id = "a".repeat(64);
-        let u = UnorderedSet::new(unique_prefix(&tmp_account_id));
-        self.services_by_account.insert(&tmp_account_id, &u);
-
-        let services_by_account_entry_in_bytes = env::storage_usage() - initial_storage_usage;
-        let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
-
-        self.extra_storage_in_bytes_per_service =
-            services_by_account_entry_in_bytes + owner_id_extra_cost_in_bytes;
-
-        self.services_by_account.remove(&tmp_account_id);
-    }
 
     pub fn update_user_mints(&mut self, quantity: u16) -> User {
         let sender = env::predecessor_account_id();
@@ -105,7 +91,7 @@ impl Marketplace {
 
         self.users.insert(&sender, &user);
 
-        return user
+        user
     }
 
     /**************************/
