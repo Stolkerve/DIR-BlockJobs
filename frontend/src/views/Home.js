@@ -141,7 +141,7 @@ export default function Home() {
                 src={createAService}
               ></img>
               <div className="text-center text-[#034D82] text-2xl font-bold ">
-                Create a Serivce
+                Create a Service
               </div>
               <VscArrowDown size={40} color="#034D82" className="w-full my-4" />
               <img className="max-w-[150px] mb-1" src={getHired}></img>

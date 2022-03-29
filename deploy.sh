@@ -51,10 +51,10 @@ ID2=proofs333.testnet
 # ID2=stolkerve2.testnet
 
 echo "inicializando el contrato de FT"
-near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000", "sales_contract": "'$FT'"}' --accountId $FT
+near call $FT new_default_meta '{"owner_id": "'$FT'", "initial_supply": "1000000000", "sales_contract": "'$SA'"}' --accountId $FT
 
 echo "inicializando el contrato de Marketplace"
-near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'"}' --accountId $MA --amount 0.03
+near call $MA new '{"owner_id": "'$MA'", "mediator": "'$ME'", "ft": "'$FT'", "usdc": "usdc.fakes.testnet"}' --accountId $MA --amount 0.03
 
 echo "inicializando el contrato Mediator"
 near call $ME new '{"marketplace_id": "'$MA'", "token_id": "'$FT'"}' --accountId $ME
@@ -70,8 +70,9 @@ near call $MA add_token '{"token": "'$FT'"}' --accountId $MA
 near call $MA add_token '{"token": "usdc.fakes.testnet"}' --accountId $MA
 
 # echo "Creando usuarios y servicios"
-# near call $MA add_user '{"roles": ["Professional"], "categories": "hola"}' --accountId $ID --amount 0.03
-# near call $MA add_user '{"roles": ["Employeer"], "categories": "hola"}' --accountId $ID2 --amount 0.03
+near call $MA add_user '{"roles": ["Professional"], "personal_data": "{\"legal_name\": \"Pepe Ramos\", \"education\": \"I am a smart contract, I dont need school\", \"email\": \"ramos@gmail.com\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"foto.jpg\", \"country\": \"NEARland\", \"idioms\": [{\"idiom\": \"Spain\", \"level\": \"native\"}, {\"idiom\": \"English\", \"level\": \"medium\"}]}"}' --accountId $ID --amount 0.03
+near call $MA add_user '{"roles": ["Employeer"], "personal_data": "{\"legal_name\": \"Mariano Ochoa\", \"education\": \"Im autodidactic\", \"email\": \"mariano@gmail.com\", \"links\": [\"marian.medium.com\"], \"bio\": \"I program in NEAR protocol\", \"picture\": \"foto.jpg\", \"country\": \"NEARland\", \"idioms\": [{\"idiom\": \"Spain\", \"level\": \"native\"}, {\"idiom\": \"English\", \"level\": \"medium\"}]}"}' --accountId $ID2 --amount 0.03
+
 # near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "none", "token": "near"}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
 # near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "none", "token": "usdc.fakes.testnet"}, "quantity": 1, "duration": 30}' --accountId $ID --amount 0.029
 # near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 20, "categories": "none", "token": "'$FT'"}, "quantity": 1, "duration": 20}' --accountId $ID --amount 0.029
@@ -82,8 +83,8 @@ near call $MA add_token '{"token": "usdc.fakes.testnet"}' --accountId $MA
 # near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
 # near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT
 # near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT
-near call $FT transfer_ft '{"to": "'$SA'", "amount": "10000000000000000000000"}' --accountId $FT
-near call $SA buy_ft '{}' --accountId $ID --amount 1 --gas 260000000000000
+# near call $FT transfer_ft '{"to": "'$SA'", "amount": "10000000000000000000000"}' --accountId $FT
+# near call $SA buy_ft '{}' --accountId $ID --amount 1 --gas 260000000000000
 
 # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
                                                                                     
