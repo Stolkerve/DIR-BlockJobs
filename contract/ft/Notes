@@ -6,10 +6,10 @@ near view $FT get_minter '{}' --accountId $FT
 
 near call $FT mint '{"receiver": "'$FT'"}' --accountId $ME
 
-near call $FT transfer_ft '{"to": "'$ID'", "amount": 10000}' --accountId $FT
-near call $FT block_tokens '{"amount": 10000}' --accountId $ID --depositYocto 1
+near call $FT transfer_ft '{"to": "'$ID2'", "amount": "100000000000000000000"}' --accountId $FT
+near call $FT block_tokens '{"amount": "10000000000000000000000"}' --accountId $ID --depositYocto 1
 
-near call $FT ft_transfer_call '{"receiver_id": "'$MA'", "amount": "10000000000000000000", "msg": "empty"}' --accountId $ID2 --depositYocto 1 --gas 100000000000000
+near call $FT ft_transfer_call '{"receiver_id": "'$MA'", "amount": "80000000000000000000", "msg": "empty"}' --accountId $ID2 --depositYocto 1 --gas 100000000000000
 
 # near call $FT increase_allowance '{"account": "'$ID'"}' --accountId $ME
 # near call $FT decrease_allowance '{"account": "'$ID'"}' --accountId $ME

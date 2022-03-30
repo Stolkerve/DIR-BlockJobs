@@ -682,8 +682,6 @@ pub trait Marketplace {
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
     fn validate_tokens(account_id: AccountId);
-    // fn increase_allowance(account: AccountId);
-    // fn decrease_allowance(account: AccountId);
     fn applicant_winner(votes: HashSet<Vote>);
     fn accused_winner(votes: HashSet<Vote>);
 }
@@ -692,8 +690,6 @@ pub trait ExtSelf {
     fn on_pre_vote(dispute_id: u64, user_id: AccountId);
     fn on_vote(dispute_id: u64, user_id: AccountId, vote: bool);
     fn on_return_service(service_id: u64);
-    // fn on_increase_allowance();
-    // fn on_decrease_allowance();
     fn on_ban_user();
 }
 #[ext_contract(ext_contract)]
