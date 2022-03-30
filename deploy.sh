@@ -72,18 +72,26 @@ near call $MA add_token '{"token": "usdc.fakes.testnet"}' --accountId $MA
 # echo "Creando usuarios y servicios"
 near call $MA add_user '{"roles": ["Professional"], "personal_data": "{\"legal_name\": \"Pepe Ramos\", \"education\": \"I am a smart contract, I dont need school\", \"email\": \"ramos@gmail.com\", \"links\": [], \"bio\": \"I live inside of a smart contract in the NEAR protocol\", \"picture\": \"foto.jpg\", \"country\": \"NEARland\", \"idioms\": [{\"idiom\": \"Spain\", \"level\": \"native\"}, {\"idiom\": \"English\", \"level\": \"medium\"}]}"}' --accountId $ID --amount 0.03
 near call $MA add_user '{"roles": ["Employeer"], "personal_data": "{\"legal_name\": \"Mariano Ochoa\", \"education\": \"Im autodidactic\", \"email\": \"mariano@gmail.com\", \"links\": [\"marian.medium.com\"], \"bio\": \"I program in NEAR protocol\", \"picture\": \"foto.jpg\", \"country\": \"NEARland\", \"idioms\": [{\"idiom\": \"Spain\", \"level\": \"native\"}, {\"idiom\": \"English\", \"level\": \"medium\"}]}"}' --accountId $ID2 --amount 0.03
+near view $MA get_user '{"account_id": "'$ID2'"}' --accountId $MA
 
-# near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "none", "token": "near"}, "quantity": 3, "duration": 30}' --accountId $ID --amount 0.029
-# near call $MA mint_service '{"metadata": {"title": "Desarrollo web", "description": "Trabajo part-time con React", "icon": "foto.png", "price": 1, "categories": "none", "token": "usdc.fakes.testnet"}, "quantity": 1, "duration": 30}' --accountId $ID --amount 0.029
-# near call $MA mint_service '{"metadata": {"title": "Near Apps", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 20, "categories": "none", "token": "'$FT'"}, "quantity": 1, "duration": 20}' --accountId $ID --amount 0.029
+near call $MA mint_service '{"metadata": {"title": "Near App NEAR", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 1, "categories": "[\"Blockchain\"]", "token": "near"}, "quantity": 2, "duration": 1}' --accountId $ID --amount 0.029
+near call $MA mint_service '{"metadata": {"title": "Near App USDC", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 1, "categories": "[\"Blockchain\"]", "token": "usdc.fakes.testnet"}, "quantity": 2, "duration": 1}' --accountId $ID --amount 0.029
+near call $MA mint_service '{"metadata": {"title": "Near App JOBS", "description": "Trabajo part-time con Rust", "icon": "foto.png", "price": 2, "categories": "[\"Blockchain\"]", "token": "'$FT'"}, "quantity": 2, "duration": 1}' --accountId $ID --amount 0.029
 
-# # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --amount 1 --gas 10000000000000
-# # near call $MA reclaim_dispute '{"service_id": 0, "proves": "none"}' --accountId $ID2 --amount 0.2 --gas 100000000000000
+near call $MA buy_service '{"service_id": 1}' --accountId $ID2 --amount 1 --gas 10000000000000
+near call $MA reclaim_dispute '{"service_id": 1, "proves": "none"}' --accountId $ID2 --amount 0.1 --gas 100000000000000
+
+near call $FT transfer_ft '{"to": "'$ID2'", "amount": "100000000000000000000"}' --accountId $FT
+near view $FT get_balance_of '{"account": "'$ID2'"}' --accountId $FT
+
+
 
 # near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1
-# near call $FT transfer_ft '{"to": "'$MA'", "amount": "100000000000000000000"}' --accountId $FT
-# near call $FT transfer_ft '{"to": "'$ME'", "amount": "100000000000000000000"}' --accountId $FT
-# near call $FT transfer_ft '{"to": "'$SA'", "amount": "10000000000000000000000"}' --accountId $FT
+near call $FT transfer_ft '{"to": "'$MA'", "amount": "1000000000000000000"}' --accountId $FT
+near call $FT ft_transfer_call '{"receiver_id": "'$MA'", "amount": "80000000000000000000", "msg": "empty"}' --accountId $ID2 --depositYocto 1 --gas 100000000000000
+
+# near call $FT transfer_ft '{"to": "'$ME'", "amount": "1000000000000000000"}' --accountId $FT
+# near call $FT transfer_ft '{"to": "'$SA'", "amount": "1000000000000000000"}' --accountId $FT
 # near call $SA buy_ft '{}' --accountId $ID --amount 1 --gas 260000000000000
 
 # near call $MA buy_service '{"service_id": 0}' --accountId $ID2 --depositYocto 1 --gas 300000000000000
