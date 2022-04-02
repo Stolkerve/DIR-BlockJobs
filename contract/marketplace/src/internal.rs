@@ -45,7 +45,6 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
     }
 }
 
-
 /// Internal function to Option values
 pub(crate) fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
     option.unwrap_or_else(|| env::panic(message))

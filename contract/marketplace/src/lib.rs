@@ -781,6 +781,23 @@ impl Marketplace {
         self.tokens.insert(token.as_ref());
         token
     }
+
+
+    /// Agregar nuevo Admin.
+    /// 
+    pub fn add_admin(&mut self, account: ValidAccountId, add: bool) -> ValidAccountId {
+        self.assert_owner();
+
+        if add {
+            assert!(!self.admins.contains(&account.to_string()), "Admin already added");
+            self.admins.insert(account.as_ref());
+        }
+        else {
+            assert!(self.admins.contains(&account.to_string()), "Account is not an Admin");
+            self.admins.remove(account.as_ref());
+        }
+        account
+    }
     
 
     /// Modificar las address de los contratos
@@ -801,7 +818,7 @@ impl Marketplace {
 
     /// Modificar tiempo promedio de bloque
     /// 
-    pub fn change_block_time(&mut self, new_time: u64) {
+    pub fn set_block_time(&mut self, new_time: u64) {
         self.assert_owner();
         self.average_block_time = new_time;
     }
