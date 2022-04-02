@@ -507,7 +507,7 @@ impl Mediator {
     /// Bannear un usuario para casos de fraudes en disputas.
     /// 
     pub fn ban_user(&self, user_id: AccountId) {
-        self.assert_admin(&env::signer_account_id());
+        self.assert_owner(&env::signer_account_id());
 
         let _res = ext_marketplace::ban_user_by_mediator(
             user_id,
@@ -599,7 +599,7 @@ impl Mediator {
     }
 
     // Verificacion de que es un Admin.
-    fn assert_admin(&self, account: &AccountId) {
+    fn assert_owner(&self, account: &AccountId) {
         if !self.admins.contains(&account) {
             env::panic(b"Isn't an Admin");
         }

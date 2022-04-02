@@ -70,10 +70,10 @@ pub struct ServiceUpdateOnSaleData {id: String, on_sale: String}
 
 // #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug)]
-pub struct UserNewData {id: String, roles: String, data: Option<String>, reputation: String, banned: String}
+pub struct UserNewData {id: String, employee: bool, data: Option<String>, reputation: String, banned: String}
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct UserUpdateRolesData {id: String, roles: String}
+pub struct UserUpdateRolesData {id: String, remove: bool}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserUpdateDatesData {id: String, data: String}
@@ -144,8 +144,8 @@ impl NearEvent {
 
 
     // Registro de un nuevo usuario.
-    pub fn log_user_new(id: String, roles: String, data: Option<String>, reputation: String, banned: String) {
-        let data = UserNewData {id, roles, data, reputation, banned};
+    pub fn log_user_new(id: String, employee: bool, data: Option<String>, reputation: String, banned: String) {
+        let data = UserNewData {id, employee, data, reputation, banned};
         NearEvent::UserNew(data).log();
     }
 
@@ -156,8 +156,8 @@ impl NearEvent {
     }
 
     // Modificar los roles de un usuario.
-    pub fn log_user_update_roles(id: String, roles: String) {
-        let data = UserUpdateRolesData {id, roles};
+    pub fn log_user_update_roles(id: String, remove: bool) {
+        let data = UserUpdateRolesData {id, remove};
         NearEvent::UserUpdateRoles(data).log();
     }
 
