@@ -81,9 +81,9 @@ near call $MA mint_service '{"metadata": {"title": "Near App JOBS", "description
 near call $MA buy_service '{"service_id": 1}' --accountId $ID2 --amount 1 --gas 10000000000000
 near call $MA reclaim_dispute '{"service_id": 1, "proves": "none"}' --accountId $ID2 --amount 0.1 --gas 100000000000000
 
+near call usdc.fakes.testnet storage_deposit '{"registration_only": true, "account_id": "'$MA'"}' --accountId $MA --depositYocto 1000000000000000000000000 --gas 10000000000000
 near call $FT transfer_ft '{"to": "'$ID2'", "amount": "100000000000000000000"}' --accountId $FT
 near view $FT get_balance_of '{"account": "'$ID2'"}' --accountId $FT
-
 
 
 # near call $FT ft_transfer '{"receiver_id": "'$ID2'", "amount": "10000000000000000000000"}' --accountId $FT --depositYocto 1

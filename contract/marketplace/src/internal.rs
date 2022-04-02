@@ -54,43 +54,27 @@ pub(crate) fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
 
 #[near_bindgen]
 impl Marketplace {
-
-    /******************************/
-    /***** INTERNAL FUNCTIONS  ****/
-    /******************************/
-
-    pub fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
-        let keys = self.users.keys_as_vector();
-        let values = self.users.values_as_vector();
-        (from_index..std::cmp::min(from_index + limit, self.users.len()))
-            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
-            .collect()
-    }
-
-
-    pub fn update_user_mints(&mut self, quantity: u16) -> User {
-        let sender = env::predecessor_account_id();
-        let mut user = expect_value_found(self.users.get(&sender), "Before mint a service, create an user".as_bytes());
-        
-        user.mints += quantity;
-
-        self.users.insert(&sender, &user);
-
-        user
-    }
-
+    
     /**************************/
     /******** ASSERTS  ********/
     /**************************/
 
-    /// Verificar que sea el admin.
-    pub fn assert_admin(&self) {
+    /// Verificar que sea el Owner.
+    pub fn assert_owner(&self) {
         assert_eq!(
             &env::predecessor_account_id(),
-            &self.contract_owner,
+            &self.owner,
             "Must be owner_id how call its function"
         );
     } 
+
+    /// Verificar que sea Admin.
+    pub fn assert_admin(&self) {
+        if !self.admins.contains(&env::predecessor_account_id()) {
+            panic!("Must be owner_id how call its function")
+        }
+    } 
+
 
     /// Verificar que el servicio exista.
     pub fn assert_service_exists(&self, service_id: &u64) {
@@ -103,6 +87,15 @@ impl Marketplace {
     /******* GET FUNCTIONS  ********/
     /*******************************/
 
+    pub fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
+        let keys = self.users.keys_as_vector();
+        let values = self.users.values_as_vector();
+        (from_index..std::cmp::min(from_index + limit, self.users.len()))
+            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
+            .collect()
+    }
+
+
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user(&self, account_id: ValidAccountId) -> User {
@@ -112,16 +105,24 @@ impl Marketplace {
     /// TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_users_by_role(&self, role: UserRoles, from_index: u64, limit: u64) -> Vec<User> {
+    pub fn get_users_by_role(&self, employee: bool, from_index: u64, limit: u64) -> Vec<User> {
         let mut users_by_role: Vec<User> = Vec::new();
 
         let users = self.get_users(from_index, limit);
 
-        for (_account_id, user) in users.iter() {
-            if user.roles.get(&role).is_some() {
-                users_by_role.push((*user).clone());
+        if employee == true {
+            for (_account_id, user) in users.iter() {
+                if user.is_employee == true {
+                    users_by_role.push((*user).clone());
+                }
             }
-        }
+        } else {
+            for (_account_id, user) in users.iter() {
+                if user.is_company == true {
+                    users_by_role.push((*user).clone());
+                }
+            }
+        } 
         users_by_role
     }
 

@@ -21,7 +21,7 @@ const BASE_GAS: Gas = 30_000_000_000_000;
 const GAS_FT_TRANSFER: Gas = 10_000_000_000_000;
 const ONE_DAY: u64 = 86400000000000;
 const ONE_YOCTO: Balance = 1;
-const DECIMALS: Balance = 1_000_000_000_000_000_000;
+const DECIMALS: Balance = 1_000_000;
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -63,7 +63,8 @@ pub struct Marketplace {
     pub total_services: u64,
     // Usuarios del marketplace.
     pub users: UnorderedMap<AccountId, User>,
-    pub contract_owner: AccountId,
+    pub owner: AccountId,
+    pub admins: UnorderedSet<AccountId>,
     pub contract_me: AccountId,
     pub contract_ft: AccountId,
     // Tokens soportados.
@@ -73,6 +74,7 @@ pub struct Marketplace {
     // Balance disponible de tokens de los usuarios.
     pub usdc_balances: LookupMap<AccountId, Balance>,
     pub jobs_balances: LookupMap<AccountId, Balance>,
+    pub average_block_time: u64
 }
 
 #[near_bindgen]
@@ -98,7 +100,8 @@ impl Marketplace {
             services_by_account: LookupMap::new(b"a".to_vec()),
             service_by_id: UnorderedMap::new(b"b".to_vec()),
             users: UnorderedMap::new(b"c".to_vec()),
-            contract_owner: owner_id.clone().into(),
+            owner: owner_id.clone().into(),
+            admins: UnorderedSet::new(b"c".to_vec()),
             contract_me: mediator.clone().into(),
             contract_ft: ft.clone().into(),
             tokens: UnorderedSet::new(b"d".to_vec()),
@@ -106,6 +109,7 @@ impl Marketplace {
             jobs_contract: ft.into(),
             usdc_balances: LookupMap::new(b"e".to_vec()),
             jobs_balances: LookupMap::new(b"f".to_vec()),
+            average_block_time: 121
         };
         // Agregar NEAR por default.
         this.tokens.insert(&"near".to_string());
@@ -116,7 +120,6 @@ impl Marketplace {
                 this.tokens.insert(id.as_ref());
             }
         }
- 
         this
     }
 
@@ -161,10 +164,9 @@ impl Marketplace {
         let initial_storage_usage = env::storage_usage();
 
         //Verificar que sea un profesional
-        let user = self.update_user_mints(quantity); // Cantidad de servicios
-        if !user.roles.get(&UserRoles::Professional).is_some() {
-            env::panic(b"Only professionals can mint a service");
-        }
+        let user = self.get_user(string_to_valid_account_id(&sender).clone()); // Cantidad de servicios
+        assert_eq!(user.is_employee == true, b"Only professionals can mint a service");
+        
         // env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
         let mut service = Service {
@@ -235,10 +237,7 @@ impl Marketplace {
 
         let sender = env::predecessor_account_id();
         let buyer = self.get_user(string_to_valid_account_id(&sender).clone());
-        // Verificar que quien compra tenga rol de empleador.
-        if buyer.roles.get(&UserRoles::Admin).is_none() && buyer.roles.get(&UserRoles::Employeer).is_none() {
-            env::panic(b"Only employers can buy services");
-        }
+
         // Verificar que no lo haya comprado ya.
         if buyer.account_id == service.actual_owner.clone() {
             env::panic(b"Already is the service owner");
@@ -310,16 +309,20 @@ impl Marketplace {
     /// Dar por aprobado un servicio por parte del empleador.
     /// 
     #[payable]
-    pub fn approve_service(&mut self, service_id: u64) {
+    pub fn approve_service(&mut self, service_id: u64, vote: u16) {
         let service = self.get_service_by_id(service_id.clone());
         let user = env::predecessor_account_id();
 
         assert!(service.actual_owner == user, "You aren't the owner");
         assert!(service.on_dispute == false, "You already have requested a dispute for this service");
 
+        let mut creator = self.get_user(string_to_valid_account_id(&service.creator_id).clone());
+        creator.reputation += vote;
+        creator.votes += 1;
+
         let _res = ext_mediator::pay_service(
             env::signer_account_id(),
-            service.metadata.price.into(),
+            (service.metadata.price*DECIMALS).into(),
             service.metadata.token.clone(),
             &self.contract_me,
             ONE_YOCTO,
@@ -332,6 +335,7 @@ impl Marketplace {
         ));
     }
 
+    
     /// Crear disputa en el contrato mediador.
     /// Solo ejecutable por el empleador que compro el servicio.
     ///
@@ -385,7 +389,7 @@ impl Marketplace {
 
         // Verificar que haya pasado el tiempo establecido para poder hacer el reclamo.
         env::log(format!("Tiempo de liberacion {}", service.buy_moment + ONE_DAY * (service.duration as u64)).as_bytes());
-        if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64) {
+        if env::block_timestamp() < service.buy_moment + ONE_DAY * (service.duration as u64) / (self.average_block_time/100) {
             env::panic("Insuficient time to reclame the service".as_bytes());
         }
 
@@ -434,13 +438,13 @@ impl Marketplace {
         let sender_id = string_to_valid_account_id(&env::predecessor_account_id());
         env::log(sender_id.to_string().as_bytes());
         let sender = self.get_user(sender_id.clone());
-        if sender.roles.get(&UserRoles::Admin).is_none()  {
+        if !self.admins.contains(&sender.account_id) {
             env::panic("Only admins can give back the services".as_bytes());
         }
 
         let _res = ext_mediator::pay_service(
             env::signer_account_id(),
-            service.metadata.price.into(),
+            (service.metadata.price*DECIMALS).into(),
             service.metadata.token.clone(),
             &self.contract_me,
             NO_DEPOSIT,
@@ -505,7 +509,7 @@ impl Marketplace {
         let sender = self.get_user(sender_id.clone());
         let owner = service.creator_id.clone();
         let owner_id = string_to_valid_account_id(&owner);
-        if (sender_id != owner_id) && sender.roles.get(&UserRoles::Admin).is_none() {
+        if !self.admins.contains(&sender.account_id) {
             env::panic("Only the creator or Admins can change metadata services".as_bytes());
         }
 
@@ -548,7 +552,7 @@ impl Marketplace {
         let is_creator = service.creator_id == sender;
 
         // Verificar que sea el cleador.
-        if !user.roles.get(&UserRoles::Admin).is_some() && !is_creator {
+        if !self.admins.contains(&user.account_id) && !is_creator {
             env::panic("Only the owner or admin can desactivate or activate the service".as_bytes());
         }
 
@@ -580,7 +584,7 @@ impl Marketplace {
     /// * `roles`        - El rol o roles que tendra el usuario. Solo los admin puenden decir quien es moderador.
     /// * `personal_data`    - Categorias y areas las cuales el usuario puede decir a que se dedica.
     #[payable]
-    pub fn add_user(&mut self, roles: Vec<UserRoles>, personal_data: Option<String>) -> User {
+    pub fn add_user(&mut self, is_employee: bool, personal_data: Option<String>) -> User {
         let initial_storage_usage = env::storage_usage();
         env::log(format!("initial store usage: {}", initial_storage_usage).as_bytes());
 
@@ -595,9 +599,9 @@ impl Marketplace {
             if p.education.len() > 60 {
                 env::panic(b"Education max 60 characters");
             }
-            // if p.country.len() > 30 {
-            //     env::panic(b"Country max 30 characters");
-            // }
+            if p.country.len() > 30 {
+                env::panic(b"Country max 30 characters");
+            }
             if p.email.len() > 60 {
                 env::panic(b"Email max 60 characters");
             }
@@ -618,16 +622,13 @@ impl Marketplace {
 
         let mut new_user = User{
             account_id: account_id.clone(),
-            mints: 0,
-            roles: HashSet::new(),
-            reputation: 0,
+            reputation: 40,
+            votes: 1,
+            is_employee: is_employee,
+            is_company: false,
             personal_data: personal_data, 
             banned: false,
         };
-
-        for r in roles.iter() {
-            new_user.roles.insert(*r);
-        }
 
         if self.users.insert(&account_id, &new_user).is_some() {
             env::panic(b"User account already added");
@@ -638,11 +639,9 @@ impl Marketplace {
 
         deposit_refund_to(required_storage_in_bytes, account_id);
 
-        let rol: String = roles[0].to_string();
-
         NearEvent::log_user_new(
             new_user.account_id.clone().to_string(),
-            rol,
+            is_employee,
             new_user.personal_data.clone(),
             new_user.reputation.clone().to_string(),
             new_user.banned.clone().to_string()
@@ -652,12 +651,12 @@ impl Marketplace {
 
 
     /// Eliminar un usuario.
-    /// Solo ejecutable por el admin.
+    /// Solo ejecutable por el Admin.
     ///
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     pub fn remove_user(&mut self, account_id: ValidAccountId) {
-        self.assert_admin();
+        self.assert_owner();
         
         let user = self.get_user(account_id.clone());
 
@@ -707,36 +706,26 @@ impl Marketplace {
 
     /// Agregar o quitar un rol al usuario.
     ///
-    /// #Arguments
-    /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
-    /// * `role`        - El role que tendra el usuario. Solo los admin puenden decir quien es moderador.
-    #[payable]
-    pub fn set_user_role(&mut self, account_id: ValidAccountId, role: UserRoles, remove: bool) -> User {
-        let is_user_sender = env::predecessor_account_id() != account_id.to_string();
-        let is_owner_sender = env::predecessor_account_id() != self.contract_owner;
-
-        if is_user_sender && is_owner_sender {
-            env::panic(b"Only the user and admins can modify this parameter");
-        }
-        if is_owner_sender && (role as u8 > 1) {
-            env::panic(b"Only the admins can have the Admin or Modder role");
-        }
+    pub fn set_user_role(&mut self, account_id: ValidAccountId, remove: bool) -> User {
+        self.assert_admin();
 
         let mut user = self.get_user(account_id.clone());
 
-        if !remove { user.roles.insert(role); }
-        else { user.roles.remove(&role); }
+        if !remove { user.is_company = true }
+        else { user.is_company = false }
 
         self.users.insert(&account_id.clone().into(), &user);
-        let rol: String = role.to_string();
 
         NearEvent::log_user_update_roles(
             account_id.clone().to_string(),
-            rol
+            remove
         );
         user
     }
 
+    //////////////////////
+    // * FT FUNCTIONS * //
+    /////////////////////
 
     /// Hacer withdraw de los FT por parte del usuario.
     /// 
@@ -785,7 +774,7 @@ impl Marketplace {
     /// Agregar nuevo token soportado.
     /// 
     pub fn add_token(&mut self, token: ValidAccountId) -> ValidAccountId {
-        self.assert_admin();
+        self.assert_owner();
         if self.tokens.contains(&token.to_string()) {
             env::panic(b"Token already added");
         }
@@ -793,12 +782,13 @@ impl Marketplace {
         token
     }
     
+
     /// Modificar las address de los contratos
     /// 
     pub fn change_address(&mut self, contract_name: String, new_address: AccountId) {
-        self.assert_admin();
+        self.assert_owner();
         if contract_name == "marketplace".to_string() {
-            self.contract_owner = new_address;
+            self.owner = new_address;
         } else if contract_name == "mediator".to_string() {
             self.contract_me = new_address;
         } else if contract_name == "ft".to_string() {
@@ -808,9 +798,18 @@ impl Marketplace {
         }
     }
 
-    /*******************************/
-    /****** CALLBACK FUNCTIONS *****/
-    /*******************************/
+
+    /// Modificar tiempo promedio de bloque
+    /// 
+    pub fn change_block_time(&mut self, new_time: u64) {
+        self.assert_owner();
+        self.average_block_time = new_time;
+    }
+
+
+    /********************************/
+    /****** CALLBACK FUNCTIONS ******/
+    /********************************/
 
     /// Verificar datos de usuario desde mediator
     /// 
@@ -818,13 +817,9 @@ impl Marketplace {
         let user_id = string_to_valid_account_id(&account_id);
         let user = self.get_user(user_id);
 
-        if !user.roles.get(&UserRoles::Judge).is_some() {
-            env::panic(b"Is required have a Judge status to can vote");
-        }
-        if user.reputation < 3 {
+        if user.reputation/user.votes < 30 {
             env::panic(b"Your reputation isn't sufficient");
         }
-        
         true
     }
     
@@ -853,6 +848,7 @@ impl Marketplace {
 
         service
     }
+
 
     /// Banear un usuario ante fraude en una disputa
     /// Solo ejecutable por Admins del contrato mediadot
