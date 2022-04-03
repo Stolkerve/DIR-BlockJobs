@@ -582,7 +582,7 @@ impl Marketplace {
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet de quien sera registrado.
     /// * `roles`        - El rol o roles que tendra el usuario. Solo los admin puenden decir quien es moderador.
-    /// * `personal_data`    - Categorias y areas las cuales el usuario puede decir a que se dedica.
+    /// * `personal_data`    - Categories y areas las cuales el usuario puede decir a que se dedica.
     #[payable]
     pub fn add_user(&mut self, is_employee: bool, personal_data: Option<String>) -> User {
         let initial_storage_usage = env::storage_usage();
