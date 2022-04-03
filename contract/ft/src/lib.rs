@@ -130,7 +130,7 @@ impl Token {
     //     amount
     // }
 
-    /// Enviar tokens a este contrato para poder er miembro de los jurados.
+    /// Send tokens a este contrato para poder er miembro de los jurados.
     /// Estos tokens aumentan o disminuyen a partir de las votaciones.
     /// 
     #[payable]

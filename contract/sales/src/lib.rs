@@ -53,7 +53,7 @@ impl Sale {
     }
 
 
-    /// Comprar tokens BJT a cambio de NEARs.
+    /// Buy tokens BJT a cambio de NEARs.
     /// 
     #[payable]
     pub fn buy_ft(&mut self) {

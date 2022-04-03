@@ -74,7 +74,7 @@ pub struct Dispute {
     applicant: AccountId, // Empleador demandante.
     accused: AccountId,   // Profesional acusado.
     winner: Option<AccountId>,
-    // Pruebas.
+    // Proofs.
     applicant_proves: String,       // Un markdown con las pruebas.
     accused_proves: Option<String>, // Un markdown con las pruebas.
     // Precio pagado por el servicio.
