@@ -12,7 +12,7 @@ use near_sdk::{env, log, near_bindgen, AccountId, Balance,
 
 near_sdk::setup_alloc!();
 
-const DECIMALS: Balance = 1_000_000_000_000_000_000; 
+const DECIMALS: Balance = 1_000_000; 
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Debug, Hash, Eq, PartialOrd, PartialEq, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -38,7 +38,7 @@ pub struct Token {
     sales_contract: AccountId,
 }
 
-const IMAGE_ICON: &str = "";
+const IMAGE_ICON: &str = "data:image/svg+xml;charset=UTF-8,%3c?xml version='1.0' encoding='UTF-8'?%3e%3csvg width='210mm' height='297mm' version='1.1' viewBox='0 0 210 297' xmlns='http://www.w3.org/2000/svg%27%3e%3ccircle cx='105.84' cy='131.98' r='100' fill='%2327c0ef' fill-rule='evenodd' stroke-width='.26458'/%3e%3cpath transform='matrix(.43882 -.11048 .1113 .44207 -425.91 18.123)' d='m1247.1 385.15-135.85 359.34 153.92-100.71-383.73-18.162 143.35 115.27-101.31-370.56-65.327 171.95 321.12-210.86-183.72-8.9942 299.77 240.25z' fill='%23fff'/%3e%3ctext transform='matrix(1.0661 .1816 -.13523 .91493 0 0)' x='100.96188' y='160.4895' fill='%231a1a1a' font-family=''Bernard MT Condensed'' font-size='79.9px' stroke-width='.93633' style='line-height:1.25' xml:space='preserve'%3e%3ctspan x='100.96188' y='160.4895' fill='%231a1a1a' font-family=''Bernard MT Condensed'' font-size='79.9px' stroke-width='.93633'%3eJ%3c/tspan%3e%3c/text%3e%3cellipse cx='102.38' cy='90.819' rx='7.3871' ry='7.5765' fill='%231a1a1a' stroke-width='.26458'/%3e%3c/svg%3e";
 
 #[near_bindgen]
 impl Token {
@@ -51,12 +51,12 @@ impl Token {
             initial_supply,
             FungibleTokenMetadata {
                 spec: FT_METADATA_SPEC.to_string(),
-                name: "JobsCoin Proof".to_string(),
-                symbol: "JOBSP".to_string(),
+                name: "JobsCoin".to_string(),
+                symbol: "JOBS".to_string(),
                 icon: Some(IMAGE_ICON.to_string()),
                 reference: None,
                 reference_hash: None,
-                decimals: 18,
+                decimals: 6,
             },
             sales_contract,
         )
@@ -79,12 +79,12 @@ impl Token {
             owner: owner_id.clone(),
             locked_tokens: LookupMap::new(b"a".to_vec()),
             pending_to_mint: 0,
-            min_blocked_amount: 10_000,
+            min_blocked_amount: 10_000*DECIMALS,
             sales_contract: sales_contract
         };
         let amount: Balance = total_supply.into();
         this.token.internal_register_account(owner_id.as_ref());
-        this.token.internal_deposit(owner_id.as_ref(), amount*DECIMALS);
+        this.token.internal_deposit(owner_id.as_ref(), amount);
         this
     }
 
@@ -97,19 +97,11 @@ impl Token {
     /// 
     pub fn mint(&mut self, receiver: ValidAccountId) {
         self.assert_minter(env::predecessor_account_id());
-        self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
+        self.mint_into(&receiver.to_string(), self.pending_to_mint);
 
         self.pending_to_mint = 0;
     }
 
-    // /// Mintear nuevos tokens, limitado por pending_amount.
-    // /// No se puede mintear por sobre esa cantidad.
-    // /// 
-    // pub fn mint_test(&mut self, receiver: ValidAccountId) {
-    //     self.mint_into(&receiver.to_string(), self.pending_to_mint*DECIMALS);
-
-    //     self.pending_to_mint = 0;
-    // }
 
     /// Cambiar la cuenta con permisos para mintear.
     /// Solo puede haber un Minter.
@@ -124,33 +116,31 @@ impl Token {
     /// 
     pub fn update_min_blocked_amount(&mut self, amount: Balance) -> bool {
         self.assert_owner();
-        self.min_blocked_amount = amount*DECIMALS;
+        self.min_blocked_amount = amount;
         true
     }
 
-    pub fn transfer_ft(&mut self, to: AccountId, amount: U128) -> U128 {
-        let sender = env::predecessor_account_id();
+    // pub fn transfer_ft(&mut self, to: AccountId, amount: U128) -> U128 {
+    //     let sender = env::predecessor_account_id();
+    //     self.token.internal_register_account(&to);
+    //     if !self.token.accounts.contains_key(&to) {
+    //         self.token.accounts.insert(&to, &0);
+    //     }
+    //     self.token.internal_transfer(&sender, &to, amount.into(), None);
+    //     amount
+    // }
 
-        // self.token.internal_register_account(&to);
-        if !self.token.accounts.contains_key(&to) {
-            self.token.accounts.insert(&to, &0);
-        }
-        self.token.internal_transfer(&sender, &to, amount.into(), None);
-
-        amount
-    }
-
-    /// Enviar tokens a este contrato para poder er miembro de los jurados.
+    /// Send tokens a este contrato para poder er miembro de los jurados.
     /// Estos tokens aumentan o disminuyen a partir de las votaciones.
     /// 
     #[payable]
     pub fn block_tokens(&mut self, amount: Balance) -> Balance {
         let sender = env::signer_account_id();
         let contract = self.owner.clone();
-        self.ft_transfer(contract, (amount*DECIMALS).into() , None);
+        self.ft_transfer(contract, (amount).into() , None);
 
         // Modificar locked_tokens sumando lo bloqueado
-        self.locked_tokens.insert(&sender, &(amount*DECIMALS + self.locked_tokens.get(&sender).unwrap_or(0)));
+        self.locked_tokens.insert(&sender, &(amount + self.locked_tokens.get(&sender).unwrap_or(0)));
 
         // Retornar locked_tokens
         self.locked_tokens.get(&sender).unwrap_or(0)
@@ -163,15 +153,14 @@ impl Token {
         let sender = env::signer_account_id();
         let contract = self.owner.clone().into();
 
-        assert!(self.locked_tokens.get(&sender) >= Some(amount*DECIMALS), "Insufficient balance");
+        assert!(self.locked_tokens.get(&sender) >= Some(amount), "Insufficient balance");
         
-        self.token.internal_transfer(&contract, &sender, amount*DECIMALS, None);
+        self.token.internal_transfer(&contract, &sender, amount, None);
         
-        let new_locked_tokens = self.locked_tokens.get(&sender).unwrap_or(0) - amount*DECIMALS;
+        let new_locked_tokens = self.locked_tokens.get(&sender).unwrap_or(0) - amount;
         
         // Modificar locked_tokens restando lo que se retira
         self.locked_tokens.insert(&sender, &new_locked_tokens);
-        
         // Retornar la locked_tokens actualizada
         self.locked_tokens.get(&sender).unwrap_or(0)
     }
@@ -225,37 +214,6 @@ impl Token {
         }
     }
 
-    // /// Incrementa en 3% el balance de un miembro de los jurados.
-    // /// Solo ejecutable por y desde Mediator.
-    // /// 
-    // fn increase_allowance(&mut self, account: AccountId) -> Balance {
-    //     self.assert_minter(env::signer_account_id());
-
-    //     self.pending_to_mint += self.allowance.get(&account).unwrap_or(0) * 103 / 100 - self.allowance.get(&account).unwrap_or(0);
-    //     let new_allowance = self.allowance.get(&account).unwrap_or(0) * 103 / 100 ;
-
-    //     // Modificar allowance aumentando en 3%
-    //     self.allowance.insert(&account, &new_allowance);
-
-    //     // Retornar la allowance actualizada
-    //     self.allowance.get(&account).unwrap_or(0)
-    // }
-
-    // /// Decrementa en 3% el balance de un miembro de los jurados.
-    // /// Solo ejecutable por y desde Mediator.
-    // /// 
-    // fn decrease_allowance(&mut self, account: AccountId) {
-    //     self.assert_minter(env::signer_account_id());
-
-    //     let new_allowance = self.allowance.get(&account).unwrap_or(0) * 100 / 103;
-
-    //     // Modificar allowance disminuyendo en 3%
-    //     self.allowance.insert(&account, &new_allowance);
-
-    //     // Retornar la allowance actualizada
-    //     //self.allowance.get(&account).unwrap_or(0)
-    // }
-
 
     /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
     /// Solo ejecutable por y desde desde Mediator.
@@ -277,12 +235,6 @@ impl Token {
         self.sales_contract = new_account_id;
     }
 
-    // /// Verificar que el ususario tenga el suficiente balance bloqueado para poder ser jurado.
-    // /// Solo ejecutable por y desde desde Mediator.
-    // /// 
-    // pub fn validate_tokens_test(&self, _account_id: AccountId) -> bool {
-    //     true
-    // }
 
     // #[payable]
     pub fn ft_sale(&mut self, from: AccountId, to: AccountId, amount: Balance) -> Balance {    
@@ -291,7 +243,7 @@ impl Token {
         if !self.token.accounts.contains_key(&to) {
             self.token.accounts.insert(&to, &0);
         }
-        self.token.internal_transfer(&from, &to, amount*DECIMALS, None);
+        self.token.internal_transfer(&from, &to, amount, None);
         amount
     }
 
@@ -380,71 +332,71 @@ impl FungibleTokenMetadataProvider for Token {
     }
 }
 
-// #[cfg(all(test, not(target_arch = "wasm32")))]
-// mod tests {
-//     use near_sdk::test_utils::{accounts, VMContextBuilder};
-//     use near_sdk::MockedBlockchain;
-//     use near_sdk::{testing_env, Balance};
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod tests {
+    use near_sdk::test_utils::{accounts, VMContextBuilder};
+    use near_sdk::MockedBlockchain;
+    use near_sdk::{testing_env, Balance};
 
-//     use super::*;
+    use super::*;
 
-//     const TOTAL_SUPPLY: Balance = 1_000_000_000_000_000;
+    const TOTAL_SUPPLY: Balance = 1_000_000_000_000_000;
 
-//     fn get_context(predecessor_account_id: ValidAccountId) -> VMContextBuilder {
-//         let mut builder = VMContextBuilder::new();
-//         builder
-//             .current_account_id(accounts(0))
-//             .signer_account_id(predecessor_account_id.clone())
-//             .predecessor_account_id(predecessor_account_id);
-//         builder
-//     }
+    fn get_context(predecessor_account_id: ValidAccountId) -> VMContextBuilder {
+        let mut builder = VMContextBuilder::new();
+        builder
+            .current_account_id(accounts(0))
+            .signer_account_id(predecessor_account_id.clone())
+            .predecessor_account_id(predecessor_account_id);
+        builder
+    }
 
-//     #[test]
-//     fn test_new() {
-//         let mut context = get_context(accounts(1));
-//         testing_env!(context.build());
-//         let contract = Token::new_default_meta(accounts(1).into(), TOTAL_SUPPLY.into());
-//         testing_env!(context.is_view(true).build());
-//         assert_eq!(contract.ft_total_supply().0, TOTAL_SUPPLY);
-//         assert_eq!(contract.ft_balance_of(accounts(1)).0, TOTAL_SUPPLY);
-//     }
+    #[test]
+    fn test_new() {
+        let mut context = get_context(accounts(1));
+        testing_env!(context.build());
+        let contract = Token::new_default_meta(accounts(1).into(), TOTAL_SUPPLY.into(), "sales.blockjob.testnet".to_string());
+        testing_env!(context.is_view(true).build());
+        assert_eq!(contract.ft_total_supply().0, TOTAL_SUPPLY);
+        assert_eq!(contract.ft_balance_of(accounts(1)).0, TOTAL_SUPPLY);
+    }
 
-//     #[test]
-//     #[should_panic(expected = "The contract is not initialized")]
-//     fn test_default() {
-//         let context = get_context(accounts(1));
-//         testing_env!(context.build());
-//         let _contract = Token::default();
-//     }
+    #[test]
+    #[should_panic(expected = "The contract is not initialized")]
+    fn test_default() {
+        let context = get_context(accounts(1));
+        testing_env!(context.build());
+        let _contract = Token::default();
+    }
 
-//     #[test]
-//     fn test_transfer() {
-//         let mut context = get_context(accounts(2));
-//         testing_env!(context.build());
-//         let mut contract = Token::new_default_meta(accounts(2).into(), TOTAL_SUPPLY.into());
-//         testing_env!(context
-//             .storage_usage(env::storage_usage())
-//             .attached_deposit(contract.storage_balance_bounds().min.into())
-//             .predecessor_account_id(accounts(1))
-//             .build());
-//         // Paying for account registration, aka storage deposit
-//         contract.storage_deposit(None, None);
+    #[test]
+    fn test_transfer() {
+        let mut context = get_context(accounts(2));
+        testing_env!(context.build());
+        let mut contract = Token::new_default_meta(accounts(2).into(), TOTAL_SUPPLY.into(), "sales.blockjob.testnet".to_string());
+        testing_env!(context
+            .storage_usage(env::storage_usage())
+            .attached_deposit(contract.storage_balance_bounds().min.into())
+            .predecessor_account_id(accounts(1))
+            .build());
+        // Paying for account registration, aka storage deposit
+        contract.storage_deposit(None, None);
 
-//         testing_env!(context
-//             .storage_usage(env::storage_usage())
-//             .attached_deposit(1)
-//             .predecessor_account_id(accounts(2))
-//             .build());
-//         let transfer_amount = TOTAL_SUPPLY / 3;
-//         contract.ft_transfer(accounts(1), transfer_amount.into(), None);
+        testing_env!(context
+            .storage_usage(env::storage_usage())
+            .attached_deposit(1)
+            .predecessor_account_id(accounts(2))
+            .build());
+        let transfer_amount = TOTAL_SUPPLY / 3;
+        contract.ft_transfer(accounts(1), transfer_amount.into(), None);
 
-//         testing_env!(context
-//             .storage_usage(env::storage_usage())
-//             .account_balance(env::account_balance())
-//             .is_view(true)
-//             .attached_deposit(0)
-//             .build());
-//         assert_eq!(contract.ft_balance_of(accounts(2)).0, (TOTAL_SUPPLY - transfer_amount));
-//         assert_eq!(contract.ft_balance_of(accounts(1)).0, transfer_amount);
-//     }
-// }
+        testing_env!(context
+            .storage_usage(env::storage_usage())
+            .account_balance(env::account_balance())
+            .is_view(true)
+            .attached_deposit(0)
+            .build());
+        assert_eq!(contract.ft_balance_of(accounts(2)).0, (TOTAL_SUPPLY - transfer_amount));
+        assert_eq!(contract.ft_balance_of(accounts(1)).0, transfer_amount);
+    }
+}

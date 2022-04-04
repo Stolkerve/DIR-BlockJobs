@@ -6,6 +6,7 @@ use near_sdk::{AccountId, Balance, Duration, env, ext_contract, Gas,
 
 near_sdk::setup_alloc!();
 
+const DECIMALS: Balance = 1_000_000; 
 const TOKENS_FOR_SALE: Balance = 500_000;
 const BJT_PER_NEAR: Balance = 1000;
 const MIN_TO_BUY: Balance = 1 * NEAR;
@@ -52,7 +53,7 @@ impl Sale {
     }
 
 
-    /// Comprar tokens BJT a cambio de NEARs.
+    /// Buy tokens BJT a cambio de NEARs.
     /// 
     #[payable]
     pub fn buy_ft(&mut self) {
@@ -64,13 +65,13 @@ impl Sale {
         ext_ft::ft_sale(
             env::current_account_id(),
             env::signer_account_id(),
-            amount.clone(),
+            (amount*DECIMALS).clone(),
             &self.ft_contract,
             NO_DEPOSIT,
             // env::attached_deposit(), 
             GAS_BASE,
         ).then(ext_self::on_buy_ft(
-            amount,
+            amount*DECIMALS,
             &env::current_account_id(),
             NO_DEPOSIT, 
             // GAS_BASE,
@@ -95,7 +96,7 @@ impl Sale {
     /// Retirar los NEARs obtenidos de la preventa una vez finalizada.
     /// 
     pub fn airdrop(&self, beneficiary: AccountId) -> Balance {
-        let time = self.deploy_time + ONE_DAY*30 * self.average_block_time/10000;
+        let time = self.deploy_time + ONE_DAY*30 / (self.average_block_time/10000);
         let actual_time = env::block_timestamp();
         assert!(actual_time >= time, "The whitelist isn't finished");
         assert!(env::signer_account_id() == env::current_account_id(), "You haven't permission to withdraw");

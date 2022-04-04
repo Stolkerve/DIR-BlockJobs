@@ -74,7 +74,7 @@ pub struct Dispute {
     applicant: AccountId, // Empleador demandante.
     accused: AccountId,   // Profesional acusado.
     winner: Option<AccountId>,
-    // Pruebas.
+    // Proofs.
     applicant_proves: String,       // Un markdown con las pruebas.
     accused_proves: Option<String>, // Un markdown con las pruebas.
     // Precio pagado por el servicio.
@@ -507,7 +507,7 @@ impl Mediator {
     /// Bannear un usuario para casos de fraudes en disputas.
     /// 
     pub fn ban_user(&self, user_id: AccountId) {
-        self.assert_admin(&env::signer_account_id());
+        self.assert_owner(&env::signer_account_id());
 
         let _res = ext_marketplace::ban_user_by_mediator(
             user_id,
@@ -599,7 +599,7 @@ impl Mediator {
     }
 
     // Verificacion de que es un Admin.
-    fn assert_admin(&self, account: &AccountId) {
+    fn assert_owner(&self, account: &AccountId) {
         if !self.admins.contains(&account) {
             env::panic(b"Isn't an Admin");
         }
@@ -682,8 +682,6 @@ pub trait Marketplace {
 #[ext_contract(ext_ft)]
 pub trait ExtFT {
     fn validate_tokens(account_id: AccountId);
-    // fn increase_allowance(account: AccountId);
-    // fn decrease_allowance(account: AccountId);
     fn applicant_winner(votes: HashSet<Vote>);
     fn accused_winner(votes: HashSet<Vote>);
 }
@@ -692,8 +690,6 @@ pub trait ExtSelf {
     fn on_pre_vote(dispute_id: u64, user_id: AccountId);
     fn on_vote(dispute_id: u64, user_id: AccountId, vote: bool);
     fn on_return_service(service_id: u64);
-    // fn on_increase_allowance();
-    // fn on_decrease_allowance();
     fn on_ban_user();
 }
 #[ext_contract(ext_contract)]

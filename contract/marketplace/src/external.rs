@@ -13,11 +13,11 @@ impl FungibleTokenReceiver for Marketplace {
         // Verificacion de que el token este dentro de los soportados por Marketplace y 
         // que la fn no sea llamada por cualquier acccount. 
         assert!(self.tokens.contains(&ft_contract), "Token not soported");
-        if ft_contract == "usdc.fakes.testnet".to_string() {
+        if ft_contract == self.usdc_contract {
             let balance = self.usdc_balances.get(&sender_id).unwrap_or(0);
             self.usdc_balances.insert(&sender_id, &(balance+amount.0));
         }
-        else if ft_contract == "ft.blockjobs.testnet".to_string() {
+        else if ft_contract == self.jobs_contract {
             let balance = self.jobs_balances.get(&sender_id).unwrap_or(0);
             self.jobs_balances.insert(&sender_id, &(balance+amount.0));
         }
@@ -110,13 +110,6 @@ impl Marketplace {
                 service.buy_moment = 0;
                 service.sold = false;
                 self.service_by_id.insert(&service_id, &service);
-
-                // Increase the rep
-                let mut creator: User = self.users.get(&service.creator_id).unwrap();
-                creator.reputation += 4;
-                // creator.roles.insert(UserRoles::Judge);
-
-                self.users.insert(&service.creator_id, &creator);
 
                 return service;
             }

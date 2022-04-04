@@ -45,81 +45,35 @@ pub(crate) fn deposit_refund_to(storage_used: u64, to: AccountId) {
     }
 }
 
-
 /// Internal function to Option values
 pub(crate) fn expect_value_found<T>(option: Option<T>, message: &[u8]) -> T {
     option.unwrap_or_else(|| env::panic(message))
 }
 
-// pub(crate) fn bytes_for_approved_account_id(account_id: &AccountId) -> u64 {
-//     // The extra 4 bytes are coming from Borsh serialization to store the length of the string.
-//     account_id.len() as u64 + 4
-// }
-
-// pub(crate) fn refund_approved_account_ids(
-//     account_id: AccountId,
-//     approved_account_ids: &HashSet<AccountId>,
-// ) -> Promise {
-//     let storage_released: u64 = approved_account_ids
-//         .iter()
-//         .map(bytes_for_approved_account_id)
-//         .sum();
-//     Promise::new(account_id).transfer(Balance::from(storage_released) * STORAGE_PRICE_PER_BYTE)
-// }
 
 #[near_bindgen]
 impl Marketplace {
-
-    /******************************/
-    /***** INTERNAL FUNCTIONS  ****/
-    /******************************/
-
-    pub fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
-        let keys = self.users.keys_as_vector();
-        let values = self.users.values_as_vector();
-        (from_index..std::cmp::min(from_index + limit, self.users.len()))
-            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
-            .collect()
-    }
-
-    pub fn measure_min_service_storage_cost(&mut self) {
-        let initial_storage_usage = env::storage_usage();
-        let tmp_account_id = "a".repeat(64);
-        let u = UnorderedSet::new(unique_prefix(&tmp_account_id));
-        self.services_by_account.insert(&tmp_account_id, &u);
-
-        let services_by_account_entry_in_bytes = env::storage_usage() - initial_storage_usage;
-        let owner_id_extra_cost_in_bytes = (tmp_account_id.len() - self.contract_owner.len()) as u64;
-
-        self.extra_storage_in_bytes_per_service =
-            services_by_account_entry_in_bytes + owner_id_extra_cost_in_bytes;
-
-        self.services_by_account.remove(&tmp_account_id);
-    }
-
-    pub fn update_user_mints(&mut self, quantity: u16) -> User {
-        let sender = env::predecessor_account_id();
-        let mut user = expect_value_found(self.users.get(&sender), "Before mint a service, create an user".as_bytes());
-        
-        user.mints += quantity;
-
-        self.users.insert(&sender, &user);
-
-        return user
-    }
-
+    
     /**************************/
     /******** ASSERTS  ********/
     /**************************/
 
-    /// Verificar que sea el admin.
-    pub fn assert_admin(&self) {
+    /// Verificar que sea el Owner.
+    pub fn assert_owner(&self) {
         assert_eq!(
             &env::predecessor_account_id(),
-            &self.contract_owner,
+            &self.owner,
             "Must be owner_id how call its function"
         );
     } 
+
+    /// Verificar que sea Admin.
+    pub fn assert_admin(&self) {
+        if !self.admins.contains(&env::predecessor_account_id()) {
+            panic!("Must be owner_id how call its function")
+        }
+    } 
+
 
     /// Verificar que el servicio exista.
     pub fn assert_service_exists(&self, service_id: &u64) {
@@ -132,6 +86,15 @@ impl Marketplace {
     /******* GET FUNCTIONS  ********/
     /*******************************/
 
+    pub fn get_users(&self, from_index: u64, limit: u64) -> Vec<(AccountId, User)> {
+        let keys = self.users.keys_as_vector();
+        let values = self.users.values_as_vector();
+        (from_index..std::cmp::min(from_index + limit, self.users.len()))
+            .map(|index| (keys.get(index).unwrap(), values.get(index).unwrap()))
+            .collect()
+    }
+
+
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
     pub fn get_user(&self, account_id: ValidAccountId) -> User {
@@ -141,16 +104,24 @@ impl Marketplace {
     /// TODO(Sebas): Optimizar con paginacion
     /// #Arguments
     /// * `account_id`  - La cuenta de mainnet/testnet del usuario.
-    pub fn get_users_by_role(&self, role: UserRoles, from_index: u64, limit: u64) -> Vec<User> {
+    pub fn get_users_by_role(&self, employee: bool, from_index: u64, limit: u64) -> Vec<User> {
         let mut users_by_role: Vec<User> = Vec::new();
 
         let users = self.get_users(from_index, limit);
 
-        for (_account_id, user) in users.iter() {
-            if user.roles.get(&role).is_some() {
-                users_by_role.push((*user).clone());
+        if employee == true {
+            for (_account_id, user) in users.iter() {
+                if user.is_employee == true {
+                    users_by_role.push((*user).clone());
+                }
             }
-        }
+        } else {
+            for (_account_id, user) in users.iter() {
+                if user.is_company == true {
+                    users_by_role.push((*user).clone());
+                }
+            }
+        } 
         users_by_role
     }
 
@@ -239,78 +210,4 @@ impl Marketplace {
             return self.jobs_balances.get(&user).unwrap_or(0);
         }
     }
-
-    // pub(crate) fn internal_remove_service_from_owner(
-    //     &mut self,
-    //     account_id: &AccountId,
-    //     service_id: &ServiceId,
-    // ) {
-    //     let mut services_set = self
-    //         .services_by_account
-    //         .get(account_id)
-    //         .expect("Service should be owned by the sender");
-    //     services_set.remove(service_id);
-    //     if services_set.is_empty() {
-    //         self.services_by_account.remove(account_id);
-    //     } else {
-    //         self.services_by_account.insert(account_id, &services_set);
-    //     }
-    // }
-
-    // pub(crate) fn internal_transfer(
-    //     &mut self,
-    //     sender_id: &AccountId,
-    //     receiver_id: &AccountId,
-    //     service_id: &ServiceId,
-    //     enforce_approval_id: Option<u64>,
-    //     memo: Option<String>,
-    // ) -> (AccountId, HashSet<AccountId>) {
-    //     let Service {
-    //         owner_id,
-    //         metadata,
-    //         employer_account_ids,
-    //         employer_id,
-    //     } = self.service_by_id.get(service_id).expect("Service not found");
-    //     if sender_id != &owner_id && !employer_account_ids.contains(sender_id) {
-    //         env::panic(b"Unauthorized");
-    //     }
-
-    //     if let Some(enforce_approval_id) = enforce_approval_id {
-    //         assert_eq!(
-    //             employer_id,
-    //             enforce_approval_id,
-    //             "The service approval_id is different from provided"
-    //         );
-    //     }
-
-    //     assert_ne!(
-    //         &owner_id, receiver_id,
-    //         "The service owner and the receiver should be different"
-    //     );
-
-    //     // env::log(
-    //         format!(
-    //             "Transfer {} from @{} to @{}",
-    //             service_id, &owner_id, receiver_id
-    //         )
-    //         .as_bytes(),
-    //     );
-
-    //     self.internal_remove_service_from_owner(&owner_id, service_id);
-    //     self.internal_add_service_to_owner(receiver_id, service_id);
-
-    //     let service = Service {
-    //         owner_id: receiver_id.clone(),
-    //         metadata,
-    //         employer_account_ids: Default::default(),
-    //         employer_id: employer_id + 1,
-    //     };
-    //     self.service_by_id.insert(service_id, &service);
-
-    //     if let Some(memo) = memo {
-    //         // env::log(format!("Memo: {}", memo).as_bytes());
-    //     }
-
-    //     (owner_id, employer_account_ids)
-    // }
 }

@@ -1,38 +1,6 @@
-use std::collections::{HashSet};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{AccountId};
-use std::fmt::{Display, Formatter, Result};
-
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Copy, PartialOrd, PartialEq, Eq, Hash, Debug)]
-#[serde(crate = "near_sdk::serde")]
-pub enum UserRoles {
-    Professional = 0,
-    Employeer = 1,
-    Admin = 2,
-    Judge = 3,
-}
-
-impl Display for UserRoles {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        match self {
-            UserRoles::Professional => write!(f, "Professional"),
-            UserRoles::Employeer => write!(f, "Employeer"),
-            UserRoles::Admin => write!(f, "Admin"),
-            UserRoles::Judge => write!(f, "Judge"),
-        }
-    }
-}
-
-
-// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
-// #[serde(crate = "near_sdk::serde")]
-// pub enum IdiomLevel {
-//     Beginner,
-//     Intermedian,
-//     Expert,
-//     Native
-// }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, Debug)]
 #[serde(crate = "near_sdk::serde")]
@@ -59,9 +27,10 @@ pub struct PersonalData {
 #[serde(crate = "near_sdk::serde")]
 pub struct User {
     pub account_id: AccountId,
-    pub mints: u16,
-    pub roles: HashSet<UserRoles>,
-    pub reputation: i16,
+    pub reputation: u16,
+    pub votes: u16,
+    pub is_employee: bool,
+    pub is_company: bool,
     pub personal_data: Option<String>,
     /*
         personal_data:  {
@@ -79,11 +48,3 @@ pub struct User {
     */
     pub banned: bool,
 }
-
-// #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
-// #[serde(crate = "near_sdk::serde")]
-// pub struct Category {
-//     pub category: String,
-//     pub subcategory: String,
-//     pub areas: String,
-// }

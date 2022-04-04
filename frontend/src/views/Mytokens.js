@@ -47,7 +47,7 @@ export default function MyTokens() {
       },
     },
     {
-      title: "Comprar",
+      title: "Buy",
       icon: <BiCoinStack />,
       action: () => {
         openBuyJOBSModal();
@@ -68,7 +68,7 @@ export default function MyTokens() {
       },
     },
     {
-      title: "Bloquear",
+      title: "Lock",
       icon: <BiBlock />,
       action: () => {
         openBlockTokeModal(false);
