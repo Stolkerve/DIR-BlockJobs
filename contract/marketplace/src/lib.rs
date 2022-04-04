@@ -279,11 +279,11 @@ impl Marketplace {
 
             if token == "usdc.fakes.testnet".to_string() {
                 let buyer_balance = self.usdc_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient USDC balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient USDC balance in the marketplace wallet");
             }
             else if token == "ft.blockjobs.testnet".to_string() {
                 let buyer_balance = self.jobs_balances.get(&buyer.account_id).unwrap_or(0);
-                assert!(buyer_balance >= service.metadata.price, "Insufficient JOBS balance");
+                assert!(buyer_balance >= service.metadata.price, "Insufficient JOBS balance in the marketplace wallet");
             } 
             else {
                 env::panic(b"Token not soported");
