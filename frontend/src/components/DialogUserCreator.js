@@ -109,11 +109,12 @@ export default function DialogUserCreator({ isOpen, closeModal, user }) {
                   </p>
                 ) : (
                   <p className="text-sm text-gray-500 border-b-2 pb-2">
-                    Please, fill in this form to be able to create your user. 
-                    At the end, a toll of 0.1 NEARS will be charged to cover the storage  
-                    the remainder will be returned. <br />
+                    Please, fill in this form to be able to create your user. At
+                    the end, a toll of 0.1 NEARS will be charged to cover the
+                    storage the remainder will be returned. <br />
                     <span className="font-bold">
-                      Remember, this data is optional and everything is public on blockchain!
+                      Remember, this data is optional and everything is public
+                      on blockchain!
                     </span>
                   </p>
                 )}
@@ -331,8 +332,6 @@ export default function DialogUserCreator({ isOpen, closeModal, user }) {
                     };
                     console.log(personalData);
                     try {
-                      let roles = ["Professional", "Employeer"];
-
                       if (selectFile) {
                         if (selectFile.size < 1024 ** 1024 * 5) {
                           setLoadingPicture(true);
@@ -355,12 +354,9 @@ export default function DialogUserCreator({ isOpen, closeModal, user }) {
 
                       console.log(personalData);
                       if (user) {
-                        await updateUserData(
-                          roles,
-                          JSON.stringify(personalData)
-                        );
+                        await updateUserData(JSON.stringify(personalData));
                       } else {
-                        await addUser(roles, JSON.stringify(personalData));
+                        await addUser(JSON.stringify(personalData));
                       }
 
                       // setLegalNameInput("")

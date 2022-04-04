@@ -30,24 +30,6 @@ export default function UserProfile({ user }) {
                 </span>
               </div>
               <div className="flex flex-row whitespace-pre-wrap font-semibold">
-                <div>Roles:</div>
-                {user.roles.map((v, i) => {
-                  return (
-                    <div
-                      key={v}
-                      className={
-                        v === "Judge"
-                          ? "text-green-400"
-                          : v === "Admin"
-                          ? "text-[#04AADD]"
-                          : ""
-                      }
-                    >
-                      {" "}
-                      {(i + 1) != user.roles.length ? `${v},` : v}
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </div>

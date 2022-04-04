@@ -336,11 +336,11 @@ export async function getServices(index, limit) {
 
 /* User relate */
 
-export async function addUser(roles, personalData) {
+export async function addUser(personalData) {
   let amt = utils.format.parseNearAmount("0.1");
   try {
     return await window.marketplaceContract.add_user(
-      { roles: roles, personal_data: personalData },
+      { is_employee: true, personal_data: personalData },
       "300000000000000",
       amt
     );
@@ -352,11 +352,11 @@ export async function addUser(roles, personalData) {
   }
 }
 
-export async function updateUserData(roles, data) {
+export async function updateUserData(data) {
   let amt = utils.format.parseNearAmount("0.1");
   try {
     return await window.marketplaceContract.update_user_data(
-      { roles: roles, data: data },
+      { data: data },
       "300000000000000",
       amt
     );
