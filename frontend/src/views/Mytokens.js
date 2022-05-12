@@ -110,25 +110,27 @@ export default function MyTokens() {
     const foo = async () => {
       let balanceOfJOBS = await getFTBalanceOf(
         window.accountId,
-        "ft.blockjobs.testnet"
+        "dev-1649005643412-40142341956976"
       );
       if (balanceOfJOBS) {
-        balanceOfJOBS = balanceOfJOBS / 10 ** 18;
+        balanceOfJOBS = balanceOfJOBS / 10 ** 6;
       }
 
-      let balanceOfUSDC = await getFTBalanceOf(window.accountId, "usdc");
+      console.log(balanceOfJOBS)
+
+      let balanceOfUSDC = await getFTBalanceOf(window.accountId, "usdc.fakes.testnet");
       if (balanceOfUSDC) {
         balanceOfUSDC = balanceOfUSDC / 10 ** 6;
       }
 
       let lockedTokensOf = await getLockedTokensOf(window.accountId);
       if (lockedTokensOf) {
-        lockedTokensOf = lockedTokensOf / 10 ** 18;
+        lockedTokensOf = lockedTokensOf / 10 ** 6;
       }
 
       console.log(lockedTokensOf);
       let JOBSBalanceFromWallet =
-        (await getJOBSBalanceFromNearWallet(window.accountId)) / 10 ** 18;
+        (await getJOBSBalanceFromNearWallet(window.accountId)) / 10 ** 6;
       let USDCBalanceFromWallet =
         (await getUSDCBalanceFromNearWallet(window.accountId)) / 10 ** 6;
       setJOBSWalletCBalance(JOBSBalanceFromWallet);

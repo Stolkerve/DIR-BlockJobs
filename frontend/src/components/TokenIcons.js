@@ -12,7 +12,7 @@ export const TokenIcons = [
     path: usdcLogo,
   },
   {
-    value: "ft.blockjobs.testnet",
+    value: "dev-1649005643412-40142341956976",
     path: jobsCoinIcon,
   },
 ];

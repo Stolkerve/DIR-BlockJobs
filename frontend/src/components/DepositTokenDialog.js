@@ -81,10 +81,10 @@ export default function DepositTokenDialog({ isOpen, closeModal, openModal, toke
                     
                     if (token == "JOBS") {
                       if (!withdraw) {
-                        await ftTransferCallJOBS( String(amount * (10**18)) )
+                        await ftTransferCallJOBS( String(amount * (10**6)) )
                       }
                       else {
-                        await withdrawFT(amount * (10**18), window.ftContract.contractId)
+                        await withdrawFT(amount * (10**6), window.ftContract.contractId)
                       }
                     } else {
                       if (!withdraw) {

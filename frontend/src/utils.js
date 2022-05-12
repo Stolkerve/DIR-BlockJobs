@@ -194,7 +194,7 @@ export async function mintService(
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -219,7 +219,7 @@ export async function withdrawFT(amount, token) {
     return true;
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return false;
   }
@@ -235,7 +235,7 @@ export async function buyService(serviceId, deposit) {
     return true;
   } catch (e) {
     let finalErrorMsg = JSON.parse(e.message).kind.ExecutionError
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return false;
   }
@@ -260,7 +260,7 @@ export async function updateService(
     return true;
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return false;
   }
@@ -276,7 +276,7 @@ export async function reclaimService(serviceId) {
     return true;
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return false;
   }
@@ -287,7 +287,7 @@ export async function getTotalServices() {
     return await window.marketplaceContract.get_total_services();
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -301,7 +301,7 @@ export async function getUserServices(serviceId) {
     });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -314,7 +314,7 @@ export async function getServiceById(id) {
     });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -328,7 +328,7 @@ export async function getServices(index, limit) {
     });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -346,7 +346,7 @@ export async function addUser(personalData) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -362,7 +362,7 @@ export async function updateUserData(data) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    ////toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -373,7 +373,7 @@ export async function getUser(accountId) {
     return await window.marketplaceContract.get_user({ account_id: accountId });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -389,7 +389,7 @@ export async function reclaimDispute(serviceId, proves) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -404,7 +404,7 @@ export async function addAccusedProves(disputeId, proves) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -419,7 +419,7 @@ export async function updateDisputeStatus(disputeId) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -434,7 +434,7 @@ export async function preVote(disputeId) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -449,7 +449,7 @@ export async function vote(disputeId, vote) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -463,7 +463,7 @@ export async function getDisputes(fromIndex, limit) {
     });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -474,7 +474,7 @@ export async function getDispute(disputeId) {
     return await window.mediatorContract.get_dispute({ dispute_id: disputeId });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -485,7 +485,7 @@ export async function getMaxJurors() {
     return await window.mediatorContract.get_max_jurors();
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -496,7 +496,7 @@ export async function getTotalDisputes() {
     return await window.mediatorContract.get_total_disputes();
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -507,7 +507,7 @@ export async function getJOBSBalanceFromNearWallet(account) {
     return await window.ftContract.ft_balance_of({ account_id: account });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -518,7 +518,7 @@ export async function blockTokens(amount) {
     return await window.ftContract.block_tokens({ amount: Number(amount) }, "300000000000000", "1");
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -529,7 +529,7 @@ export async function getLockedTokensOf(account) {
     return await window.ftContract.get_locked_tokens_of({ account: account });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -540,7 +540,7 @@ export async function withdrawTokens(amount) {
     return await window.ftContract.withdraw_tokens({ amount: Number(amount) }, "300000000000000", "1");
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -559,7 +559,7 @@ export async function ftTransferCallJOBS(amount) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -570,7 +570,7 @@ export async function getUSDCBalanceFromNearWallet(account) {
     return await window.USDCConstract.ft_balance_of({ account_id: account });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -584,7 +584,7 @@ export async function getFTBalanceOf(user, token) {
     });
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -610,7 +610,7 @@ export async function ftTransferCallUSDC(amount) {
     );
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }
@@ -622,7 +622,7 @@ export async function buyFT(amount) {
     return await window.salesContract.buy_ft({}, "300000000000000", amt);
   } catch (e) {
     let finalErrorMsg = getErrMsg(e);
-    toast.error(finalErrorMsg);
+    //toast.error(finalErrorMsg);
     console.log(e);
     return null;
   }

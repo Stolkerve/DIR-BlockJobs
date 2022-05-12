@@ -42,7 +42,7 @@ export default function MyChats() {
   }, [salasDoc]);
 
   return (
-    <div className="max-h-screen w-full">
+    <div className="max-h-screen my-chats-container w-full">
       {salas ? (
         <div className="flex h-full">
           <div className="min-w-[180px] max-w-[180px] max-h-screen overflow-y-auto">
